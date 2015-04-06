@@ -1,0 +1,200 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<link href='http://fonts.googleapis.com/css?family=Lato:100,400|Roboto:400,300' rel='stylesheet' type='text/css'>
+<script src="/public/js/jquery-2.1.3.min.js"></script>
+<script src="/public/js/underscore-min.js"></script>
+<script src="/public/js/backbone-min.js"></script>
+<style>
+.item-view{
+	margin-bottom: 15px;
+}
+.item-view button{
+	margin-left: 10px;
+}
+.member{
+	border: 5px #f0f0f0 solid;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+</style>
+<body>
+
+<div class="container-fluid">
+<h1>Bear Backbone test</h1>
+</div>
+<script>
+(function(){
+	//Backbone.sync = function(method, model, success, error){ success(); }
+	var Member = Backbone.Model.extend({
+		urlRoot:'/members',
+		defaults:{
+			"id":'',
+			"firstname": "",
+			"lastname": "",
+			"email": "",
+			"password": ""
+		}
+	});
+	var MemberView = Backbone.View.extend({
+		tagName: 'form',
+		events: {
+			'change input[name=id]':'fetch',
+			'keyup input[name=id]':'fetch',
+			'submit':'onSubmit'
+		},
+		initialize:function(id)
+		{
+			this.model = new Member();
+			_.bindAll(this,'fetch','rerender','onSubmit');
+			this.model.bind('change',this.rerender)
+			$(this.el).addClass('member').addClass('form-inline');
+			$(this.el).html(
+				'<div class="form-group">'+
+					'<input type="number" class="form-control" name="id" placeholder="member id">'+
+				'</div>'+
+				'<div class="form-group">'+
+					'<input type="email" class="form-control" name="email" placeholder="email">'+
+				'</div>'+
+				'<div class="form-group">'+
+					'<input type="text" class="form-control" name="firstname" placeholder="firstname">'+
+					'<input type="text" class="form-control" name="lastname" placeholder="lastname">'+
+				'</div>'+
+				'<button type="submit" class="btn btn-default" name="save">Save</button>'
+			);
+			if(id){
+				this.model.set('id',id); 
+				this.fetch();
+			}
+		},
+		fetch: function()
+		{
+			var id = this.el.elements['id'].value;
+			if(id){
+				this.model.set({id:id});
+				this.model.fetch();
+			}
+		},
+		rerender: function()
+		{
+			var self = this;
+			_.each(this.model.attributes,function(val,key){
+				var element = self.el.elements[key];
+				if(element){
+					element.value = val;
+				}
+			})
+		},
+		onSubmit: function(e)
+		{
+			var self = this;
+			e.preventDefault();
+			var modelObject = {}
+			_.each(this.el.elements,function(el){
+				var name = $(el).attr('name');
+				if(self.model.get(name)){
+					modelObject[name] = $(el).val();
+				}
+			})
+
+			console.log('save',this.model.attributes)
+			this.model.save(modelObject,{
+				success: function(e){
+					console.log('cool',e);
+				},
+				error: function(e)
+				{
+					console.log('fail',e);
+				}
+			})
+		}
+	})
+	var memberView = new MemberView(4);
+	$('.container-fluid').append(memberView.el);
+
+
+	var Item = Backbone.Model.extend({
+		defaults:{
+			part1: 'hello',
+			part2: 'world'
+		},
+		initialize: function()
+		{
+			console.log('init model with part1 = '+this.get('part1'));
+		}
+	});
+	var List = Backbone.Collection.extend({
+		model: Item
+	})
+	var ItemView = Backbone.View.extend({
+		tagName:'li',
+		events:{'click button.swap':'swap','click button.remove':'remove'},
+		initialize: function() {
+			_.bindAll(this,'render','swap','remove','unrender');
+			this.model.bind('change',this.render);
+			this.model.bind('remove',this.unrender);
+		},
+		remove: function()
+		{
+			this.model.destroy()
+		},
+		unrender: function()
+		{
+			console.log(11);
+			$(this.el).remove();
+			console.log($(this.el));
+		},
+		swap: function()
+		{
+			var swappedModel = {
+				part1: this.model.get('part2'),
+				part2: this.model.get('part1')
+			};
+			this.model.set(swappedModel);
+		},
+		render: function() {
+			$(this.el).addClass('item-view')
+			$(this.el).html('<span>'+this.model.get('part1')+' '+this.model.get('part2')+'</span>');
+			$(this.el).append('<button class="btn btn-default swap">Swap</button>');
+			$(this.el).append('<button class="btn btn-default remove">remove</button>');
+			return this;
+		}
+	})
+	var ListView = Backbone.View.extend({
+		el: $('.container-fluid'),
+		events: {'click button.btn.add': 'addItem','mouseover li':'over'},
+		initialize: function(){
+			_.bindAll(this,'render','addItem','appendItem');
+			this.collection = new List()
+			this.collection.bind('add',this.appendItem);
+			this.render();
+		},
+		render: function(){
+			var self = this;
+			$(this.el).append('<button class="btn btn-default add">Add Item</button>');
+			$(this.el).append('<ul></ul>');
+			this.addItem()
+			this.addItem()
+			this.addItem()
+			this.addItem()
+		},
+		over:function(e){
+			//console.log('over',e)
+		},
+		addItem:function(e){
+			var newItem = new Item({part2:'hello '+parseInt(this.collection.length+1)});
+			this.collection.add(newItem)
+		},
+		appendItem:function(item)
+		{
+			var itemView = new ItemView({model:item})
+			$('ul',this.el).append(itemView.render().el);
+		}
+	});
+	var listView = new ListView();
+})()
+</script>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<html>
+<script src="/public/js/react-0.13.1/build/react.js"></script>
+<script src="/public/js/react-0.13.1/build/JSXTransformer.js"></script>
+<div id="foo"></div>
+<script type="text/jsx">
+function get(url)
+{
+	return new Promise(function(resolve,reject){
+		var req = new XMLHttpRequest();
+		req.open('GET',url);
+		req.onload = function()
+		{
+			if(req.status == 200){
+				resolve(req.response);
+			}else{
+				reject(Error(req.statusText))
+			}
+		}
+		req.onerror = function()
+		{
+			reject(Error("network error"));
+		}
+		req.send();
+	})
+}
+var ProductListView = React.createClass({
+	render: function() {
+		var productNodes = this.productNodes()
+		return (
+		<div>
+			<div>count: {this.props.products.length}</div>
+			<ul>
+				{productNodes}
+			</ul>
+		</div>
+		);
+	},
+	productNodes: function()
+	{
+		return this.props.products.map(function(product){
+			return (
+				<li><b>{product.id}</b> &nbsp; <span>{product.name}</span></li>
+			);
+		})
+	}
+});
+get('/products').then(JSON.parse).then(function(products){
+	React.render(<ProductListView products={products} />, document.getElementById('foo'));
+},function(error){
+	console.log(error);
+});
+</script>
+</html>

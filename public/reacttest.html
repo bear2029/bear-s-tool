@@ -1,0 +1,37 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<link href='http://fonts.googleapis.com/css?family=Lato:100,400|Roboto:400,300' rel='stylesheet' type='text/css'>
+<script src="http://fb.me/react-0.13.1.js"></script>
+<script src="http://fb.me/JSXTransformer-0.13.1.js"></script>
+<!-- script src="/public/js/reacttest.jsx"></script-->
+<style>
+.item-view{
+	margin-bottom: 15px;
+}
+.item-view button{
+	margin-left: 10px;
+}
+.member{
+	border: 5px #f0f0f0 solid;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+</style>
+<body>
+
+<div class="container-fluid">
+	<h1>Bear Backbone test</h1>
+	<hi />
+	<script type="text/jsx">
+	var HelloMessage = React.createClass({
+		render: function() {
+			return <div>Hello {this.props.name}</div>;
+		}
+	});
+	React.render(<HelloMessage name="John" />,'hi');
+	</script>
+</div>
+</body>
+</html>

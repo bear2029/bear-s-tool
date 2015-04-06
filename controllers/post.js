@@ -1,6 +1,9 @@
 module.exports = {
 	home: function (req, res, next) {
-		res.send('home page2');
+		res.render('home',{
+			title:'home page2',
+			headerTitle: 'Welcome to Ecomerce'
+		});
 	},
 	get: function (req, res, next) {
 		req.models.post.find({id: req.params.id}, function(err, data) {
