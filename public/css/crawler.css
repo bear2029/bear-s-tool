@@ -1,0 +1,19 @@
+.list-url {
+	position: relative;
+}
+.list-url input{
+	transition: color 300ms ease-out;
+}
+.list-url.invalid input {
+	color: red;
+}
+.list-url.valid .validation-icon{
+	opacity: 1;
+}
+.list-url .validation-icon{
+	opacity: 0;
+	transition: opacity 300ms ease-out;
+	position: absolute;
+	top: 8px;
+	right: 10px;
+}
