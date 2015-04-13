@@ -1,19 +1,49 @@
-.list-url {
+.crawler-editor .url {
 	position: relative;
+	display: flex;
 }
-.list-url input{
+.crawler-editor .url input{
 	transition: color 300ms ease-out;
+	width: auto;
 }
-.list-url.invalid input {
+.crawler-editor .form-group>input{
+	margin-left: 12px;
+}
+.crawler-editor div.form-group>input:first-of-type{
+	margin-left: 0;
+}
+.crawler-editor .url input[type=url]{
+	padding-left: 32px;
+}
+.crawler-editor .url input.wide{
+	flex-grow: 2;
+}
+.crawler-editor .url.invalid input {
 	color: red;
 }
-.list-url.valid .validation-icon{
+.crawler-editor .url.valid .validation-icon{
 	opacity: 1;
 }
-.list-url .validation-icon{
-	opacity: 0;
+.crawler-editor .url .validation-icon{
+	opacity: 0.2;
 	transition: opacity 300ms ease-out;
 	position: absolute;
 	top: 8px;
-	right: 10px;
+	left: 10px;
+}
+
+.popup{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	opacity: 0;
+	transition: opacity 500ms ease-out;
+	background: #fff;
+	box-shadow: 5px 5px 15px 0 rgba(0,0,0,.3);
+	padding: 30px;
+	border-radius: 10px;
+}
+.popup.appear{
+	opacity: 1;
 }
