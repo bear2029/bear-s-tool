@@ -1,7 +1,7 @@
+var util = require('util');
 var request = require('request');
 var cheerio = require('cheerio');
 var gbk = require('gbk');
-var _eval = require('eval');
 
 module.exports = {
 	home: function(req,res)
@@ -22,10 +22,15 @@ module.exports = {
 					var $ = cheerio.load(body);
 					for(var key in testRule){
 						//console.log(testRule[key]);
-						data[key] = eval(testRule[key])
+						try{
+							data[key] = eval(testRule[key])
+							console.log(data[key]);
+						}catch(e){
+							res.status(400).json('parsing error: '+e);
+							return
+						}
 					}
-					console.log(data);
-					res.json(data);
+					res.json(util.inspect(data));
 				}else{
 					res.status(400).json(error);
 				}

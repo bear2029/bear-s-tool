@@ -1,10 +1,15 @@
 (function(){
 Ajax = {/*{{{*/
+	delete:function(url,data)
+	{
+		return this.post(url,data,'DELETE')
+	},
 	post:function(url,data)
 	{
+		var method = arguments[2] || 'POST'
 		return new Promise(function(resolve,reject){
 			$.ajax({
-				method: "POST",
+				method: method,
 				url: url,
 				data: JSON.stringify(data),
 				processData: false,
@@ -12,7 +17,7 @@ Ajax = {/*{{{*/
 			}).done(function(msg) {
 				resolve(msg);
 			}).fail(function(jqXHR, textStatus, errorThrown){
-				reject(new Error(errorThrown))
+				reject(new Error(jqXHR.responseJSON))
 			});
 		})
 	},
@@ -103,13 +108,20 @@ var Editor = React.createClass(
 		var matches = $(e.target).attr('class').match(/(item|collection)/)
 		if(matches){
 			var testType = matches[0];
+			var consoleArea = $('.console textarea',React.findDOMNode(this))
 			var story = {
 				testUrl: this.state[testType+'Url'],
 				testRule: JSON.parse(this.state[testType+'Rule'])
 			};
-			console.log(story)
+			console.log('testing',story)
 			Ajax.post('/crawler/scriptTester',story).then(function(e){
 				console.log('response',e);
+				consoleArea.removeClass('error')
+				consoleArea.html(JSON.stringify(e))
+			},function(e){
+				console.log('error',e);
+				consoleArea.addClass('error')
+				consoleArea.html(e.message)
 			})
 		}
 	},
@@ -136,30 +148,37 @@ var Editor = React.createClass(
 	render: function() {
 		return (
 		<form className="crawler-editor" onSubmit={this.onSubmit}>
-			<div className="form-group">
-				<input name="site-name" className="form-control" placeholder="site name" valueLink={this.linkState('siteName')}/>
+			<div className="editor">
+				<h4>Editor</h4>
+				<div className="form-group">
+					<input name="site-name" className="form-control" placeholder="site name" valueLink={this.linkState('siteName')}/>
+				</div>
+				<div className="form-group url">
+					<input name="list-url" onKeyUp={this.onUrlMatchChanged} type="url" className="form-control wide" placeholder="list URL for test" valueLink={this.linkState('collectionUrl')}/>
+					<div className="validation-icon"><span className="glyphicon glyphicon-ok" aria-hidden="true"></span></div>
+					<input type="text" onKeyUp={this.onUrlMatchChanged} className="form-control" name="list-url-regex" placeholder="list URL regex" valueLink={this.linkState('collectionUrlRegex')} />
+				</div>
+				<div className="form-group url">
+					<input name="item-url" onKeyUp={this.onUrlMatchChanged} type="url" className="form-control wide" placeholder="item URL for test" valueLink={this.linkState('itemUrl')}/>
+					<div className="validation-icon"><span className="glyphicon glyphicon-ok" aria-hidden="true"></span></div>
+					<input type="text" onKeyUp={this.onUrlMatchChanged} className="form-control" name="item-url-regex" placeholder="item URL regex" valueLink={this.linkState('itemUrlRegex')}/>
+				</div>
+				<div className="form-group url">
+					<input type="text" className="form-control wide" name="collection-rule" placeholder="collection rule, e.g. {&#34;title&#34;:&#34;$('h1').html()&#34;}" valueLink={this.linkState('collectionRule')}/>
+					<input type="submit" className="btn btn-default collection" onClick={this.onTest} value="test"/>
+				</div>
+				<div className="form-group url">
+					<input type="text" className="form-control wide" name="item-rule" placeholder="item rule" valueLink={this.linkState('itemRule')}/>
+					<input type="submit" className="btn btn-default item" onClick={this.onTest} value="test"/>
+				</div>
+				<div className="form-group">
+					<button type="submit" className="btn btn-default" >Submit</button>&nbsp;
+					<button type="close" className="btn btn-default" onClick={this.onClose}>Close</button>
+				</div>
 			</div>
-			<div className="form-group url">
-				<input name="list-url" onKeyUp={this.onUrlMatchChanged} type="url" className="form-control wide" placeholder="list URL for test" valueLink={this.linkState('collectionUrl')}/>
-				<div className="validation-icon"><span className="glyphicon glyphicon-ok" aria-hidden="true"></span></div>
-				<input type="text" onKeyUp={this.onUrlMatchChanged} className="form-control" name="list-url-regex" placeholder="list URL regex" valueLink={this.linkState('collectionUrlRegex')} />
-			</div>
-			<div className="form-group url">
-				<input name="item-url" onKeyUp={this.onUrlMatchChanged} type="url" className="form-control wide" placeholder="item URL for test" valueLink={this.linkState('itemUrl')}/>
-				<div className="validation-icon"><span className="glyphicon glyphicon-ok" aria-hidden="true"></span></div>
-				<input type="text" onKeyUp={this.onUrlMatchChanged} className="form-control" name="item-url-regex" placeholder="item URL regex" valueLink={this.linkState('itemUrlRegex')}/>
-			</div>
-			<div className="form-group url">
-				<input type="text" className="form-control wide" name="collection-rule" placeholder="collection rule" valueLink={this.linkState('collectionRule')}/>
-				<input type="submit" className="btn btn-default collection" onClick={this.onTest} value="test"/>
-			</div>
-			<div className="form-group url">
-				<input type="text" className="form-control wide" name="item-rule" placeholder="item rule" valueLink={this.linkState('itemRule')}/>
-				<input type="submit" className="btn btn-default item" onClick={this.onTest} value="test"/>
-			</div>
-			<div className="form-group">
-				<button type="submit" className="btn btn-default" >Submit</button>
-				<button type="close" className="btn btn-default" onClick={this.onClose}>Close</button>
+			<div className="console">
+				<h4>Console</h4>
+				<textarea readonly></textarea>
 			</div>
 		</form>
 		);
@@ -179,6 +198,7 @@ var CrawlerList = React.createClass(
 				<th>site name</th>
 				<th>list URL</th>
 				<th>list URL match</th>
+				<th>deletion</th>
 			</tr>
 			{this.state.data.map(function(item){
 				return <CrawlerItem data={item}/>;
@@ -198,6 +218,15 @@ var CrawlerItem = React.createClass(
 	{
 		React.render(<Editor data={this.state} />, $('#crawler-editor')[0]);
 	},
+	onDelete: function(e)
+	{
+		var that = this
+		e.preventDefault();
+		Ajax.delete('//www.tool.bear:9200/crawler/common/'+this.state._id).then(function(){
+			$(React.findDOMNode(that)).remove();
+		})
+		return false
+	},
 	render: function()
 	{
 		return (
@@ -205,6 +234,7 @@ var CrawlerItem = React.createClass(
 			<td>{this.state._source.siteName}</td>
 			<td>{this.state._source.collectionUrl}</td>
 			<td>{this.state._source.collectionUrlRegex}</td>
+			<td><button className="btn btn-danger" onClick={this.onDelete}>delete</button></td>
 		</tr>
 		)
 	}

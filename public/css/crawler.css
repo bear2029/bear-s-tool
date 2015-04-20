@@ -1,3 +1,16 @@
+.crawler-editor {
+	display: flex;
+}
+.crawler-editor .console {
+	margin-left: 20px;
+}
+.crawler-editor .console textarea.error{
+	color: #d9534f;
+}
+.crawler-editor .console textarea{
+	width: 300px;
+	height: 300px;
+}
 .crawler-editor .url {
 	position: relative;
 	display: flex;
