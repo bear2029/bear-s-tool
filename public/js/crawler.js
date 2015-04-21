@@ -41,6 +41,7 @@ var Editor = React.createClass(
 	mixins: [React.addons.LinkedStateMixin],
 	getInitialState:function(){
 		this.fieldMap = ['siteName','collectionRule','itemRule','collectionUrlRegex','itemUrlRegex','collectionUrl','itemUrl']
+		this.isNew = !this.props.data._source;
 		var state = $.extend({
 			iscollectionUrlValid: true,
 			isItemUrlValid: true
@@ -190,6 +191,11 @@ var CrawlerList = React.createClass(
 	{
 		return {data:this.props.data};
 	},
+	onAddNew: function()
+	{
+		var data = {'_source': {}}
+		React.render(<Editor data={data} />, $('#crawler-editor')[0]);
+	},
 	render: function()
 	{
 		return (
@@ -203,6 +209,9 @@ var CrawlerList = React.createClass(
 			{this.state.data.map(function(item){
 				return <CrawlerItem data={item}/>;
 			})}
+			<tr>
+				<td colSpan="4"><button className="btn btn-primary" onClick={this.onAddNew}>Add New &nbsp;<span className="glyphicon glyphicon-plus"></span></button></td>
+			</tr>
 		</table>
 		)
 	}
@@ -234,7 +243,7 @@ var CrawlerItem = React.createClass(
 			<td>{this.state._source.siteName}</td>
 			<td>{this.state._source.collectionUrl}</td>
 			<td>{this.state._source.collectionUrlRegex}</td>
-			<td><button className="btn btn-danger" onClick={this.onDelete}>delete</button></td>
+			<td><button className="btn btn-danger btn-xs" onClick={this.onDelete}>delete <span className="glyphicon glyphicon-remove"></span></button></td>
 		</tr>
 		)
 	}
@@ -245,6 +254,9 @@ Ajax.post('//www.tool.bear:9200/crawler/common/_search',{size:1000})
 	return data.hits.hits
 })
 .then(function(data){
+	React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
+}).catch(function(e){
+	var data = [];
 	React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
 })
 
