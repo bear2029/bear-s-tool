@@ -5,15 +5,18 @@
 <body id="homepage">
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="/public/js/jquery-2.1.3.min.js"></script>
-<script src="/public/js/react-0.13.1/build/react-with-addons.js"></script>
 <script src="/public/js/underscore-min.js"></script>
+<script src="/public/js/react-0.13.1/build/react-with-addons.js"></script>
 <script src="/public/js/react-0.13.1/build/JSXTransformer.js"></script>
+<script>
+var crawlerId = {{{json crawlerId}}};
+</script>
 <script type="text/jsx" src="/public/js/crawler.js"></script>
 <div class="container-fluid">
 	{{>navi}}
-	<h1>Crawler</h1>
-	<div id="crawler-list"></div>
-	<div id="crawler-editor" class="popup"></div>
+	<h1>Crawler Subscribe</h1>
+	<div id="subscribe-list"></div>
+	<div id="subscribe-editor" class="popup"></div>
 </div>
 </body>
 </html>

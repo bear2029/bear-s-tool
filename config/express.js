@@ -11,7 +11,11 @@ module.exports = function(app, express) {
 
 	app.engine('handlebars', exphbs({
 		//defaultLayout: 'main',
-		//helpers      : helpers,
+		helpers: {
+			json: function(obj) {
+				return JSON.stringify(obj);
+			}
+		},
 		extname: '.html',
 		partialsDir: [
 			'views/partials/'
