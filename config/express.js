@@ -1,8 +1,12 @@
-var bodyParser = require('body-parser');
-var logger = require('morgan');
-var error_handler = require('errorhandler');
-var exphbs  = require('express-handlebars');
-var autoPrefixer = require('express-autoprefixer');
+util = require('util');
+bodyParser = require('body-parser');
+logger = require('morgan');
+error_handler = require('errorhandler');
+exphbs  = require('express-handlebars');
+autoPrefixer = require('express-autoprefixer');
+_ = require(global.appRoot+'/public/js/underscore-min.js')
+http = require('http').Server(app);
+io = require('socket.io')(http);
 
 module.exports = function(app, express) {
 	app.use(bodyParser.json());

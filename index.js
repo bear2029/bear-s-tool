@@ -1,8 +1,8 @@
-var path = require('path');
-var express = require('express');
-var app = express();
-var http = require('http').Server(app);
-var fs = require('fs');
+path = require('path');
+express = require('express');
+app = express();
+http = require('http').Server(app);
+fs = require('fs');
 global.appRoot = path.resolve(__dirname);
 var controllers = {};
 var matches;

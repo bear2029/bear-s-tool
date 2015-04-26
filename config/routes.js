@@ -1,6 +1,4 @@
 module.exports = function(app, controllers) {
-	var http = require('http').Server(app);
-	var io = require('socket.io')(http);
 	app.get( '/' , controllers.post.home);
 	app.get( '/post/:id' , controllers.post.get);
 	app.get( '/posts' , controllers.post.getall);
