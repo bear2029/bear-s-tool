@@ -385,14 +385,13 @@ var SubscriptionItemCore = _.extend(CrawlerItemCore,
 	{
 		socket.emit('crawler', {'subscriptionId':this.state._id});
 	},
-	onDownload: function(e)
-	{
-	},
 	onDelete: function(e)
 	{
 		var that = this
 		e.preventDefault();
-		Ajax.delete('//www.tool.bear:9200/crawler/common/'+this.state._id).then(function(){
+		Ajax.delete('//www.tool.bear:9200/crawler/subscriptionItem/',{query:{match:{
+			collectionName:this.state._source.collectionName
+		}}}).then(function(){
 			$(React.findDOMNode(that)).remove();
 		})
 		return false
@@ -409,7 +408,7 @@ var SubscriptionItemCore = _.extend(CrawlerItemCore,
 			<th>{this.state._source.count}</th>
 			<th>{this.state._source.lastUpdate}</th>
 			<td><button className="btn btn-info btn-xs" onClick={this.onUpdate}>update <span className="glyphicon glyphicon-refresh"></span></button></td>
-			<td><button className="btn btn-primary btn-xs" onClick={this.onDownload}>download <span className="glyphicon glyphicon-floppy-save"></span></button></td>
+			<td><a className="btn btn-primary btn-xs" href={"/crawler/subscriptionItems/"+this.state._source.collectionName+"/zip"}>download <span className="glyphicon glyphicon-floppy-save"></span></a></td>
 			<td><button className="btn btn-primary btn-xs" onClick={this.onExportToDropBox}>export to dropbox <span className="glyphicon glyphicon-cloud-download"></span></button></td>
 			<td><button className="btn btn-success btn-xs" onClick={this.onEdit}>Edit <span className="glyphicon glyphicon-pencil"></span></button></td>
 			<td><button className="btn btn-danger btn-xs" onClick={this.onDelete}>delete <span className="glyphicon glyphicon-trash"></span></button></td>

@@ -8,6 +8,7 @@ module.exports = function(app, controllers) {
 	app.get( '/crawler' , controllers.crawler.home);
 	app.get( '/crawler/subscribe/:id' , controllers.crawler.subscribe);
 	app.post( '/crawler/scriptTester' , controllers.crawler.scriptTester);
+	app.get( '/crawler/subscriptionItems/:id/zip' , controllers.crawler.archive);
 
 	app.post( '/members' , controllers.member.create);
 	app.get( '/members/' , controllers.member.getAll);
