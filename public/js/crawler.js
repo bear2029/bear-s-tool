@@ -338,6 +338,9 @@ var SubscriptionListCore = _.extend(CrawlerListCore,
 	{
 		socket.on('crawler',function(msg){
 			console.log(msg);
+			if(msg.msg == 'all done'){
+				console.log('new count '+msg.count)
+			}
 		})
 	},
 	onAddNew: function()

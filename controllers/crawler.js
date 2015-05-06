@@ -2,10 +2,11 @@ var fsp = require('fs-promise');
 var striptags = require('striptags');
 var request = require('request');
 var cheerio = require('cheerio');
+var batch = require('../lib/batch');
 var gbk = require('gbk');
 var elasticsearch = require('elasticsearch');
 var Promise = require('promise');
-var client;
+var client, debug = true;
 Number.prototype.padLeft = function(base,chr){
 	var  len = (String(base || 10).length - String(this).length)+1;
 	return len > 0? new Array(len).join(chr || '0')+this : this;
@@ -24,37 +25,14 @@ var formatDate = function(d)
 
 var self = 
 {
-	batch: function(paramList,callBack,size)
-	{
-		var n = Math.floor(paramList.length/size);
-		var paramChunks = _.groupBy(paramList, function(element, index){
-			  return Math.floor(index/n);
-		});
-		paramChunks = _.toArray(paramChunks);
-		var paramChunk = paramChunks.shift();
-		batchEach(self.paramChunk,callBack,paramChunks)
-	},
-	batchEach: function(paramChunk,callBack,paramChunks)
-	{
-		var promises = [];
-		for(var i=0;i<paramChunk.length; i++){
-			promises.push(callBack.apply(this,paramChunk[i]));
-		}
-		Promise.all(promises)
-		.then(function(data){
-			if(paramChunks.length){
-				var paramChunk = paramChunks.shift();
-				batchEach(self.paramChunk,callBack,paramChunks)
-			}
-		})
-	},
 	request: function(url,index)
 	{
-		console.log(url,index);return
 		return new Promise(function(resolve,reject){
 			request(url, function (error, response, body) {
 				if (!error && response.statusCode == 200) {
-					resolve(body) // Show the HTML for the Google homepage. 
+					console.log(url + ' resolved');
+					//resolve(body) // Show the HTML for the Google homepage. 
+					resolve(url) // Show the HTML for the Google homepage. 
 				}else{
 					reject(error);
 				}
@@ -126,15 +104,6 @@ var self =
 	},
 	archive: function(req,res)
 	{/*{{{*/
-		self.batch(
-			[['http://stackoverflow.com/',1],
-			['http://stackoverflow.com/',2],
-			['http://stackoverflow.com/',3],
-			['http://stackoverflow.com/',4]
-			]
-			,self.request,2);
-		res.send('a')
-		return;
 		var exec = require('child_process').exec, child;
 		var fs = require('fs'),size = 5
 		var dirpath = global.appRoot+'/tmp/crawler.'+req.params.id+'/';
@@ -207,7 +176,11 @@ var self =
 	},/*}}}*/
 	crawl: function(io,obj)
 	{
-		var subscription,crawler,existingItemUrls;
+		var subscription,
+			crawler,
+			existingItemUrls,
+			itemTitlePerUrl = {},
+			allItemUrls = []; // for index
 		client = new elasticsearch.Client({
 			//log: 'trace',
 			host: 'localhost:9200'
@@ -268,7 +241,11 @@ var self =
 			if(!data.links || !data.links.length){
 				return new Error('nothing returned from collection page')
 			}
+			if(debug) data.links = data.links.splice(0,10)
 			data.links = _.reduce(data.links,function(list,item){
+				item.link = self.combineUrl(item.link,subscription._source.collectionUrl)
+				allItemUrls.push(item.link);
+				itemTitlePerUrl[item.link] = item.title;
 				for(var i=0; i<existingItemUrls.length; i++){
 					if(existingItemUrls[i].match(new RegExp(item.link))){
 						return list
@@ -277,40 +254,38 @@ var self =
 				list.push(item)
 				return list;
 			},[])
-			return Promise.all(self.fetchEveryItem(data,subscription,crawlerRule));
+			return self.fetchEveryItem(data,subscription,crawlerRule);
 		})
 		.then(function(fetchResults){
 			var promises = [];
-			io.emit('crawler',{'msg':'resolved item pagese',data:fetchResults})
-			fetchResults.map(function(i,itemData){
+			io.emit('crawler',{'msg':'resolved item pagese',count:fetchResults.length})
+			var indexParams = _.reduce(fetchResults,function(list,itemData){
 				var body = _.extend({
-					index: urls.indexOf(itemData.remoteUrl),
+					index: allItemUrls.indexOf(itemData.remoteUrl),
 					subscriptionId: subscription._id,
 					collectionName: subscription._source.collectionName,
 					title: itemTitlePerUrl[itemData.remoteUrl]
 				},itemData);
-				io.emit('crawler',{'msg':'indexing '+body.title,'data':body})
-				promises.push(client.index({index: 'crawler', type: 'subscriptionItem', body: body}));
-			})
-			return Promise.all(promises);
+				list.push({index: 'crawler', type: 'subscriptionItem', body: body});
+				return list;
+			},[])
+			io.emit('crawler',{'msg':'indexing items',params:indexParams})
+			return batch(indexParams,function(param){client.index(param)},10,1)
 		})
 		.then(function(data){
-			io.emit('crawler',{'msg':'all done'})
-			/*
+			io.emit('crawler',{'msg':'all done', lastUpdate: formatDate(new Date()), count: allItemUrls.length })
 			return client.update({
 				index: 'crawler',
 				type: 'subscription',
 				id: obj.subscriptionId,
 				body: {doc:{
 					lastUpdate: formatDate(new Date()),
-					count: count
+					count: allItemUrls.length
 				}}
 			});
-			*/
 		})
 		.catch(function(err){
-			console.trace(err.message);
-			console.log(err);
+			console.trace(err);
 		})
 	},
 	fetchEveryItem: function(data,subscription,crawlerRule)
@@ -318,14 +293,12 @@ var self =
 		var items = [];
 		var titlePerUrl = {};
 		var loopCount = 0;
-		var promises = [];
+		io.emit('crawler',{'msg':'crawling '+data.links.length+' items'})
 		for(var i=0; i<data.links.length; i++){
 			var linkItem = data.links[i];
-			var url = self.combineUrl(linkItem.link,subscription._source.collectionUrl)
-			promises.push(self.fetch(url,crawlerRule))
-			io.emit('crawler',{'msg':'crawling '+url})
+			items.push([linkItem.link,crawlerRule])
 		}
-		return promises
+		return batch(items,self.fetch,5,0);
 	},/*}}}*/
 	collectRemoteUrlsFromSearchedFields: function(existingItems){
 		existingItemUrls = _.uniq(_.reduce(existingItems.hits.hits,function(urls,item){
