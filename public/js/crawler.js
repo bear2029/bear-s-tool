@@ -422,9 +422,14 @@ var SubscriptionItemCore = _.extend(CrawlerItemCore,
 var SubscriptionItem = React.createClass(SubscriptionItemCore);
 
 if($('#crawler-list').length){
+	var collectionList;
 	Ajax.post('//www.tool.bear:9200/crawler/common/_search',{size:1000})
 	.then(function(data){
+		collectionList = data;
 		return data.hits.hits
+	})
+	.then(function(data){
+		Ajax.post('//www.tool.bear:9200/crawler/common/_search',{size:1000})
 	})
 	.then(function(data){
 		React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
@@ -433,12 +438,23 @@ if($('#crawler-list').length){
 		React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
 	})
 }else if($('#subscribe-list').length && crawlerId){
+	var core;
 	Ajax.get('//www.tool.bear:9200/crawler/subscription/_search?size=1000&q=crawlerid='+crawlerId)
-	.then(function(data){
-		return data.hits.hits
+	.then(function(data){ core = data.hits.hits;})
+	.then(function(){
+		return Ajax.post('//www.tool.bear:9200/crawler/subscriptionItem/_search',{ "size": 0, "aggs": { "group_by_collection": { "terms": { "field": "subscriptionId" } } } })
 	})
 	.then(function(data){
-		React.render(<SubscriptionList data={data} />, document.getElementById('subscribe-list'));
+		console.log(data.aggregations.group_by_collection.buckets,core);
+		var itemGroup = data.aggregations.group_by_collection.buckets;
+		_.each(core,function(coreItem){
+			_.each(itemGroup,function(item){
+				if(_.isMatch(item,{key:coreItem._id.toLowerCase()})){
+					coreItem._source.count = item.doc_count;
+				}
+			})
+		})
+		React.render(<SubscriptionList data={core} />, document.getElementById('subscribe-list'));
 	}).catch(function(e){
 		console.log(e)
 		//var data = [];

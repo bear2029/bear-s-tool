@@ -6,7 +6,7 @@ var batch = require('../lib/batch');
 var gbk = require('gbk');
 var elasticsearch = require('elasticsearch');
 var Promise = require('promise');
-var client, debug = true;
+var client, debug = false;
 Number.prototype.padLeft = function(base,chr){
 	var  len = (String(base || 10).length - String(this).length)+1;
 	return len > 0? new Array(len).join(chr || '0')+this : this;
@@ -25,20 +25,6 @@ var formatDate = function(d)
 
 var self = 
 {
-	request: function(url,index)
-	{
-		return new Promise(function(resolve,reject){
-			request(url, function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					console.log(url + ' resolved');
-					//resolve(body) // Show the HTML for the Google homepage. 
-					resolve(url) // Show the HTML for the Google homepage. 
-				}else{
-					reject(error);
-				}
-			})
-		})
-	},
 	combineUrl: function(targetUrl,sourceUrl)
 	{/*{{{*/
 		if(targetUrl.match(/^https?:/)){
@@ -176,7 +162,7 @@ var self =
 	},/*}}}*/
 	crawl: function(io,obj)
 	{
-		var subscription,
+		var subscription = 'ss',
 			crawler,
 			existingItemUrls,
 			itemTitlePerUrl = {},
@@ -241,7 +227,7 @@ var self =
 			if(!data.links || !data.links.length){
 				return new Error('nothing returned from collection page')
 			}
-			if(debug) data.links = data.links.splice(0,10)
+			if(debug) data.links = data.links.splice(0,12)
 			data.links = _.reduce(data.links,function(list,item){
 				item.link = self.combineUrl(item.link,subscription._source.collectionUrl)
 				allItemUrls.push(item.link);
@@ -256,37 +242,34 @@ var self =
 			},[])
 			return self.fetchEveryItem(data,subscription,crawlerRule);
 		})
-		.then(function(fetchResults){
-			var promises = [];
-			io.emit('crawler',{'msg':'resolved item pagese',count:fetchResults.length})
-			var indexParams = _.reduce(fetchResults,function(list,itemData){
-				var body = _.extend({
-					index: allItemUrls.indexOf(itemData.remoteUrl),
-					subscriptionId: subscription._id,
-					collectionName: subscription._source.collectionName,
-					title: itemTitlePerUrl[itemData.remoteUrl]
-				},itemData);
-				list.push({index: 'crawler', type: 'subscriptionItem', body: body});
-				return list;
-			},[])
-			io.emit('crawler',{'msg':'indexing items',params:indexParams})
-			return batch(indexParams,function(param){client.index(param)},10,1)
-		})
-		.then(function(data){
-			io.emit('crawler',{'msg':'all done', lastUpdate: formatDate(new Date()), count: allItemUrls.length })
-			return client.update({
-				index: 'crawler',
-				type: 'subscription',
-				id: obj.subscriptionId,
-				body: {doc:{
-					lastUpdate: formatDate(new Date()),
-					count: allItemUrls.length
-				}}
-			});
-		})
+		.then(function(fetchResults){return Promise.resolve(self.indexFetchedSubscriptionItems(client, subscription, allItemUrls, itemTitlePerUrl,fetchResults))})
+		.then(_.partial( self.crawlComplete, allItemUrls))
 		.catch(function(err){
 			console.trace(err);
 		})
+	},
+	crawlComplete: function(allItemUrls,data)
+	{/*{{{*/
+		io.emit('crawler',{'msg':'all done', lastUpdate: formatDate(new Date()), count: allItemUrls.length })
+	},/*}}}*/
+	indexFetchedSubscriptionItems: function(client, subscription, allItemUrls, itemTitlePerUrl, fetchResults){
+		var promises = [];
+		io.emit('crawler',{'msg':'resolved item pagese',count:fetchResults.length})
+		var indexParams = _.reduce(fetchResults,function(list,itemData){
+			var body = _.extend({
+				index: allItemUrls.indexOf(itemData.remoteUrl),
+				subscriptionId: subscription._id,
+				collectionName: subscription._source.collectionName,
+				title: itemTitlePerUrl[itemData.remoteUrl],
+				lastUpdate: parseInt(new Date().getTime()/1000)
+			},itemData);
+			list.push([{index: 'crawler', type: 'subscriptionItem', body: body}]);
+			return list;
+		},[])
+		return batch(indexParams,function(param){
+			io.emit('crawler',{'msg':'indexing item',param:param})
+			client.index(param)
+		},10,0)
 	},
 	fetchEveryItem: function(data,subscription,crawlerRule)
 	{/*{{{*/
