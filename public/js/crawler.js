@@ -105,15 +105,13 @@ var EditorCore =
 	onClose: function(e)
 	{
 		var that = this
+		console.log(this,React.findDOMNode(that));
 		if(e){
 			e.preventDefault();
 		}
 		if(this.parentElement){
 			this.parentElement.removeClass('appear')
-			this.parentElement.unbind('transitionend')
-			this.parentElement.bind('transitionend',function(e){
-				$(React.findDOMNode(that)).remove()
-			});
+			$(React.findDOMNode(that)).remove()
 		}
 	},
 	onTest: function(e)
@@ -286,11 +284,11 @@ var CrawlerItem = React.createClass(CrawlerItemCore)
 var SubscriptionEditorCore = _.extend(EditorCore,
 {/*{{{*/
 	getInitialState:function(){
-		this.fieldMap = ['collectionName','collectionUrl','crawlerId','lastUpdate','count']
+		this.fieldMap = ['collectionName','collectionUrl','crawlerId']
 		this.isNew = !this.props.data._source;
 		var state = $.extend({
 			crawlerId: crawlerId,
-			lastUpdate: _.formatDate(new Date),
+			lastUpdate: '',
 			count: 0
 		},this.props.data._source);
 		return state;
@@ -392,9 +390,12 @@ var SubscriptionItemCore = _.extend(CrawlerItemCore,
 	{
 		var that = this
 		e.preventDefault();
-		Ajax.delete('//www.tool.bear:9200/crawler/subscriptionItem/',{query:{match:{
-			collectionName:this.state._source.collectionName
-		}}}).then(function(){
+		Ajax.delete('//www.tool.bear:9200/crawler/subscription/'+that.state._id)
+		//.then(function(){
+			//todo this will delete every item!!!
+			//return Ajax.delete('//www.tool.bear:9200/crawler/subscriptionItem/',{query:{match:{subscriptionId:that.state._id}}})
+		//})
+		.then(function(){
 			$(React.findDOMNode(that)).remove();
 		})
 		return false
@@ -442,7 +443,18 @@ if($('#crawler-list').length){
 	Ajax.get('//www.tool.bear:9200/crawler/subscription/_search?size=1000&q=crawlerid='+crawlerId)
 	.then(function(data){ core = data.hits.hits;})
 	.then(function(){
-		return Ajax.post('//www.tool.bear:9200/crawler/subscriptionItem/_search',{ "size": 0, "aggs": { "group_by_collection": { "terms": { "field": "subscriptionId" } } } })
+		return Ajax.post('//www.tool.bear:9200/crawler/subscriptionItem/_search',{
+			"size": 0,
+			"fields":["_timestamp"],
+			"aggs": {
+				"group_by_collection": {
+					"terms": { "field": "subscriptionId" },
+					"aggs": {
+						"lastUpdate": { "max": { "field": "_timestamp" } }
+					}
+				}
+			}
+		})
 	})
 	.then(function(data){
 		console.log(data.aggregations.group_by_collection.buckets,core);
@@ -451,6 +463,7 @@ if($('#crawler-list').length){
 			_.each(itemGroup,function(item){
 				if(_.isMatch(item,{key:coreItem._id.toLowerCase()})){
 					coreItem._source.count = item.doc_count;
+					coreItem._source.lastUpdate = item.lastUpdate.value_as_string;
 				}
 			})
 		})

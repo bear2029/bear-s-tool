@@ -46,6 +46,11 @@ var self =
 		prefix += '/' + sourceUrlParts.path;
 		return prefix + targetUrl
 	},/*}}}*/
+	syncDropBox: function(req,res)
+	{
+		var Dropbox = require("dropbox");
+		var client = new Dropbox.Client({ key: "hpw285i1do3f7ot",secret:"kmp57d2qs3gp821" });
+	},
 	fetch: function(url,rule)
 	{/*{{{*/
 		return new Promise(function(resolve,reject){
@@ -79,14 +84,6 @@ var self =
 	subscribe: function(req,res)
 	{
 		res.render('crawlerSubscribe',{crawlerId:req.params.id});
-	},
-	writeFile: function(data)
-	{
-		return fsp.writeFile(data.fileName,data.buff)
-	},
-	writeFiles: function(dataSet)
-	{
-		return Promise.all(data.map())
 	},
 	archive: function(req,res)
 	{/*{{{*/
@@ -125,11 +122,11 @@ var self =
 			for(var i=0; i<items.length; i++){
 				buff += items[i].title + "\n" + items[i].body + "\n\n"
 				if((i+1) % size == 0 || i == items.length-1){
-					dataSet.push({fileNmae: dirpath+(i-size+1)+'-'+i+'.txt',buff: buff})
+					dataSet.push([dirpath+(i-size+1)+'-'+i+'.txt', buff])
 					buff = '';
 				}
 			}
-			return self.writeFiles(dataSet)
+			return batch(dataSet,fsp.writeFile,5,0);
 		})
 		.catch(function(e){
 			res.status(400).send(e)
@@ -260,8 +257,7 @@ var self =
 				index: allItemUrls.indexOf(itemData.remoteUrl),
 				subscriptionId: subscription._id,
 				collectionName: subscription._source.collectionName,
-				title: itemTitlePerUrl[itemData.remoteUrl],
-				lastUpdate: parseInt(new Date().getTime()/1000)
+				title: itemTitlePerUrl[itemData.remoteUrl]
 			},itemData);
 			list.push([{index: 'crawler', type: 'subscriptionItem', body: body}]);
 			return list;

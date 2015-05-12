@@ -6,6 +6,7 @@ module.exports = function(app, controllers) {
 	app.get( '/comment/:id' , controllers.comment.get);
 
 	app.get( '/crawler' , controllers.crawler.home);
+	app.put( '/crawler/syncDropBox' , controllers.crawler.syncDropBox);
 	app.get( '/crawler/subscribe/:id' , controllers.crawler.subscribe);
 	app.post( '/crawler/scriptTester' , controllers.crawler.scriptTester);
 	app.get( '/crawler/subscriptionItems/:id/zip' , controllers.crawler.archive);
@@ -24,8 +25,5 @@ module.exports = function(app, controllers) {
 		socket.on('disconnect', function(){
 			console.log('user disconnected');
 		});
-	});
-	http.listen(8080, function(){
-		  console.log('listening on *:80');
 	});
 };
