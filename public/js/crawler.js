@@ -12,6 +12,7 @@ _.formatDate = function(d)
 	d.getSeconds().padLeft()].join(':');
 	return dformat;
 };
+searchHost = '//'+location.hostname+':9200';
 (function(){
 var socket = io();
 Ajax = {/*{{{*/
@@ -68,7 +69,7 @@ var EditorCore =
 		e.preventDefault();
 		var self = this
 		var formBody = _.pick(self.state,this.fieldMap);
-		var url = "//www.tool.bear:9200/crawler/common";
+		var url = searchHost+"/crawler/common";
 		if(this.props.data && this.props.data._id){
 			url += '/' + this.props.data._id
 		}
@@ -260,7 +261,7 @@ var CrawlerItemCore =
 	{
 		var that = this
 		e.preventDefault();
-		Ajax.delete('//www.tool.bear:9200/crawler/common/'+this.state._id).then(function(){
+		Ajax.delete(searchHost+'/crawler/common/'+this.state._id).then(function(){
 			$(React.findDOMNode(that)).remove();
 		})
 		return false
@@ -299,7 +300,7 @@ var SubscriptionEditorCore = _.extend(EditorCore,
 		var self = this
 		var formBody = _.pick(self.state,this.fieldMap);
 		console.log(formBody);
-		var url = "//www.tool.bear:9200/crawler/subscription/";
+		var url = searchHost+"/crawler/subscription/";
 		if(this.props.data && this.props.data._id){
 			url += '/' + this.props.data._id
 		}
@@ -368,7 +369,7 @@ var SubscriptionListCore = _.extend(CrawlerListCore,
 					return <SubscriptionItem data={item}/>;
 				})}
 				<tr>
-					<td colSpan="8"><button className="btn btn-primary" onClick={this.onAddNew}>Add New &nbsp;<span className="glyphicon glyphicon-plus"></span></button></td>
+					<td colSpan="9"><button className="btn btn-primary" onClick={this.onAddNew}>Add New &nbsp;<span className="glyphicon glyphicon-plus"></span></button></td>
 				</tr>
 			</tbody>
 		</table>
@@ -390,11 +391,10 @@ var SubscriptionItemCore = _.extend(CrawlerItemCore,
 	{
 		var that = this
 		e.preventDefault();
-		Ajax.delete('//www.tool.bear:9200/crawler/subscription/'+that.state._id)
-		//.then(function(){
-			//todo this will delete every item!!!
-			//return Ajax.delete('//www.tool.bear:9200/crawler/subscriptionItem/',{query:{match:{subscriptionId:that.state._id}}})
-		//})
+		Ajax.delete(searchHost+'/crawler/subscription/'+that.state._id)
+		.then(function(){
+			return Ajax.delete(searchHost+'/crawler/subscriptionItem/_query',{query:{match:{subscriptionId:that.state._id}}})
+		})
 		.then(function(){
 			$(React.findDOMNode(that)).remove();
 		})
@@ -424,26 +424,26 @@ var SubscriptionItem = React.createClass(SubscriptionItemCore);
 
 if($('#crawler-list').length){
 	var collectionList;
-	Ajax.post('//www.tool.bear:9200/crawler/common/_search',{size:1000})
+	Ajax.post(searchHost+'/crawler/common/_search',{size:1000})
 	.then(function(data){
 		collectionList = data;
 		return data.hits.hits
 	})
 	.then(function(data){
-		Ajax.post('//www.tool.bear:9200/crawler/common/_search',{size:1000})
+		return Ajax.post(searchHost+'/crawler/common/_search',{size:1000})
 	})
 	.then(function(data){
-		React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
+		React.render(<CrawlerList data={data.hits.hits} />, document.getElementById('crawler-list'));
 	}).catch(function(e){
 		var data = [];
 		React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
 	})
 }else if($('#subscribe-list').length && crawlerId){
 	var core;
-	Ajax.get('//www.tool.bear:9200/crawler/subscription/_search?size=1000&q=crawlerid='+crawlerId)
+	Ajax.get(searchHost+'/crawler/subscription/_search?size=1000&q=crawlerid='+crawlerId)
 	.then(function(data){ core = data.hits.hits;})
 	.then(function(){
-		return Ajax.post('//www.tool.bear:9200/crawler/subscriptionItem/_search',{
+		return Ajax.post(searchHost+'/crawler/subscriptionItem/_search',{
 			"size": 0,
 			"fields":["_timestamp"],
 			"aggs": {
@@ -463,7 +463,7 @@ if($('#crawler-list').length){
 			_.each(itemGroup,function(item){
 				if(_.isMatch(item,{key:coreItem._id.toLowerCase()})){
 					coreItem._source.count = item.doc_count;
-					coreItem._source.lastUpdate = item.lastUpdate.value_as_string;
+					coreItem._source.lastUpdate = _.formatDate(new Date(item.lastUpdate.value));
 				}
 			})
 		})
