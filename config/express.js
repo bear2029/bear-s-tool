@@ -14,7 +14,7 @@ module.exports = function(app, express) {
 	app.use(error_handler());
 
 	app.engine('handlebars', exphbs({
-		//defaultLayout: 'main',
+		defaultLayout: 'main',
 		helpers: {
 			json: function(obj) {
 				return JSON.stringify(obj);

@@ -89,14 +89,14 @@ var self =
 	{/*{{{*/
 		var exec = require('child_process').exec, child;
 		var fs = require('fs'),size = 5
-		var dirpath = global.appRoot+'/tmp/crawler.'+req.params.id+'/';
+		var dirpath = global.appRoot+'/tmp/crawler.'+req.params.name+'/';
 		try{
 			fs.mkdirSync(dirpath)
 		}catch(e){}
 		try{
 			var files = fs.readdirSync(dirpath)
 			_.map(files,function(path){
-				fs.unlinkSync(dirpath+path)	
+				fs.unlinkSync(dirpath+path)
 			})
 		}catch(e){}
 		client = new elasticsearch.Client({
@@ -107,7 +107,7 @@ var self =
 			index: 'crawler',
 			type: 'subscriptionItem',
 			body: {
-				"query":{"match":{"collectionName":req.params.id}},
+				"query":{"match":{"subscriptionId":req.params.id}},
 				sort:['index'],
 				size: 3000
 			}
@@ -132,11 +132,11 @@ var self =
 			res.status(400).send(e)
 		})
 		.done(function(){
-			child = exec('cd '+global.appRoot+'/tmp/; zip '+req.params.id+' crawler.'+req.params.id+'/*',function (error, stdout, stderr) {
+			child = exec('cd '+global.appRoot+'/tmp/; zip '+req.params.name+' crawler.'+req.params.name+'/*',function (error, stdout, stderr) {
 				if (error !== null) {
 					console.log('exec error: ' + error);
 				}else{
-					res.sendfile(global.appRoot+'/tmp/'+req.params.id+'.zip')
+					res.sendfile(global.appRoot+'/tmp/'+req.params.name+'.zip')
 				}
 			});
 		})
@@ -181,7 +181,12 @@ var self =
 		})
 		.then(function(theSubscription){
 			subscription = theSubscription
-			io.emit('crawler',{'msg':'located subscription',subscription:subscription})
+			io.emit('crawler',{
+				'msg':'located subscription',
+				subscription:subscription,
+				id: subscription._id,
+				percentage: 1
+			})
 			return client.search({
 				index: 'crawler',
 				type: 'common',
@@ -194,7 +199,12 @@ var self =
 				return new Error('crawleer not found');
 			}
 			crawler = hits[0];
-			io.emit('crawler',{'msg':'located crawler',crawler:crawler})
+			io.emit('crawler',{
+				'msg':'located crawler',
+				crawler:crawler,
+				id: subscription._id,
+				percentage: 2
+			})
 		})
 		
 		// get existing subscription
@@ -219,7 +229,13 @@ var self =
 			return self.fetch(collectionUrl,crawlerRule)
 		})
 		.then(function(data){
-			io.emit('crawler',{'msg':'resolved remote collection page',data:data,existingItemUrls:existingItemUrls})
+			io.emit('crawler',{
+				'msg':'resolved remote collection page',
+				data:data,
+				existingItemUrls:existingItemUrls,
+				id: subscription._id,
+				percentage: 10
+			})
 			var crawlerRule = JSON.parse(crawler._source.itemRule)
 			if(!data.links || !data.links.length){
 				return new Error('nothing returned from collection page')
@@ -240,18 +256,30 @@ var self =
 			return self.fetchEveryItem(data,subscription,crawlerRule);
 		})
 		.then(function(fetchResults){return Promise.resolve(self.indexFetchedSubscriptionItems(client, subscription, allItemUrls, itemTitlePerUrl,fetchResults))})
-		.then(_.partial( self.crawlComplete, allItemUrls))
+		.then(_.partial( self.crawlComplete, allItemUrls, obj.subscriptionId))
 		.catch(function(err){
 			console.trace(err);
 		})
 	},
-	crawlComplete: function(allItemUrls,data)
+	crawlComplete: function(allItemUrls,id,data)
 	{/*{{{*/
-		io.emit('crawler',{'msg':'all done', lastUpdate: formatDate(new Date()), count: allItemUrls.length })
+		console.log(arguments)
+		io.emit('crawler',{
+			'msg':'all done',
+			lastUpdate: formatDate(new Date()),
+			count: allItemUrls.length,
+			id: id,
+			percentage: 100
+		})
 	},/*}}}*/
 	indexFetchedSubscriptionItems: function(client, subscription, allItemUrls, itemTitlePerUrl, fetchResults){
 		var promises = [];
-		io.emit('crawler',{'msg':'resolved item pagese',count:fetchResults.length})
+		io.emit('crawler',{
+			'msg':'resolved item pagese',
+			count:fetchResults.length,
+			id: subscription._id,
+			percentage: 80
+		})
 		var indexParams = _.reduce(fetchResults,function(list,itemData){
 			var body = _.extend({
 				index: allItemUrls.indexOf(itemData.remoteUrl),
@@ -272,7 +300,11 @@ var self =
 		var items = [];
 		var titlePerUrl = {};
 		var loopCount = 0;
-		io.emit('crawler',{'msg':'crawling '+data.links.length+' items'})
+		io.emit('crawler',{
+			'msg':'crawling '+data.links.length+' items',
+			id: subscription._id,
+			percentage: 40
+		})
 		for(var i=0; i<data.links.length; i++){
 			var linkItem = data.links[i];
 			items.push([linkItem.link,crawlerRule])

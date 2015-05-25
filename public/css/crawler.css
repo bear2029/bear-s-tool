@@ -75,3 +75,17 @@
 	opacity: 1;
 	visibility: visible;
 }
+.update-cell .btn,
+.update-cell.updating .progress{
+	display: block;
+}
+.update-cell .progress{
+	margin: 0;
+}
+.update-cell.updating .btn,
+.update-cell .progress{
+	display: none;
+}
+table td .btn{
+	width: 100%;
+}

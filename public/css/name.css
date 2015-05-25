@@ -1,0 +1,46 @@
+.name-card {
+	padding: 30px;
+	background: #333;
+	display: inline-block;
+	border-radius: 10px;
+	min-width: 290px;
+	text-align: center;
+	position: relative;
+	color: #ecc204;
+}
+.name-card i,
+.name-card em{
+	font-size: 16px;
+	position: absolute;
+	bottom: 30px;
+	top: inherit;
+	padding: 8px;
+	background: #fff;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 1;
+	color: #333;
+}
+.name-card em{
+	right: 30px;
+}
+.name-card i{
+	left: 30px;
+}
+.name-card span,
+.name-card b{
+	display: block;
+}
+.name-card b{
+	font-size: 120px;
+	line-height: 1.1;
+}
+.name-card span:after,
+.name-card span:before{
+	content: ' " ';
+}
+.name-card span{
+	color: #fff;
+	font-size: 20px;
+	text-transform: capitalize;
+}

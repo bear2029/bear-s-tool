@@ -335,12 +335,6 @@ var SubscriptionListCore = _.extend(CrawlerListCore,
 {/*{{{*/
 	componentDidMount: function()
 	{
-		socket.on('crawler',function(msg){
-			console.log(msg);
-			if(msg.msg == 'all done'){
-				console.log('new count '+msg.count)
-			}
-		})
 	},
 	onAddNew: function()
 	{
@@ -378,47 +372,74 @@ var SubscriptionListCore = _.extend(CrawlerListCore,
 });/*}}}*/
 var SubscriptionList = React.createClass(SubscriptionListCore);
 var SubscriptionItemCore = _.extend(CrawlerItemCore,
-{/*{{{*/
-	onEdit: function(e)
+{
+	componentDidMount: function()
 	{
-		React.render(<SubscriptionEditor data={this.state} onSubmitComplete={this.onSubmitComplete} />, $('#subscribe-editor')[0]);
+		var that = this;
+		this.state.updating = false;
+		socket.on('crawler',function(msg){
+			if(msg.id == that.state._id){
+				if(msg.msg == 'all done'){
+					that.state.updating = false;
+					that.state._source.count = msg.count;
+					that.state._source.lastUpdate = msg.lastUpdate;
+					that.setState(that.state);
+				}else if(msg.percentage){
+					that.setState({'updating': true,'updatePercentage':msg.percentage});
+				}
+			}
+		})
 	},
-	onUpdate: function(e)
-	{
+	onEdit: function(e) { React.render(<SubscriptionEditor data={this.state} onSubmitComplete={this.onSubmitComplete} />, $('#subscribe-editor')[0]); },
+	onUpdate: function(e) {
 		socket.emit('crawler', {'subscriptionId':this.state._id});
+		this.setState({'updating':true});
+		this.setState({'updatePercentage':0});
 	},
 	onDelete: function(e)
-	{
+	{/*{{{*/
 		var that = this
 		e.preventDefault();
 		Ajax.delete(searchHost+'/crawler/subscription/'+that.state._id)
 		.then(function(){
-			return Ajax.delete(searchHost+'/crawler/subscriptionItem/_query',{query:{match:{subscriptionId:that.state._id}}})
+			return Ajax.delete(searchHost+'/crawler/subscriptionItem/_query',{query:{match:{
+				subscriptionId:that.state._id}
+			}})
 		})
 		.then(function(){
 			$(React.findDOMNode(that)).remove();
 		})
 		return false
-	},
-	onExportToDropBox: function(e)
-	{
-	},
+	},/*}}}*/
+	onExportToDropBox: function(e) { },
 	render: function()
-	{
+	{/*{{{*/
+		var classes = 'update-cell';
+		if(this.state.updating){
+			classes += ' updating'
+		}
+		var progressStyle = {width: this.state.updatePercentage+'%'}
 		return (
 		<tr>
-			<th>{this.state._source.collectionName}</th>
-			<th>{this.state._source.collectionUrl}</th>
-			<th>{this.state._source.count}</th>
-			<th>{this.state._source.lastUpdate}</th>
-			<td><button className="btn btn-info btn-xs" onClick={this.onUpdate}>update <span className="glyphicon glyphicon-refresh"></span></button></td>
-			<td><a className="btn btn-primary btn-xs" href={"/crawler/subscriptionItems/"+this.state._source.collectionName+"/zip"}>download <span className="glyphicon glyphicon-floppy-save"></span></a></td>
+			<td>{this.state._source.collectionName}</td>
+			<td>{this.state._source.collectionUrl}</td>
+			<td>{this.state._source.count}</td>
+			<td>{this.state._source.lastUpdate}</td>
+			<td className={classes}>
+				<button className="btn btn-info btn-xs" onClick={this.onUpdate}>
+					update <span className="glyphicon glyphicon-refresh"></span>
+				</button>
+				<div className="progress">
+					<div style={progressStyle} className="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">{this.state.updatePercentage}%</div>
+				</div>
+			</td>
+			<td><a className="btn btn-primary btn-xs" href={"/crawler/subscriptionItems/"+this.state._id+"/"+this.state._source.collectionName+".zip"}>download <span className="glyphicon glyphicon-floppy-save"></span></a></td>
 			<td><button className="btn btn-primary btn-xs" onClick={this.onExportToDropBox}>export to dropbox <span className="glyphicon glyphicon-cloud-download"></span></button></td>
 			<td><button className="btn btn-success btn-xs" onClick={this.onEdit}>Edit <span className="glyphicon glyphicon-pencil"></span></button></td>
 			<td><button className="btn btn-danger btn-xs" onClick={this.onDelete}>delete <span className="glyphicon glyphicon-trash"></span></button></td>
 		</tr>
 		)
-	}
+	}/*}}}*/
 });/*}}}*/
 var SubscriptionItem = React.createClass(SubscriptionItemCore);
 
