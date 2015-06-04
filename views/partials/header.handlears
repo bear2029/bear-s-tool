@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/public/css/bootstrap.min.css">
 <link rel="stylesheet" href="/public/css/bootstrap-theme.min.css">
-<link href='http://fonts.googleapis.com/css?family=Lato:100,400|Roboto:400,300' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300|Nixie+One|Patua+One' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="/public/css/common.css">
 <script src="/public/js/jquery-2.1.3.min.js"></script>
 <script src="/public/js/underscore-min.js"></script>

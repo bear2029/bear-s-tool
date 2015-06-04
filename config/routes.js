@@ -7,13 +7,16 @@ function shouldCompress(req, res) {
 	return compression.filter(req, res)
 }
 module.exports = function(app, controllers) {
-	app.use(compression({filter: shouldCompress}))
-	app.get( '/' , controllers.post.home);
-	app.get( '/name' , controllers.post.name);
-	app.get( '/post/:id' , controllers.post.get);
-	app.get( '/queue/:name' , controllers.post.dumpQueue);
-	app.post( '/queue/:name' , controllers.post.pushQueue);
-	app.post( '/post' , controllers.post.create);
+	//app.use(compression({filter: shouldCompress}))
+	app.use(compression())
+	app.get( '/' , controllers.post.home.bind(controllers.post));
+	app.get( '/name' , controllers.post.name.bind(controllers.post));
+	app.get( '/post/:id' , controllers.post.get.bind(controllers.post));
+	app.get( '/queue/:name' , controllers.post.dumpQueue.bind(controllers.post));
+	app.post( '/queue/:name' , controllers.post.pushQueue.bind(controllers.post));
+	app.get( '/dictionaryWrapper/:words' , controllers.post.dictionaryWrapper.bind(controllers.post));
+	app.delete( '/queue/:name/:index' , controllers.post.removeFromQueue.bind(controllers.post));
+	app.post( '/post' , controllers.post.create.bind(controllers.post));
 	app.get( '/comment/:id' , controllers.comment.get);
 
 	app.get( '/crawler' , controllers.crawler.home);
@@ -25,7 +28,7 @@ module.exports = function(app, controllers) {
 	app.post( '/members' , controllers.member.create);
 	app.get( '/members/' , controllers.member.getAll);
 	app.use( '/members/:id' , controllers.member.get);
-	app.use(controllers.post.default);
+	app.use(controllers.post.default.bind(controllers.post));
 
 	io.on('connection', function(socket){
 		console.log('a user connected');

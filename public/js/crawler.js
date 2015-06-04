@@ -176,7 +176,7 @@ var EditorCore =
 					<input type="text" onKeyUp={this.onUrlMatchChanged} className="form-control" name="item-url-regex" placeholder="item URL regex" valueLink={this.linkState('itemUrlRegex')}/>
 				</div>
 				<div className="form-group url">
-					<textarea className="form-control wide" name="collection-rule" placeholder="collection rule, e.g. {&#34;title&#34;:&#34;$('h1').html()&#34;}" valueLink={this.linkState('collectionRule')}></textarea>
+					<textarea className="form-control wide" name="collection-rule" placeholder="collection rule, e.g. {&#34;title&#34;:&#34;$('h1').html()&#34;,&#34;links&#34;:{&#34;link&#34;:&#34;&#34;,&#34;title&#34;:&#34;&#34;}}" valueLink={this.linkState('collectionRule')}></textarea>
 					<input type="submit" className="btn btn-default collection" onClick={this.onTest} value="test"/>
 				</div>
 				<div className="form-group url">

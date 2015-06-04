@@ -1,7 +1,14 @@
 <div class="">
 	<h1>Bear's Home</h1>
+	<div id="home"></div>
 </div>
-<script>
-var nameBases = {{{json nameBases}}};
+<script id="entry-template" type="text/x-handlebars-template">
+<div class="entry">
+	<h1>\{{t}}</h1>
+	<div class="body">
+		\{{b}}
+	</div>
+</div>
 </script>
-<script src="/public/js/name.js"></script>
+<script src="/public/js/handlebars-v3.0.3.js"></script>
+<script src="/public/js/home.js"></script>

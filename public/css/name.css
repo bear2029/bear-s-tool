@@ -1,6 +1,17 @@
+.btn{
+	outline: 0 !important;
+}
+/* Palette URL: http://paletton.com/#uid=70r050knPon00te3wf0Xjur++e8 */
+.generator{
+	margin-bottom: 15px;
+}
+.generator .name-card {
+	width: 100%;
+}
 .name-card {
-	padding: 30px;
-	background: #333;
+	box-shadow: 1px 1px 20px 0 rgba(0,0,0,0.3) inset;
+	padding: 30px 10%;
+	background: #78706A;
 	display: inline-block;
 	border-radius: 10px;
 	min-width: 290px;
@@ -8,39 +19,118 @@
 	position: relative;
 	color: #ecc204;
 }
-.name-card i,
-.name-card em{
-	font-size: 16px;
-	position: absolute;
-	bottom: 30px;
-	top: inherit;
-	padding: 8px;
+.name-card .utils{
+	display: flex;
+	justify-content: space-between;
+}
+.name-card .remove,
+.name-card .utils>*{
+	font-size: 15px;
+	padding: 10px;
 	background: #fff;
 	border-radius: 50%;
 	text-align: center;
 	line-height: 1;
 	color: #333;
+	box-shadow: 2px 2px 7px 0 rgba(0,0,0,.3);
+	display: flex;
+	text-align: center;
+	align-items: center;
 }
-.name-card em{
+.name-card .utils em{
 	right: 30px;
 }
-.name-card i{
+.favorite .name-card .utils em{
+	color: #F26700;
+}
+.name-card .utils i{
 	left: 30px;
 }
-.name-card span,
-.name-card b{
+.name-card h4,
+.name-card .main{
 	display: block;
 }
-.name-card b{
+.name-card .main{
 	font-size: 120px;
 	line-height: 1.1;
 }
-.name-card span:after,
-.name-card span:before{
+.name-card .remove{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	bottom: inherit;
+}
+.name-card h4:after,
+.name-card h4:before{
 	content: ' " ';
 }
-.name-card span{
+.name-card h4{
 	color: #fff;
 	font-size: 20px;
 	text-transform: capitalize;
+}
+.fav{
+	padding: inherit;
+}
+.fav>ul>li{
+	margin-bottom: 30px;
+}
+.fav>ul>li .name-card{
+	background: #E9E9E9;
+	color: #F26700;
+	min-width: 100%;
+	padding-bottom: 50px;
+}
+.fav>ul>li .name-card .main{
+	font-size: 50px;
+}
+
+.colapseable.expand .word{
+	display: block;
+}
+.colapseable .word{
+	clear: both;
+	text-align: left;
+	display: none;
+	background-color: #E9E9E9;
+	padding: 10px;
+	margin-top: 15px;
+	border-radius: 10px;
+}
+.fav .dictionary.expand {
+	margin: -15px;
+	text-align: left;
+	z-index: 10;
+	background-color: #fff;
+	padding: 15px;
+	width: 300px;
+	box-shadow: 2px 2px 10px 0 rgba(0,0,0,.5);
+}
+.generator .dictionary{
+	text-align: center;
+	color: #414849;
+	margin-top: 16px;
+}
+.dictionary h6{
+	color: #008794;
+	font-size: 1.5em;
+}
+.dictionary h5{
+	color: #F26700;
+	font-size: 2em;
+}
+.fav .dictionary {
+	position: absolute;
+	top: 90px;
+	right: 27px;
+}
+.generator .dictionary .toggler{
+	display: inline-block;
+	float: none !important;
+	margin-bottom: 0px;
+}
+.dictionary .toggler{
+	color: #fff;
+	background-color: #009787;
+	margin-bottom: 10px;
 }

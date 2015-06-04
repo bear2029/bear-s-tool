@@ -1,15 +1,61 @@
 <div class="">
 	<h1>Name Generator</h1>
-	<div id="name-gen" class="name-gen">
-		<div class="name-card">
-			<b></b>
-			<span></span>
-			<i class="glyphicon glyphicon-refresh"></i>
-			<em class="glyphicon glyphicon-heart"></em>
+	<div id="name-gen" class="name-gen row">
+		<div class="generator col-md-4">
+			<div class="name-card">
+				<div class="utils">
+					<i class="glyphicon glyphicon-refresh"></i>
+					<span class="rotate glyphicon glyphicon-transfer"></span>
+					<em class="glyphicon glyphicon-heart"></em>
+				</div>
+				<h3 class="main"></h3>
+				<h4></h4>
+			</div>
+		</div>
+		<div class="fav col-md-8">
+			<ul class="list-unstyled clearfix"></ul>
 		</div>
 	</div>
 </div>
+
+<script id="fav-item-template" type="text/x-handlebars-template">
+<li class="entry col-md-3 col-sm-3">
+	<div class="name-card">
+		<a class="remove"><span class="glyphicon glyphicon-remove"></span></a>
+		<b class="main">\{{name}}</b>
+	</div>
+</li>
+</script>
+
+<script id="dictionary-template" type="text/x-handlebars-template">
+<div class="dictionary colapseable">
+	<button class="toggler btn pull-right">Description</button>
+\{{#each d}}\{{#if this.t}}
+	<div class="word"> 
+		<h5>\{{this.t}}</h3>
+		\{{#each this.h}}
+			<div class="word">
+			\{{#each this.d}}
+				<div class="model">
+					<h6>\{{this.f}}</h4>
+					<i>[\{{this.type}}]</i>
+					<ul class="example">\{{#each this.e}}
+						<li>\{{this}}</li>
+					\{{/each}}</ul>
+					<ul class="quot">\{{#each this.q}}
+						<li>\{{this}}</li>
+					\{{/each}}</ul>
+				</div>
+			\{{/each}}
+			</div>
+		\{{/each}}
+	</div>
+\{{/if}}\{{/each}}
+</div>
+</script>
+
 <script>
 var nameBases = {{{json nameBases}}};
 </script>
+<script src="/public/js/handlebars-v3.0.3.js"></script>
 <script src="/public/js/name.js"></script>

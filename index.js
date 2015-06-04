@@ -8,11 +8,17 @@ https = require('https').Server({
 	cert: fs.readFileSync('config/cert.pem')
 },app);
 global.appRoot = path.resolve(__dirname);
+_ = require(global.appRoot+'/public/js/underscore-min.js')
 var controllers = {};
 var matches;
 fs.readdirSync('./controllers').map(function(file){
 	if(matches = file.match(/^(.*)\.js$/)){
-		controllers[matches[1]] = require('./controllers/'+file);
+		var exp = require('./controllers/'+file);
+		if(_.isFunction(exp)){
+			controllers[matches[1]] = new exp()
+		}else{
+			controllers[matches[1]] = exp
+		}
 	}
 })
 
