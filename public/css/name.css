@@ -1,3 +1,12 @@
+@keyframes flashing{
+	0% {opacity:1;}
+	20%{opacity:0.6;}
+	100%{opacity:1;}
+}
+.flashing {
+	animation: flashing 200ms infinite;
+	cursor: pointer;
+}
 .btn{
 	outline: 0 !important;
 }
@@ -19,6 +28,12 @@
 	position: relative;
 	color: #ecc204;
 }
+.name-card .selected{
+	animation: flashing 2000ms infinite;
+	text-shadow: 0 0 .1em rgba(255,255,255,1);
+	font-weight: bold;
+	color: #F26700;
+}
 .name-card .utils{
 	display: flex;
 	justify-content: space-between;
@@ -37,20 +52,12 @@
 	text-align: center;
 	align-items: center;
 }
-.name-card .utils em{
-	right: 30px;
-}
-.favorite .name-card .utils em{
-	color: #F26700;
-}
-.name-card .utils i{
-	left: 30px;
-}
 .name-card h4,
 .name-card .main{
 	display: block;
 }
 .name-card .main{
+	cursor: pointer;
 	font-size: 120px;
 	line-height: 1.1;
 }
