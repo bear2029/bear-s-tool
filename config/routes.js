@@ -29,6 +29,9 @@ module.exports = function(app, controllers) {
 	app.get( '/members/' , controllers.member.getAll);
 	app.use( '/members/:id' , controllers.member.get);
 	app.use(controllers.post.default.bind(controllers.post));
+	app.get('/favicon.ico',function(req,res){
+		res.sendFile('../public/favicon.ico')
+	})
 
 	io.on('connection', function(socket){
 		console.log('a user connected');

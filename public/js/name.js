@@ -11,6 +11,9 @@ Handlebars.registerHelper('strip',function(e){
 	}
 	return e
 })
+var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+var clickMethod = isMobile ? 'touchstart' : 'click'
+	
 
 
 var CharModel = Backbone.Model.extend({});
@@ -43,7 +46,6 @@ var NameModel = Backbone.Model.extend(
 	urlRoot: '/queue/nameCache/',
 	equalTo: function(other)
 	{
-		console.log(this.attributes,other.attributes);
 		return false;
 	},
 	exchange: function()
@@ -58,7 +60,6 @@ var NameModel = Backbone.Model.extend(
 			this.set(_var,this[_var]);
 			delete this[_var];
 		}.bind(this))
-		console.log(this)
 	},
 	eng: function()
 	{
@@ -91,14 +92,12 @@ var CharCollection = Backbone.Collection.extend(
 	},
 	randomize: function(len,pronouncePattern)
 	{
-		console.log(pronouncePattern);
 		var minimunScore = len * 8; // score per char = 10 - index
 		do{
 			var score = 0;
 			var nameCombo = new NameCombo;
 			for(var i=0; i<len; i++){
 				var sample = pronouncePattern ? new CharCollection(this.where({eng:pronouncePattern[i]})) : this
-				console.log(sample)
 				var randomIndex = Math.floor(Math.random()*sample.length);
 				nameCombo.add(sample.at(randomIndex));
 				score += 10 - sample.at(randomIndex).get('index');
@@ -130,7 +129,7 @@ var DictionaryView = Backbone.View.extend(
 		}
 		this.$el = $(this.template(data));
 		this.attributes.parentEl.append(this.$el);
-		$('.toggler',this.$el).on('click',function(){
+		$('.toggler',this.$el).on(clickMethod,function(){
 			this.$el.toggleClass('expand');
 		}.bind(this))
 		return this;
@@ -152,8 +151,8 @@ var FavItemView = Backbone.View.extend(
 		this.render(this.attributes.parentEl)
 		this.attributes.parentEl.append(this.$el);
 		this.dictionary = new DictionaryView({attributes: {parentEl: this.$el, str: this.model.chi()}})
-		$('.remove',this.$el).on('click',this.remove);
-		$('.main',this.$el).on('click',function(){
+		$('.remove',this.$el).on(clickMethod,this.remove);
+		$('.main',this.$el).on(clickMethod,function(){
 			this.trigger('select',this.model)
 		}.bind(this))
 	},
@@ -181,11 +180,11 @@ var NameGenView = Backbone.View.extend({
 		this.pinIndex = -1;
 		this.isFixingPronounce = false;
 		this.listenTo(this.faviCollection,'add',this.onAddFavItem)
-		$('i',this.$el).on('click',this.randomize);
-		$('em',this.$el).on('click',this.capture);
-		$('.generator .main',this.$el).on('click',this.onPinSelected);
-		$('.generator .name-card>h4',this.$el).on('click',this.onPinPronounce);
-		$('.utils>.rotate',this.$el).on('click',this.rotate);
+		$('i',this.$el).on(clickMethod,this.randomize);
+		$('em',this.$el).on(clickMethod,this.capture);
+		$('.generator .main',this.$el).on(clickMethod,this.onPinSelected);
+		$('.generator .name-card>h4',this.$el).on(clickMethod,this.onPinPronounce);
+		$('.utils>.rotate',this.$el).on(clickMethod,this.rotate);
 	},
 	onPinPronounce: function(e)
 	{
