@@ -152,7 +152,7 @@ var FavItemView = Backbone.View.extend(
 		this.attributes.parentEl.append(this.$el);
 		this.dictionary = new DictionaryView({attributes: {parentEl: this.$el, str: this.model.chi()}})
 		$('.remove',this.$el).on(clickMethod,this.remove);
-		$('.main',this.$el).on(clickMethod,function(){
+		$('.main',this.$el).on('click',function(){
 			this.trigger('select',this.model)
 		}.bind(this))
 	},

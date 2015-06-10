@@ -26,7 +26,7 @@ module.exports = function(app, express) {
 	}));
 	app.set('view engine', 'handlebars');
 
-	app.use(autoPrefixer({ browsers: 'last 4 versions', cascade: false }))
+	app.use(autoPrefixer({ browsers: 'last 2 versions', cascade: false }))
 	.use('/public/css',express.static('prefixer'))
 	app.use('/public',express.static(global.appRoot+'/public'));
 };

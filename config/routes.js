@@ -18,6 +18,7 @@ module.exports = function(app, controllers) {
 	app.delete( '/queue/:name/:index' , controllers.post.removeFromQueue.bind(controllers.post));
 	app.post( '/post' , controllers.post.create.bind(controllers.post));
 	app.get( '/comment/:id' , controllers.comment.get);
+	app.use( '/dataUriConverter' , controllers.dataUriConverter.home);
 
 	app.get( '/crawler' , controllers.crawler.home);
 	app.put( '/crawler/syncDropBox' , controllers.crawler.syncDropBox);

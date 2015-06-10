@@ -11,39 +11,77 @@ h1{
 	margin-bottom: .5em;
 	line-height: 1.6;
 }
-h2,h3,h4,h5{
+.narrow-page{
+	max-width: 1000px;
+	margin: 20px auto 0;
 }
 
-
 nav {
-	padding-top: 10px;
-	padding-bottom: 10px;
 	background: #eee;
 	border: 0;
 	box-shadow: inset 0px -9px 26px -7px rgba(0,0,0,.3);
 	border-radius: 0;
 	font-size: 16px;
+	display: flex;
+	align-items: center;
 }
 @media(max-width:800px){
 	body nav{
-		font-size: 3vw;
+		font-size: 4vw;
 	}
+}
+nav .logo {
+	flex-grow: 1;
+	text-align: center;
 }
 nav .logo a{
 	font-family: 'Lobster', cursive;
-	font-size: 4em;
+	font-size: 2em;
 }
-nav ul{
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
+body.navi-list-expend>div>*:not(nav){
+	display: none;
 }
-nav ul li{
-	margin: 0 .5em .5em 0;
-	padding: .5em 1em;
+nav .navi-list .toggle{
+	padding: 1em;
+	position: relative;
+	z-index: 2;
+}
+body.navi-list-expend nav .navi-list ul{
+	padding-top: 1em;
+	opacity: 1;
+	height: 100%;
+}
+nav .navi-list ul{
+	transition: all 400ms ease-out;
+	overflow: hidden;
+	opacity: 0;
+	height: 0;
+	position: absolute;
+	padding: 0;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: #fff;
+	margin: 0;
+	text-align: center;
+	font-size: 3em;
+	z-index: 1;
+	margin: 0;
+}
+nav ul li a{
+	color: #1F6F76;
+}
+nav .navi-list ul a:hover{
+	color: #fff !important;
+	background: #009787 !important;
+}
+nav ul li:nth-of-type(2n) a{
 	background: #fff;
-	border-radius: 1em;
-	white-space: nowrap;
+}
+nav ul li a{
+	display: block;
+	transition: all 100ms ease-out;
+	background: #E9E9E9;
 }
 nav a{
 	font-family: 'Nunito', sans-serif;
