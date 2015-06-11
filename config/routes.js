@@ -10,7 +10,7 @@ module.exports = function(app, controllers) {
 	//app.use(compression({filter: shouldCompress}))
 	app.use(compression())
 	app.get( '/' , controllers.post.home.bind(controllers.post));
-	app.get( '/name' , controllers.post.name.bind(controllers.post));
+	app.get( ['/name/*','/name'] , controllers.post.name.bind(controllers.post));
 	app.get( '/post/:id' , controllers.post.get.bind(controllers.post));
 	app.get( '/queue/:name' , controllers.post.dumpQueue.bind(controllers.post));
 	app.post( '/queue/:name' , controllers.post.pushQueue.bind(controllers.post));

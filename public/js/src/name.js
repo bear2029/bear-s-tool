@@ -1,3 +1,10 @@
+var AppRouter = Backbone.Router.extend({
+	routes: {
+		'name/*nameJson': 'changeName'
+	}
+});
+var app_router = new AppRouter;
+
 Handlebars.registerHelper('json',function(e){
 	if(_.isUndefined(e)){
 		return '';
@@ -171,11 +178,14 @@ var NameGenView = Backbone.View.extend({
 			'onSelectFav',
 			'onPinSelected',
 			'onPinPronounce',
+			'urlChangeName',
 			'randomize','capture','onAddFavItem','rotate','rerender')
 		this.favItemViews = [];
 		this.faviCollection = new NameList([])
 		this.faviCollection.fetch();
-		this.randomize();
+		if(location.pathname == '/name'){
+			this.randomize();
+		}
 		this.isSelectingPin = false;
 		this.pinIndex = -1;
 		this.isFixingPronounce = false;
@@ -185,6 +195,7 @@ var NameGenView = Backbone.View.extend({
 		$('.generator .main',this.$el).on(clickMethod,this.onPinSelected);
 		$('.generator .name-card>h4',this.$el).on(clickMethod,this.onPinPronounce);
 		$('.utils>.rotate',this.$el).on(clickMethod,this.rotate);
+		app_router.on('route:changeName', this.urlChangeName);
 	},
 	onPinPronounce: function(e)
 	{
@@ -264,6 +275,10 @@ var NameGenView = Backbone.View.extend({
 		}
 		this.rerender();
 	},
+	urlChangeName: function(nameJson) {
+		this.nameModel = new NameModel(JSON.parse(nameJson));
+		this.rerender()
+	},
 	rerender: function()
 	{
 		var isFav = this.faviCollection.contains(this.nameModel);
@@ -283,6 +298,11 @@ var NameGenView = Backbone.View.extend({
 		this.dictionary = new DictionaryView({attributes: {parentEl: $('.generator .name-card',this.$el), str: this.nameModel.chi()}})
 		this.syncPinClass();
 		this.synPinPronounceClass()
+		//todo 
+		setTimeout(function(){
+			console.log('reg',this.nameModel.toJSON());
+			app_router.navigate('name/'+JSON.stringify(this.nameModel.toJSON()))
+		}.bind(this),100)
 	}
 })
 
@@ -291,3 +311,4 @@ _.each(nameBases,function(eachName){
 	charCollection.add(new CharModel(eachName));
 },[])
 var nameGenView = new NameGenView({collection: charCollection, el:$('#name-gen')});
+Backbone.history.start({pushState: true});
