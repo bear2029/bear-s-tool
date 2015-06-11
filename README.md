@@ -3,6 +3,8 @@ Bear's tool include site scraber and name generator right now
 - sudo apt-get update
 - sudo apt-get install nodejs
 - sudo apt-get install npm
+- sudo apt-get install ruby
+- sudo gem install sass 
 - git clone https://github.com/bear2029/bear-s-tool.git
 - sudo apt-get install openjdk-7-jre-headless -y
 - wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.5.2.deb
