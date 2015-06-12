@@ -19,6 +19,7 @@ module.exports = function(grunt)
 				},
 				files: {
 					'public/css/name.css': 'public/css/name.scss',
+					'public/css/crawler.css': 'public/css/crawler.scss',
 				}
 			}
 		},

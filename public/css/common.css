@@ -69,7 +69,8 @@ nav .navi-list ul{
 	margin: 0;
 }
 nav ul li a{
-	color: #1F6F76;
+	color: #777;
+	font-size: .5em;
 }
 nav .navi-list ul a:hover{
 	color: #fff !important;
@@ -81,7 +82,9 @@ nav ul li:nth-of-type(2n) a{
 nav ul li a{
 	display: block;
 	transition: all 100ms ease-out;
-	background: #E9E9E9;
+	background: #f2f2f2;
+	box-shadow: 0 0px 14px 0 rgba(0,0,0,.3);
+	line-height: 3;
 }
 nav a{
 	font-family: 'Nunito', sans-serif;

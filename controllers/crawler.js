@@ -55,7 +55,8 @@ var self =
 	{/*{{{*/
 		return new Promise(function(resolve,reject){
 			try{
-				gbk.fetch(url).to('string', function(error,body){
+				request(url, function (error, response, body) {
+				//gbk.fetch(url).to('string', function(error,body){
 					if (!error) {
 						var data = {}
 						for(var key in rule){

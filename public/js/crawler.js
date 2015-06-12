@@ -216,8 +216,15 @@ var CrawlerListCore =
 	render: function()
 	{
 		return (
-		<table className="table table-striped">
+		<table className="table table-striped responsive-table">
 			<thead>
+				<colgroup>
+					<col className="" />
+					<col className="hide-mobile" />
+					<col className="hide-mobile" />
+					<col className="" />
+					<col className="hide-mobile" />
+				</colgroup>
 				<tr>
 					<th>site name</th>
 					<th>list URL</th>
