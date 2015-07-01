@@ -9,15 +9,30 @@ function shouldCompress(req, res) {
 module.exports = function(app, controllers) {
 	//app.use(compression({filter: shouldCompress}))
 	app.use(compression())
+	app.use(function(req,res,next){
+		res.header('Access-Control-Allow-Origin', 'http://bear.ddns.net:8080');
+		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+		res.header('Access-Control-Allow-Headers', 'Content-Type');
+		next();
+	})
+	app.get('/favicon.ico',function(req,res){
+		res.sendFile(global.appRoot+'/public/favicon.ico')
+	})
 	app.get( '/' , controllers.post.home.bind(controllers.post));
 	app.get( ['/name/*','/name'] , controllers.post.name.bind(controllers.post));
-	app.get( '/post/:id' , controllers.post.get.bind(controllers.post));
 	app.get( '/queue/:name' , controllers.post.dumpQueue.bind(controllers.post));
 	app.post( '/queue/:name' , controllers.post.pushQueue.bind(controllers.post));
+
+	app.use('/member/signin',forceSSL, controllers.member.signin);
+	app.use('/member/signout',forceSSL, controllers.member.signout);
+	app.use('/member/signup',forceSSL, controllers.member.signup);
+
 	app.get( '/dictionaryWrapper/:words' , controllers.post.dictionaryWrapper.bind(controllers.post));
 	app.delete( '/queue/:name/:index' , controllers.post.removeFromQueue.bind(controllers.post));
-	app.post( '/post' , controllers.post.create.bind(controllers.post));
-	app.get( '/comment/:id' , controllers.comment.get);
+	app.get( '/subscription/:collectionName/:pg.html' , controllers.subscription.collection);
+	app.get( '/subscription/:collectionName/:pg' , controllers.subscription.collection);
+	app.get( '/searchCollection/:term/:pg' , controllers.subscription.search);
+	app.get( '/subscription/:collectionName/item/:itemIndex' , controllers.subscription.collectionItem);
 	app.use( '/dataUriConverter' , controllers.dataUriConverter.home);
 
 	app.get( '/crawler' , controllers.crawler.home);
@@ -26,13 +41,7 @@ module.exports = function(app, controllers) {
 	app.post( '/crawler/scriptTester' , controllers.crawler.scriptTester);
 	app.get( '/crawler/subscriptionItems/:id/:name.zip' , controllers.crawler.archive);
 
-	app.post( '/members' , controllers.member.create);
-	app.get( '/members/' , controllers.member.getAll);
-	app.use( '/members/:id' , controllers.member.get);
 	app.use(controllers.post.default.bind(controllers.post));
-	app.get('/favicon.ico',function(req,res){
-		res.sendFile('../public/favicon.ico')
-	})
 
 	io.on('connection', function(socket){
 		console.log('a user connected');

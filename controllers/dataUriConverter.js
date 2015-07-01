@@ -5,7 +5,9 @@ app.use(multer({ dest: uploadPath}))
 module.exports = exports = {
 	home: function(req,res)
 	{
-		var result = {};
+		var result = {
+			req: req
+		};
 		if(req.files && req.files.file){
 			var fileName = uploadPath+req.files.file.name
 			dataUri.encode(fileName, function(results){

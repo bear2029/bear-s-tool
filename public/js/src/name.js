@@ -118,6 +118,41 @@ var DictionaryModel = Backbone.Model.extend({
 })
 
 
+var CustomEditView = Backbone.View.extend(
+{/*{{{*/
+	template: Handlebars.compile($('#custom-edit-template').html()),
+	initialize: function()
+	{
+		_.bindAll(this,'render','onSubmit')
+		this.render();
+		this.attributes.parentEl.append(this.$el);
+		this.$el.on('reset', function(e)
+		{
+			$('#name-gen').removeClass('custom-edting');
+		})
+		this.$el.on('submit',this.onSubmit) 
+		this.model.on('change',this.render)
+	},
+	onSubmit: function(e)
+	{
+		e.preventDefault()
+		$('#name-gen').removeClass('custom-edting');
+		var nameObj = _.reduce($('input.free',this.$el),function(list,item){
+			var item = $(item);
+			if(item.hasClass('chi')){
+				list.chi.push(item.val())
+			}else if(item.hasClass('eng')){
+				list.eng.push(item.val())
+			}
+			return list;
+		},{chi:[],eng:[]})
+		this.model.set(nameObj);
+	},
+	render: function() {
+		this.$el.html($(this.template(this.model.toJSON())));
+		return this;
+	}
+});/*}}}*/
 var DictionaryView = Backbone.View.extend(
 {/*{{{*/
 	template: Handlebars.compile($('#dictionary-template').html()),
@@ -133,6 +168,16 @@ var DictionaryView = Backbone.View.extend(
 	render: function(data) {
 		if(this.$el){
 			this.$el.remove();
+		}
+		data.strokes = _.reduce(data.d,function(total,item){
+			if(item.c){
+				total+=item.c;
+			}
+			return total;
+		},0)
+		data.isMatchStrokes = [9,10,15,17,18,21,25,31].indexOf(data.strokes) > -1;
+		if(!data.isMatchStrokes){
+			this.trigger('notMatch',this)
 		}
 		this.$el = $(this.template(data));
 		this.attributes.parentEl.append(this.$el);
@@ -174,10 +219,18 @@ var FavItemView = Backbone.View.extend(
 var NameGenView = Backbone.View.extend({
 	initialize: function()
 	{
+		this.nameModel = new NameModel({'chi':[],'eng':[]})
+		this.customEditor = new CustomEditView({
+			attributes:{
+				parentEl: $('.generator .name-card',this.$el)
+			},
+			model: this.nameModel.clone()
+		})
 		_.bindAll(this,
 			'onSelectFav',
 			'onPinSelected',
 			'onPinPronounce',
+			'onCustom',
 			'urlChangeName',
 			'randomize','capture','onAddFavItem','rotate','rerender')
 		this.favItemViews = [];
@@ -190,13 +243,20 @@ var NameGenView = Backbone.View.extend({
 		this.pinIndex = -1;
 		this.isFixingPronounce = false;
 		this.listenTo(this.faviCollection,'add',this.onAddFavItem)
+		this.listenTo(this.nameModel,'change',this.rerender)
+		this.customEditor.model.on('change',function(e){
+			this.nameModel = e.clone()
+			this.rerender();
+		}.bind(this))
 		$('i',this.$el).on(clickMethod,this.randomize);
 		$('em',this.$el).on(clickMethod,this.capture);
 		$('.generator .main',this.$el).on(clickMethod,this.onPinSelected);
 		$('.generator .name-card>h4',this.$el).on(clickMethod,this.onPinPronounce);
 		$('.utils>.rotate',this.$el).on(clickMethod,this.rotate);
+		$('.utils>.custom',this.$el).on(clickMethod,this.onCustom);
 		app_router.on('route:changeName', this.urlChangeName);
 	},
+	onCustom: function() { this.$el.addClass('custom-edting'); },
 	onPinPronounce: function(e)
 	{
 		this.isFixingPronounce = !this.isFixingPronounce;
@@ -210,16 +270,16 @@ var NameGenView = Backbone.View.extend({
 		this.syncPinClass();
 	},
 	synPinPronounceClass: function()
-	{
+	{/*{{{*/
 		var pronounceEl = $('.generator .name-card>h4',this.$el);
 		if(this.isFixingPronounce){
 			pronounceEl.addClass('selected')
 		}else{
 			pronounceEl.removeClass('selected')
 		}
-	},
+	},/*}}}*/
 	syncPinClass: function()
-	{
+	{/*{{{*/
 		_.each($('.generator .main>span',this.$el),function(el,i){
 			if(i == this.pinIndex){
 				$(el).addClass('selected');
@@ -227,9 +287,9 @@ var NameGenView = Backbone.View.extend({
 				$(el).removeClass('selected');
 			}
 		}.bind(this));
-	},
+	},/*}}}*/
 	onAddFavItem: function(newNameModel)
-	{
+	{/*{{{*/
 		var index = this.faviCollection.indexOf(newNameModel);
 		this.favItemViews[index] = new FavItemView({
 			model: newNameModel,
@@ -237,7 +297,7 @@ var NameGenView = Backbone.View.extend({
 			attributes:{parentEl: $('.fav>ul',this.$el)}
 		})
 		this.listenTo(this.favItemViews[index],'select',this.onSelectFav)
-	},
+	},/*}}}*/
 	onSelectFav: function(e)
 	{
 		this.nameModel = e;
@@ -249,15 +309,15 @@ var NameGenView = Backbone.View.extend({
 		this.rerender();
 	},
 	capture: function()
-	{
+	{/*{{{*/
 		if(!this.faviCollection.contains(this.nameModel)){
 			this.faviCollection.add(this.nameModel);
 			this.nameModel.save();
 		}
 		this.$el.addClass('favorite')
-	},
+	},/*}}}*/
 	randomize: function()
-	{
+	{/*{{{*/
 		var pronouncePattern;
 		if(this.isFixingPronounce){
 			pronouncePattern = this.nameModel.get('eng')
@@ -268,15 +328,15 @@ var NameGenView = Backbone.View.extend({
 			var charCombo = this.collection.randomize(1,pronouncePattern);
 			var method = this.pinIndex == 0 ? 'unshift' : 'add';
 			charCombo[method](this.nameModel.charModelAtIndex(this.pinIndex));
-			this.nameModel = charCombo.toNameModel();
+			this.nameModel.set(charCombo.toNameModel().toJSON());
 		}else{
 			var charCombo = this.collection.randomize(2,pronouncePattern);
-			this.nameModel = charCombo.toNameModel()
+			this.nameModel.set(charCombo.toNameModel().toJSON())
 		}
 		this.rerender();
-	},
+	},/*}}}*/
 	urlChangeName: function(nameJson) {
-		this.nameModel = new NameModel(JSON.parse(nameJson));
+		this.nameModel.set(JSON.parse(nameJson));
 		this.rerender()
 	},
 	rerender: function()
@@ -296,13 +356,22 @@ var NameGenView = Backbone.View.extend({
 			this.dictionary.remove();
 		}
 		this.dictionary = new DictionaryView({attributes: {parentEl: $('.generator .name-card',this.$el), str: this.nameModel.chi()}})
+		//todo hack
+		$('.dictionary',this.$el).remove()
 		this.syncPinClass();
 		this.synPinPronounceClass()
+		this.customEditor.model.set(this.nameModel.toJSON());
 		//todo 
 		setTimeout(function(){
-			console.log('reg',this.nameModel.toJSON());
-			app_router.navigate('name/'+JSON.stringify(this.nameModel.toJSON()))
+			var data = this.nameModel.toJSON();
+			delete data.id;
+			app_router.navigate('name/'+JSON.stringify(data))
 		}.bind(this),100)
+		//todo hack
+		this.dictionary.once('notMatch',function(e){
+			this.dictionary.remove();
+			this.randomize();
+		}.bind(this))
 	}
 })
 

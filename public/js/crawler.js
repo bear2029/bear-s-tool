@@ -489,12 +489,13 @@ if($('#crawler-list').length){
 		var itemGroup = data.aggregations.group_by_collection.buckets;
 		_.each(core,function(coreItem){
 			_.each(itemGroup,function(item){
-				if(_.isMatch(item,{key:coreItem._id.toLowerCase()})){
+				if(item.key == coreItem._id){
 					coreItem._source.count = item.doc_count;
 					coreItem._source.lastUpdate = _.formatDate(new Date(item.lastUpdate.value));
 				}
 			})
 		})
+		console.log(core);
 		React.render(<SubscriptionList data={core} />, document.getElementById('subscribe-list'));
 	}).catch(function(e){
 		console.log(e)

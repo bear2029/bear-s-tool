@@ -1,3 +1,7 @@
+@import "_global.scss";
+
+$main-font-size: 100px;
+$second-font-size: 20px;
 @keyframes flashing{
 	0% {opacity:1;}
 	20%{opacity:0.6;}
@@ -15,6 +19,10 @@
 	65% {transform:translate(0,-3px) rotate(0); opacity: 0.1;}
 	66% {transform:translate(0,0) rotate(0); opacity: 0.1;}
 	100% {transform:translate(0,0) rotate(0); opacity: 0.1;}
+}
+input.free{
+	border: 0;
+	background-color: transparent;
 }
 .selected{
 	position:relative;
@@ -37,7 +45,6 @@
 .btn{
 	outline: 0 !important;
 }
-/* Palette URL: http://paletton.com/#uid=70r050knPon00te3wf0Xjur++e8 */
 .generator{
 	margin-bottom: 15px;
 }
@@ -57,6 +64,47 @@
 	.selected{
 		font-weight: bold;
 		color: #333;
+	}
+	.custom-editor{
+		display: none;
+		.btn{
+			font-size: 16px;
+		}
+		.text-fields{
+			display: flex;
+			*{
+				transition: all 100ms ease-out;
+			}
+			.chi{
+				font-size: $main-font-size;
+			}
+			.eng{
+				color: #fff;
+				font-size: $second-font-size;
+			}
+			.free{
+				padding: 3px;
+				border: 2px dashed #C27632;
+				&:focus{
+					padding: 0;
+					text-align: center !important;
+					border: 5px dashed #E9E9E9;
+				}
+				text-align: right;
+				&:last-of-type{
+					margin-left: 5px;
+					text-align: left;
+				}
+			}
+		}
+	}
+	.name-gen.custom-edting &{
+		.custom-editor{
+			display: block;
+		}
+		h3,h4,.utils,.dictionary{
+			display: none;
+		}
 	}
 	.utils{
 		display: flex;
@@ -91,14 +139,14 @@
 		margin: 0;
 		user-select: none;
 		color: #fff;
-		font-size: 20px;
+		font-size: $second-font-size;
 		text-transform: capitalize;
 		display: block;
 	}
 	.main{
 		display: block;
 		cursor: pointer;
-		font-size: 115px;
+		font-size: $main-font-size;
 		line-height: 1.1;
 	}
 	.remove{

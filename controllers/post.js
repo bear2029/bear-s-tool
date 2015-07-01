@@ -1,11 +1,12 @@
-var Promise = require('promise');
 var redis = require('redis'),
 client = redis.createClient();
 function controller(){}
 
 controller.prototype = {
 	default: function (req, res, next) {
-		res.render(req.path.substr(1,req.path.length-1),{});
+		res.render(req.path.substr(1,req.path.length-1),{
+			req: req
+		});
 	},
 	promiseFetch: function(url)
 	{
@@ -21,7 +22,7 @@ controller.prototype = {
 		})
 	},
 	dictionaryWrapper: function(req,res)
-	{
+	{/*{{{*/
 		var redis = require("redis");
 		var client = redis.createClient();
 		var cacheKey = 'get:'+req.path;
@@ -54,11 +55,22 @@ controller.prototype = {
 				res.status(400).json({});
 			})
 		}.bind(this))
-	},
+	},/*}}}*/
 	home: function (req, res, next) {
-		res.render('home',{
-			title:'home page2',
-			headerTitle: 'Welcome to Ecomerce',
+		var subscription = require('../lib/subscription')
+		subscription.getAllSubscriptionByUpdate()
+		.then(function(o){
+			//res.json(o);return;
+			res.render('home',{
+				req: req,
+				title:'home page2',
+				headerTitle: 'Welcome to Ecomerce',
+				summaries: o,
+			})
+		})
+		.catch(function(e){
+			console.log(e)
+			res.status(400).send('something wrong')
 		})
 	},
 	allFromQueue: function(name)
@@ -123,32 +135,12 @@ controller.prototype = {
 	},
 	name: function (req, res, next) {
 		res.render('name',{
+			req: req,
 			title:'home page2',
 			headerTitle: 'Welcome to Ecomerce',
 			vowels: ['ey','y','a','o','u','ine','ia','ai'],
 			consonants: ['b','p','m','f','d','t','n','l','g','k','h','ch','sh','z','ts','s','tr','j'],
 			nameBases:require('../lib/nameBase')
-		});
-	},
-	get: function (req, res, next) {
-		req.models.post.find({id: req.params.id}, function(err, data) {
-			if(err) return next(err);
-			res.send(data[0]);
-		});
-	},
-	getall: function (req, res, next) {
-		req.models.post.find(function(err, data) {
-			if(err) return next(err);
-			res.send(data);
-		});
-	},
-	create: function (req, res, next) {
-		req.models.post.create({
-			title: 'title',
-			content: 'content'
-		}, function(err, result) {
-			if(err) return next(err);
-			res.send(result);
 		});
 	}
 };

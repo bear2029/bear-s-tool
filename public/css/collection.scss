@@ -1,0 +1,134 @@
+@import "_global.scss";
+@import "_mainSearch.scss";
+.content{
+	line-height: 1.5;
+	p{
+		margin-bottom: 1em;
+	}
+}
+.collection{
+	.hd{
+		display: flex;
+		align-items: baseline;
+		border-bottom: 1px solid $color-secondary-2-2;
+		margin-bottom: 20px;
+		h2{
+			color: $color-secondary-2-3;
+			flex-grow: 1;
+		}
+		sub a{
+			font-size: 12px;
+			color: $color-secondary-2-2;
+		}
+	}
+	.bd{
+		display: flex;
+		flex-wrap: wrap;
+		>li{
+			position: relative;
+			padding: 10px;
+			box-sizing: border-box;
+			font-size: 16px;
+			overflow: hidden;
+			@media(min-width: $responsive-breakpoint-sm+1){
+				width: 19%;
+				margin: 0 1.25% 1.25% 0;
+				&:nth-of-type(5n){
+					margin-right: 0;
+				}
+			}
+			@media(max-width: $responsive-breakpoint-sm) and (min-width: $responsive-breakpoint-xs+1){
+				width: 32%;
+				margin: 0 2% 2% 0;
+				&:nth-of-type(3n){
+					margin-right: 0;
+				}
+			}
+			@media(max-width: $responsive-breakpoint-xs){
+				width: 100%;
+				margin: 0 0 2vh;
+			}
+			margin: 0 1.25% 1.25% 0;
+			border-radius: 5px;
+			box-shadow: 1px 1px 4px 0 rgba(0,0,0,.5);
+			transition: all 200ms ease-out;
+			b{
+				position: absolute;
+				font-size: 3em;
+				bottom: -3px;
+				right: 5px;
+				line-height: 1;
+				color: rgba(0,0,0,.2);
+				z-index: 1;
+				font-family: "oswald";
+			}
+			sub{
+				display: block;
+				color: $color-secondary-2-2;
+				line-height: 1;
+				padding-bottom: .6em;
+				margin-bottom: .6em;
+				border-bottom: 1px solid $color-secondary-2-2;
+			}
+			a{
+				font-weight: bold;
+				transition: all 200ms ease-out;
+				color: $color-secondary-2-2;
+			}
+			a,sub{
+				position: relative;
+				z-index: 2;
+			}
+			&:hover b{
+				filter: blur(2px);
+			}
+			&:hover{
+				background-color: $color-secondary-2-1;
+				a,sub{
+					color: #fff;
+					text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+				}
+			}
+		}
+	}
+}
+#collection-paginator{
+	text-align: center;
+}
+#main-list{
+	display: flex;
+	flex-wrap: wrap;
+	.collection{
+		padding: 15px;
+		border: 5px solid $color-secondary-1-1;
+		@media(max-width:$responsive-breakpoint-sm){
+			margin-bottom: 15px;
+			width: 100%;
+		}
+		@media(min-width:$responsive-breakpoint-sm+1px){
+			width: 49%;
+			margin: 0 2% 2% 0;
+			&:nth-of-type(2n){
+				margin-right: 0;
+			}
+		}
+		h2{
+			margin-top: 0;
+			font-weight: bold;
+			border-bottom: 1px solid $color-secondary-1-2;
+			position: relative;
+			a{
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				font-size: 11px;
+			}
+		}
+		li{
+			margin-bottom: .5em;
+			b{
+				color: $color-primary-3;
+			}
+		}
+	}
+}

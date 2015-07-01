@@ -23,3 +23,4 @@ http.cors.allow-headers : X-Requested-With,X-Auth-Token,Content-Type, Content-Le
 Reference:
 http://www.noip.com/support/knowledgebase/installing-the-linux-dynamic-update-client-on-ubuntu/
 https://gist.github.com/ricardo-rossi/8265589463915837429d
+https://github.com/elastic/elasticsearch-analysis-smartcn/tree/v2.6.0/#version-260-for-elasticsearch-16

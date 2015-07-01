@@ -6,6 +6,7 @@
 				<div class="utils">
 					<i class="glyphicon glyphicon-refresh"></i>
 					<span class="rotate glyphicon glyphicon-transfer"></span>
+					<span class="custom glyphicon glyphicon-plus"></span>
 					<em class="glyphicon glyphicon-heart"></em>
 				</div>
 				<h3 class="main"></h3>
@@ -18,6 +19,25 @@
 	</div>
 </div>
 
+<script id="custom-edit-template" type="text/x-handlebars-template">
+<form class="custom-editor">
+	<div class="form-group text-fields">
+	\{{#each chi}}
+		<input class="chi free" value="\{{this}}" required />
+	\{{/each}}
+	</div>
+	<div class="form-group text-fields">
+	\{{#each eng}}
+		<input class="eng free" value="\{{this}}" required />
+	\{{/each}}
+	</div>
+	<div class="form-group">
+		<input type="submit" class="btn primary" value="save" />
+		<input type="reset" class="btn secondary" value="cancel" />
+	</div>
+</form>
+</script>
+
 <script id="fav-item-template" type="text/x-handlebars-template">
 <li class="entry col-md-3 col-sm-3">
 	<div class="name-card">
@@ -29,7 +49,15 @@
 
 <script id="dictionary-template" type="text/x-handlebars-template">
 <div class="dictionary colapseable">
-	<button class="toggler btn pull-right">Description</button>
+	<button class="toggler btn pull-right">
+		\{{#if isMatchStrokes}}
+			<span class="glyphicon glyphicon-thumbs-up"></span>
+		\{{else}}
+			<span class="glyphicon glyphicon-thumbs-down"></span>
+		\{{/if}}
+		Description
+		(\{{strokes}}劃)
+	</button>
 \{{#each d}}\{{#if this.t}}
 	<div class="word"> 
 		<h5>\{{this.t}}</h3>
@@ -58,4 +86,4 @@
 var nameBases = {{{json nameBases}}};
 </script>
 <script src="/public/js/handlebars-v3.0.3.js"></script>
-<script src="/public/js/build/name.js"></script>
+<script src="/public/js/src/name.js"></script>

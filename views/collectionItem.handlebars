@@ -1,0 +1,17 @@
+<link rel="stylesheet" href="/public/css/collection.css">
+<div class="">
+
+<h1>{{title}}</h1>
+<ol class="breadcrumb">
+	<li><a href="/subscription/{{collectionName}}/1.html">{{collectionName}}</a></li>
+	<li>{{title}}</li>
+</ol>
+<div class="content">
+{{{addBr body}}}
+</div>
+<nav><ul class="pager">
+	{{#if prevIndex}}<li><a href="{{prevIndex}}">Previous</a></li>{{/if}}
+	{{#if nextIndex}}<li><a href="{{nextIndex}}">Next</a></li>{{/if}}
+</ul></nav>
+
+</div>

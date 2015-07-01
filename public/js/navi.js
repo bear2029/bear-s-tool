@@ -1,7 +1,6 @@
 var NaviList = Backbone.View.extend({
 	initialize: function()
 	{
-		console.log(12,this.$el);
 		_.bindAll(this,'onToggle');
 		$('.toggle',this.$el).on('click',this.onToggle)
 	},

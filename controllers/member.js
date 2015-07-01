@@ -1,107 +1,72 @@
-// https://github.com/dresende/node-orm2
+var memberController = require('../lib/member.js')
+var esHelper = require('../lib/esHelper.js')
 module.exports = {
-	get: function(req,res)
+	signout: function(req,res)
 	{
-		req.models.member.get(req.params.id, function (err, member) {
-			    if(err){
-				if(err.literalCode == 'NOT_FOUND'){
-					res.status(404).send('Not Found');
-				}else{
-					res.status(406).send('Not Acceptable');
-				}
-			    }
-			    res.json(member);
-		});
+		delete(req.session.email);
+		delete(req.session.memberId);
+		res.redirect(req.query.forward);
 	},
-	initMemberContact: function(req,res,next)
+	signin: function(req,res)
 	{
-		req.models.contactInfo.hasOne('member',req.models.member,{reverse:'contactInfos'});
-		console.log('associate');
-		next();
+		if(!req.body.email){
+			console.log('skip');
+			res.send('redirect');
+			return
+		}
+
+		memberController.get(req.body.email,req.body.pwd)
+		.then(esHelper.getHits)
+		.then(function(d){
+			if(d.length <= 0){
+				throw 'no match'
+			}
+			return d;
+		})
+		.then(_.first)
+		.then(esHelper.digestHit)
+		.then(_.partial(_.omit,_,'pwd'))
+		.then(function(data){
+			req.session.email = data.email;
+			console.log('set',req.session.email)
+			req.session.memberId = data.id;
+			res.json(data);
+		})
+		.catch(function(error){
+			if(error == 'no match'){
+				res.status(404).send(error);
+			}
+			console.log(error);
+			res.status(500).send(_.isString(error) ? error : 'something wrong');
+		})
 	},
-	getAllContact: function(req,res)
+	signup: function(req,res)
 	{
-		console.log('consume');
-		req.models.member.get(req.params.memberId,function(err,member){
-			if(err){
-				res.status('500').send('bad member');
-			}else{
-				member.getContactInfos(function(err,contactInfos){
-					if(err){
-						res.status('500').send('bad contact info');
-					}else{
-						try{
-							res.json(contactInfos)
-						}catch(error){
-							res.status('500').send('bad response');
-						}
-					}
-				})
+		if(!req.body.email){
+			res.send('redirect');
+			return
+		}
+		var error = memberController.validate(req.body)
+		if(error){
+			res.status(500).send(_.isString(error) ? error : 'something wrong');
+			return;
+		}
+		memberController.get(req.body.email)
+		.then(function(existingMember){
+			if(existingMember.hits.total>0){
+				throw 'member existed!';
 			}
 		})
-	},
-	getAll: function(req,res)
-	{
-		req.models.member.find({},function(err,members){
-			if(err){
-				if(err.literalCode == 'NOT_FOUND'){
-					res.status(404).send('Not Found');
-				}else{
-					res.status(406).send('bad data');
-				}
-			}else{
-				res.json(members);
-			}
+		.then(_.partial(memberController.create.bind(memberController),req.body))
+		.then(esHelper.noTrash)
+		.then(function(d){
+			req.session.email = req.body.email;
+			req.session.memberId = d.id;
+			res.json(d)
 		})
-	},
-	createContact: function(req,res)
-	{
-		var body = req.body;
-		body.member_id = req.params.memberId;
-		req.models.contactInfo.create(body,function(err,items){
-			if(err){
-				console.log(err)
-				res.status(406).send('Not Acceptable');
-			}else{
-				res.json(items);
-			}
-		})
-	},
-	create: function(req,res,next)
-	{
-		req.models.member.create(req.body,function(err,items){
-			if(err){
-				console.log(err)
-				res.status(406).send('Not Acceptable');
-			}else{
-				res.json(items);
-			}
-		})
-	},
-	update: function(req,res,next)
-	{
-		req.models.member.get(req.params.id,function(err,member){
-			member.save(req.body,function(err){
-				if(err){
-					res.status(406).send('some error');
-				}else{
-					console.log('ok');
-					res.json(member);
-				}
-			})
-		})
-	},
-	delete: function(req,res)
-	{
-		req.models.member.get(req.params.id,function(err,member){
-			member.remove(function(err){
-				if(err){
-					res.status(406).send('some error');
-				}else{
-					console.log('ok');
-					res.json({});
-				}
-			})
+		.catch(function(error){
+			console.trace(error);
+			res.status(500).send(_.isString(error) ? error : 'something wrong');
 		})
 	}
 }

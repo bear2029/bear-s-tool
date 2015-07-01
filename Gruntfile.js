@@ -18,9 +18,22 @@ module.exports = function(grunt)
 					style: 'expanded'
 				},
 				files: {
+					'public/css/collection.css': 'public/css/collection.scss',
+					'public/css/common.css': 'public/css/common.scss',
 					'public/css/name.css': 'public/css/name.scss',
 					'public/css/crawler.css': 'public/css/crawler.scss',
 				}
+			}
+		},
+		autoprefixer: {
+			options: {
+				browsers: ['last 2 versions']
+			},
+			files: {
+				expand: true,
+				flatten: true,
+				src: 'public/css/*.css',
+				dest: 'public/css/'
 			}
 		},
 		watch: {
@@ -30,11 +43,12 @@ module.exports = function(grunt)
 			},
 			scss: {
 				files: ['public/css/*.scss'],
-				tasks: ['sass']
+				tasks: ['sass','autoprefixer']
 			}
 		}
 	});
 
+	grunt.loadNpmTasks('grunt-autoprefixer');
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');

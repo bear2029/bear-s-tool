@@ -80,11 +80,16 @@ var self =
 	},/*}}}*/
 	home: function(req,res)
 	{
-		res.render('crawlerHome',{});
+		res.render('crawlerHome',{
+			req: req
+		});
 	},
 	subscribe: function(req,res)
 	{
-		res.render('crawlerSubscribe',{crawlerId:req.params.id});
+		res.render('crawlerSubscribe',{
+			req: req,
+			crawlerId:req.params.id
+		});
 	},
 	archive: function(req,res)
 	{/*{{{*/
@@ -310,7 +315,10 @@ var self =
 			var linkItem = data.links[i];
 			items.push([linkItem.link,crawlerRule])
 		}
-		return batch(items,self.fetch,5,0);
+		//todo
+		return batch(items,self.fetch,5,0,function(current,total){
+			console.log(current+'/'+total);
+		});
 	},/*}}}*/
 	collectRemoteUrlsFromSearchedFields: function(existingItems){
 		existingItemUrls = _.uniq(_.reduce(existingItems.hits.hits,function(urls,item){

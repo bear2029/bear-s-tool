@@ -1,0 +1,54 @@
+<link rel="stylesheet" href="/public/css/collection.css">
+<div class="collection" id="collection-list">
+	<div class="hd">
+		<h2>{{data.collection.name}}</h2>
+		<sub><a href="{{data.collection.remoteUrl}}"><span class="glyphicon glyphicon-link"></span> remote</a></sub>
+	</div>
+	<div id="collection-list"><ul class="bd list-unstyled">
+	{{#each data.items}}
+		<li>
+			{{#if chapter}}<sub>{{chapter}}</sub>{{/if}}
+			{{#if collectionName}}
+			<a href="/subscription/{{collectionName}}/item/{{index}}">{{title}}</a>
+			{{else}}
+			<a href="/subscription/{{../../data.collection.name}}/item/{{index}}">{{title}}</a>
+			{{/if}}
+			<b>{{index}}</b>
+		</li>
+	{{/each}}
+	</ul></div>
+	<div id="collection-paginator"></div>
+</div>
+<script id="collection-list-template" type="text/x-handlebars-template">
+	<div id="collection-list"><ul class="bd list-unstyled">
+	\{{#each items}}
+		<li>
+			\{{#if chapter}}<sub>\{{chapter}}</sub>\{{/if}}
+			\{{#if collectionName}}
+			<a href="/subscription/\{{collectionName}}/item/\{{index}}">\{{title}}</a>
+			\{{else}}
+			<a href="/subscription/\{{../../collection.name}}/item/\{{index}}">\{{title}}</a>
+			\{{/if}}
+			<b>\{{index}}</b>
+		</li>
+	\{{/each}}
+	</ul></div>
+</script>
+<script id="pagination-template" type="text/x-handlebars-template">
+<nav>
+	<ul class="pagination">
+		\{{#if prev}}
+			<li><a href="\{{prev}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+		\{{/if}}
+		\{{#each links}}
+			<li class="\{{class}}"><a href="\{{href}}">\{{content}}</a></li>
+		\{{/each}}
+		\{{#if next}}
+			<li><a href="\{{next}}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+		\{{/if}}
+	</ul>
+</nav>
+</script>
+<script>
+var app = {{{json data}}};
+</script>

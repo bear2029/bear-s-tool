@@ -1,14 +1,24 @@
+<link rel="stylesheet" href="/public/css/collection.css">
 <div class="">
-	<h1>Bear's Home</h1>
-	<div id="home"></div>
+
+<form id="main-search" action="/searchCollection" class="search-collection" autocomplete="off">
+	<input type="search" name="term" placeholder="search for something..."/>
+</form>
+<ul id="main-list" class="list-unstyled">
+	{{#each summaries}}
+	<li class="collection">
+		<h2>{{@key}}<a href="/subscription/{{@key}}/1.html">more</a></h2>
+		<ul>
+			{{#each this}}
+			<li>
+				<a href="/subscription/{{@../key}}/item/{{this.index}}"><b>{{index}}</b> | {{this.title}}</a>
+			</li>
+			{{/each}}
+		</ul>
+	</li>
+	{{/each}}
+</ul>
+
 </div>
-<script id="entry-template" type="text/x-handlebars-template">
-<div class="entry">
-	<h1>\{{t}}</h1>
-	<div class="body">
-		\{{b}}
-	</div>
-</div>
-</script>
-<script src="/public/js/handlebars-v3.0.3.js"></script>
-<script src="/public/js/home.js"></script>
+<!--<script src="/public/js/handlebars-v3.0.3.js"></script>-->
+<!--<script src="/public/js/home.js"></script>-->

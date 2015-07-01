@@ -1,4 +1,4 @@
-<nav class="row">
+<nav class="row" id="navi">
 	<div class="navi-list">
 		<a class="glyphicon glyphicon-align-justify toggle"></a>
 		<ul class="list-unstyled col-md-8">
@@ -11,4 +11,58 @@
 	<div class="logo">
 		<a class="" href="/">Bear's tool</a>
 	</div>
+	<div id="header-utils"></div>
+	<script id="login-form-template" type="text/x-handlebars-template">
+	<div class="login popup \{{#if onSignin}}on-signin\{{else}}on-signup\{{/if}}">
+		<ul class="nav nav-tabs">
+			<li role="presentation" \{{#if onSignin}}class="active"\{{/if}}><a href="#">Log in</a></li>
+			<li role="presentation" \{{#unless onSignin}}class="active"\{{/unless}}><a href="#">Sign up</a></li>
+		</ul>
+		<form class="signin-section" action="\{{host}}/member/signin">
+			<div class="form-group">
+				<input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email" required>
+			</div>
+			<div class="form-group">
+				<input type="password" name="pwd" class="form-control" id="exampleInputPassword1" placeholder="Password" required>
+			</div>
+			<div class="checkbox">
+				<label for="login-save-me">
+				<input type="checkbox" id="login-save-me" name="login-save-me" />
+				Remember me
+				</label>
+			</div>
+			\{{#each errors}}
+				<p class="error">\{{this}}</p>
+			\{{/each}}
+			<input type="submit" name="signup" value="login" class="btn primary"/>
+			<button type="reset" class="btn secondary">Close</button>
+		</form>
+		<form class="signup-section" action="\{{host}}/member/signup">
+			<div class="form-group">
+				<input name="firstname" class="form-control" placeholder="first name" required>
+			</div>
+			<div class="form-group">
+				<input name="lastname" class="form-control" placeholder="last name" required>
+			</div>
+			<div class="form-group">
+				<input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email" required>
+			</div>
+			<div class="form-group">
+				<input type="password" name="pwd" class="form-control" id="exampleInputPassword1" placeholder="Password" required>
+			</div>
+			<div class="form-group">
+				<input type="password" name="re-pwd" class="form-control" id="exampleInputPassword1" placeholder="Re-enter Password" required>
+			</div>
+			\{{#each errors}}
+				<p class="error">\{{this}}</p>
+			\{{/each}}
+			<input type="submit" name="signup" value="signup" class="btn primary"/>
+			<button type="reset" class="btn secondary">Close</button>
+		</form>
+	</div>
+	</script>
+	<script id="header-utils-template" type="text/x-handlebars-template">
+		<a class="login" href="/member/signin">Login</a>
+		<a class="logout" href="/member/signout">Logout</a>
+	</script>
 </nav>
