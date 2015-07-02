@@ -50,13 +50,14 @@
 <script id="dictionary-template" type="text/x-handlebars-template">
 <div class="dictionary colapseable">
 	<button class="toggler btn pull-right">
-		\{{#if isMatchStrokes}}
-			<span class="glyphicon glyphicon-thumbs-up"></span>
-		\{{else}}
-			<span class="glyphicon glyphicon-thumbs-down"></span>
-		\{{/if}}
 		Description
-		(\{{strokes}}劃)
+		\{{#if isMatchStrokes}}
+		<span class="strokes good">
+		\{{else}}
+		<span class="strokes">
+		\{{/if}}
+			(\{{strokes}}劃)
+		</span>
 	</button>
 \{{#each d}}\{{#if this.t}}
 	<div class="word"> 

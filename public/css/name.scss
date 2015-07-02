@@ -214,6 +214,8 @@ input.free{
 		right: 27px;
 	}
 	& .toggler{
+		box-shadow: 1px 1px 4px 0 rgba(255, 255, 255, 0.5) inset;
+		text-shadow: -1px -1px 1px rgba(0,0,0,.5);
 		color: #fff;
 		background-color: #009787;
 		margin-bottom: 10px;
@@ -221,6 +223,12 @@ input.free{
 			display: inline-block;
 			float: none !important;
 			margin-bottom: 0px;
+		}
+		.strokes{
+			color: $color-primary-3;
+			&.good{
+				color: $color-primary-1;
+			}
 		}
 	}
 }
