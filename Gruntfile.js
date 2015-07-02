@@ -46,6 +46,16 @@ module.exports = function(grunt)
 				files: ['public/css/*.scss'],
 				tasks: ['sass','autoprefixer']
 			}
+		},
+		copy:{
+			main:{
+				files:[
+					{expand: true, cwd: 'node_modules/underscore/', src: 'underscore*.js' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/backbone/', src: 'backbone*.js' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/requirejs/', src: 'require.js' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/bootstrap/dist/css/', src: 'bootstrap*.css' , dest: 'public/vendor/'}
+				]
+			}
 		}
 	});
 
@@ -53,6 +63,7 @@ module.exports = function(grunt)
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	grunt.registerTask('default', ['uglify']);
 };
