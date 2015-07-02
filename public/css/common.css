@@ -1,92 +1,189 @@
-a:hover{
-	text-decoration: none;
-	color: inherit;
-}
-body{
-	font-family: 'Roboto', sans-serif;
-	font-size: 13px;
-}
-h1{
-	border-bottom: 1px solid #999;
-	margin-bottom: .5em;
-	line-height: 1.6;
-}
-.narrow-page{
-	max-width: 1000px;
-	margin: 20px auto 0;
+/* Palette URL: http://paletton.com/#uid=70r050knPon00te3wf0Xjur++e8 */
+textarea:hover,
+input:not([type=checkbox]):hover,
+textarea:active,
+input:not([type=checkbox]):active,
+textarea:focus,
+input:not([type=checkbox]):focus,
+button:focus,
+button:active,
+button:hover {
+  outline: 0px !important;
+  -webkit-appearance: none;
 }
 
-nav {
-	background: #eee;
-	border: 0;
-	box-shadow: inset 0px -9px 26px -7px rgba(0,0,0,.3);
-	border-radius: 0;
-	font-size: 16px;
-	display: flex;
-	align-items: center;
+body a {
+  transition: color 300ms ease-out;
+  color: #008794;
 }
-@media(max-width:800px){
-	body nav{
-		font-size: 4vw;
-	}
+
+body a:hover {
+  color: #F26700;
+  text-decoration: none;
 }
+
+body {
+  color: #78706A;
+  font-family: 'Arvo', sans-serif;
+  font-size: 14px;
+}
+
+h1, h2, h3 {
+  color: #000;
+}
+
+h1 {
+  border-bottom: 1px solid #999;
+  margin-bottom: .5em;
+  line-height: 1.6;
+}
+
+.narrow-page {
+  max-width: 1000px;
+  margin: 20px auto 0;
+}
+
+.btn.secondary {
+  background-color: #78706A;
+  color: #fff;
+}
+
+.btn.primary {
+  background-color: #C26F32;
+  color: #fff;
+}
+
+#navi {
+  background: #eee;
+  border: 0;
+  box-shadow: inset 0px -9px 26px -7px rgba(0, 0, 0, 0.3);
+  border-radius: 0;
+  font-size: 16px;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+@media (max-width: 400px) {
+  #navi {
+    font-size: 4vw;
+  }
+}
+
+body.navi-list-expend > div > *:not(nav) {
+  display: none;
+}
+
 nav .logo {
-	flex-grow: 1;
-	text-align: center;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  text-align: center;
 }
-nav .logo a{
-	font-family: 'Lobster', cursive;
-	font-size: 2em;
+nav .logo a {
+  font-family: 'Lobster', cursive;
+  font-size: 2em;
+  color: #008794;
 }
-body.navi-list-expend>div>*:not(nav){
-	display: none;
+nav .logo a:hover {
+  color: #F26700;
 }
-nav .navi-list .toggle{
-	padding: 1em;
-	position: relative;
-	z-index: 2;
+nav a {
+  font-family: 'Arvo', sans-serif;
+  color: #000;
 }
-body.navi-list-expend nav .navi-list ul{
-	padding-top: 1em;
-	opacity: 1;
-	height: 100%;
+nav .navi-list .toggle {
+  padding: 1em;
+  position: absolute;
+  z-index: 2;
 }
-nav .navi-list ul{
-	transition: all 400ms ease-out;
-	overflow: hidden;
-	opacity: 0;
-	height: 0;
-	position: absolute;
-	padding: 0;
-	top: 0;
-	left: 0;
-	width: 100%;
-	background-color: #fff;
-	margin: 0;
-	text-align: center;
-	font-size: 3em;
-	z-index: 1;
-	margin: 0;
+nav .navi-list ul {
+  transition: all 400ms ease-out;
+  overflow: hidden;
+  opacity: 0;
+  height: 0;
+  position: absolute;
+  padding: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  margin: 0;
+  text-align: center;
+  font-size: 3em;
+  z-index: 1;
+  margin: 0;
 }
-nav ul li a{
-	color: #777;
-	font-size: .5em;
+nav .navi-list ul li:nth-of-type(2n) a {
+  background: #fff;
 }
-nav .navi-list ul a:hover{
-	color: #fff !important;
-	background: #009787 !important;
+nav .navi-list ul li a {
+  color: #777;
+  font-size: .5em;
+  display: block;
+  transition: all 100ms ease-out;
+  background: #f2f2f2;
+  box-shadow: 0 0px 14px 0 rgba(0, 0, 0, 0.3);
+  line-height: 3;
 }
-nav ul li:nth-of-type(2n) a{
-	background: #fff;
+nav .navi-list ul li a:hover {
+  color: #fff !important;
+  background: #009787 !important;
 }
-nav ul li a{
-	display: block;
-	transition: all 100ms ease-out;
-	background: #f2f2f2;
-	box-shadow: 0 0px 14px 0 rgba(0,0,0,.3);
-	line-height: 3;
+body.navi-list-expend nav .navi-list ul {
+  padding-top: 1em;
+  opacity: 1;
+  height: 100%;
 }
-nav a{
-	font-family: 'Nunito', sans-serif;
-	color: #000;
+
+.popup {
+  position: fixed;
+  left: 50%;
+  width: 300px;
+  margin-left: -150px;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: -2px 1px 15px 0 rgba(0, 0, 0, 0.3), 3px 3px 5px 0 rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  top: 20%;
+}
+.popup * {
+  font-size: 16px;
+}
+.popup .nav-tabs {
+  margin-bottom: 20px;
+}
+.popup.login {
+  opacity: 0;
+  transition: all ease-out 200ms;
+  height: 386px;
+  top: 50%;
+  margin-top: -193px;
+}
+.popup.login.appear {
+  opacity: 1;
+}
+.popup.login .signin-section,
+.popup.login .signup-section {
+  display: none;
+}
+.popup.login.on-signin .signin-section {
+  display: block;
+}
+.popup.login.on-signup .signup-section {
+  display: block;
+}
+
+#header-utils {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+#header-utils .logout, #header-utils.signed-in .login {
+  display: none;
+}
+#header-utils.signed-in .logout {
+  display: block;
 }
