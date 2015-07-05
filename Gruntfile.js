@@ -50,9 +50,11 @@ module.exports = function(grunt)
 		copy:{
 			main:{
 				files:[
-					{expand: true, cwd: 'node_modules/underscore/', src: 'underscore*.js' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/backbone/', src: 'backbone*.js' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/requirejs/', src: 'require.js' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/jquery/dist/', src: 'jquery*' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/handlebars/dist/', src: 'handlebars*' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/underscore/', src: 'underscore*' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/backbone/', src: 'backbone*' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/requirejs/', src: 'require*' , dest: 'public/vendor/'},
 					{expand: true, cwd: 'node_modules/bootstrap/dist/css/', src: 'bootstrap*.css' , dest: 'public/vendor/'}
 				]
 			}

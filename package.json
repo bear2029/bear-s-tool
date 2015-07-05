@@ -62,7 +62,8 @@
     "backbone": "~1.2.1",
     "underscore": "~1.8.3",
     "lodash": "~3.10.0",
-    "requirejs": "~2.1.18"
+    "requirejs": "~2.1.18",
+    "jquery": "~2.1.4"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

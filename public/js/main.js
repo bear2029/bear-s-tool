@@ -2,10 +2,10 @@ require.config({
 	paths: {
 		//modernizr: 'modernizr.custom.56433.js',
 		bear: 'lib/bear',
-		handlebars: 'handlebars-v3.0.3',
-		jquery: 'jquery-2.1.3.min',
-		underscore: 'underscore-min',
-		backbone: 'backbone'
+		handlebars: '../vendor/handlebars',
+		jquery: '../vendor/jquery.min',
+		underscore: '../vendor/underscore-min',
+		backbone: '../vendor/backbone'
 	}
 });
 

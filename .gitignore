@@ -2,3 +2,4 @@ node_modules/
 .sass-cache/
 public/css/*.css.map
 public/css/*.css
+public/vendor/*
