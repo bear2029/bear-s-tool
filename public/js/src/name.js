@@ -1,9 +1,10 @@
 var AppRouter = Backbone.Router.extend({
 	routes: {
-		'name/*nameJson': 'changeName'
+		'name/*nameJson': 'changeName',
+		'name': 'changeName'
 	}
 });
-var app_router = new AppRouter;
+var appRouter = new AppRouter;
 
 Handlebars.registerHelper('json',function(e){
 	if(_.isUndefined(e)){
@@ -120,9 +121,9 @@ var DictionaryModel = Backbone.Model.extend({
 
 var CustomEditView = Backbone.View.extend(
 {/*{{{*/
-	template: Handlebars.compile($('#custom-edit-template').html()),
 	initialize: function()
 	{
+		this.template = Handlebars.compile($('#custom-edit-template').html());
 		_.bindAll(this,'render','onSubmit')
 		this.render();
 		this.attributes.parentEl.append(this.$el);
@@ -155,9 +156,9 @@ var CustomEditView = Backbone.View.extend(
 });/*}}}*/
 var DictionaryView = Backbone.View.extend(
 {/*{{{*/
-	template: Handlebars.compile($('#dictionary-template').html()),
 	initialize: function()
 	{
+		this.template = Handlebars.compile($('#dictionary-template').html());
 		_.bindAll(this,'render')
 		var dictionary = new DictionaryModel({id: this.attributes.str})
 		dictionary.fetch();
@@ -189,7 +190,6 @@ var DictionaryView = Backbone.View.extend(
 });/*}}}*/
 var FavItemView = Backbone.View.extend(
 {/*{{{*/
-	template: Handlebars.compile($('#fav-item-template').html()),
 	remove: function()
 	{
 		this.collection.remove(this.model)
@@ -199,6 +199,7 @@ var FavItemView = Backbone.View.extend(
 	},
 	initialize: function()
 	{
+		this.template = Handlebars.compile($('#fav-item-template').html());
 		_.bindAll(this,'render','remove')
 		this.render(this.attributes.parentEl)
 		this.attributes.parentEl.append(this.$el);
@@ -243,10 +244,14 @@ var NameGenView = Backbone.View.extend({
 		this.pinIndex = -1;
 		this.isFixingPronounce = false;
 		this.listenTo(this.faviCollection,'add',this.onAddFavItem)
-		this.listenTo(this.nameModel,'change',this.rerender)
-		this.customEditor.model.on('change',function(e){
-			this.nameModel = e.clone()
+		this.nameModel.on('change',function(){
+			var data = this.nameModel.toJSON();
+			data = _.pick(data,'chi','eng');
+			appRouter.navigate('name/'+JSON.stringify(data))
 			this.rerender();
+		}.bind(this));
+		this.customEditor.model.on('change',function(e){
+			this.nameModel.set(e.toJSON);
 		}.bind(this))
 		$('i',this.$el).on(clickMethod,this.randomize);
 		$('em',this.$el).on(clickMethod,this.capture);
@@ -254,7 +259,9 @@ var NameGenView = Backbone.View.extend({
 		$('.generator .name-card>h4',this.$el).on(clickMethod,this.onPinPronounce);
 		$('.utils>.rotate',this.$el).on(clickMethod,this.rotate);
 		$('.utils>.custom',this.$el).on(clickMethod,this.onCustom);
-		app_router.on('route:changeName', this.urlChangeName);
+		appRouter.on('route:changeName', this.urlChangeName);
+	},
+	events:{
 	},
 	onCustom: function() { this.$el.addClass('custom-edting'); },
 	onPinPronounce: function(e)
@@ -300,13 +307,11 @@ var NameGenView = Backbone.View.extend({
 	},/*}}}*/
 	onSelectFav: function(e)
 	{
-		this.nameModel = e;
-		this.rerender();
+		this.nameModel.set(e.toJSON());
 	},
 	rotate: function()
 	{
 		this.nameModel.exchange();
-		this.rerender();
 	},
 	capture: function()
 	{/*{{{*/
@@ -333,14 +338,18 @@ var NameGenView = Backbone.View.extend({
 			var charCombo = this.collection.randomize(2,pronouncePattern);
 			this.nameModel.set(charCombo.toNameModel().toJSON())
 		}
-		this.rerender();
 	},/*}}}*/
 	urlChangeName: function(nameJson) {
 		this.nameModel.set(JSON.parse(nameJson));
+		console.log('url change captured');
 		this.rerender()
+	},
+	render: function(){
+		this.rerender();
 	},
 	rerender: function()
 	{
+		console.log('rerender');
 		var isFav = this.faviCollection.contains(this.nameModel);
 		if(isFav){
 			this.$el.addClass('favorite')
@@ -351,27 +360,15 @@ var NameGenView = Backbone.View.extend({
 		_.each(this.nameModel.chi(),function(char){
 			$('h3',this.$el).append('<span>'+char+'</span>');
 		});
+		console.log(123213);
 		$('h4',this.$el).text(this.nameModel.eng())
 		if(this.dictionary){
 			this.dictionary.remove();
 		}
 		this.dictionary = new DictionaryView({attributes: {parentEl: $('.generator .name-card',this.$el), str: this.nameModel.chi()}})
-		//todo hack
-		$('.dictionary',this.$el).remove()
 		this.syncPinClass();
 		this.synPinPronounceClass()
 		this.customEditor.model.set(this.nameModel.toJSON());
-		//todo 
-		setTimeout(function(){
-			var data = this.nameModel.toJSON();
-			delete data.id;
-			app_router.navigate('name/'+JSON.stringify(data))
-		}.bind(this),100)
-		//todo hack
-		this.dictionary.once('notMatch',function(e){
-			this.dictionary.remove();
-			this.randomize();
-		}.bind(this))
 	}
 })
 

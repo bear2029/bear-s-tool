@@ -6,7 +6,6 @@ var NaviList = Backbone.View.extend({
 	},
 	onToggle: function()
 	{
-		console.log(11);
 		$('body').toggleClass('navi-list-expend');
 	}
 })
