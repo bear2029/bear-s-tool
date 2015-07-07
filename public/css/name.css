@@ -343,6 +343,9 @@ input.free {
   color: #414849;
   margin-top: 16px;
 }
+.generator .dictionary .toggler .strokes {
+  display: inline-block;
+}
 .fav .dictionary {
   position: absolute;
   top: 90px;
@@ -361,6 +364,7 @@ input.free {
   margin-bottom: 0px;
 }
 .dictionary .toggler .strokes {
+  display: none;
   color: #F26700;
 }
 .dictionary .toggler .strokes.good {

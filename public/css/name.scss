@@ -208,6 +208,9 @@ input.free{
 		color: #414849;
 		margin-top: 16px;
 	}
+	.generator & .toggler .strokes{
+		display: inline-block;
+	}
 	.fav & {
 		position: absolute;
 		top: 90px;
@@ -225,6 +228,7 @@ input.free{
 			margin-bottom: 0px;
 		}
 		.strokes{
+			display: none;
 			color: $color-primary-3;
 			&.good{
 				color: $color-primary-1;

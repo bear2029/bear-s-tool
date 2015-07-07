@@ -94,8 +94,6 @@ module.exports = exports = {
 		})
 		.then(_.partial(subscription.getItemsByCollectionName,req.params.collectionName,0,0).bind(subscription))
 		.then(function(data){
-			//vars.data = data;
-			data.hits.total
 			if(vars.index>0){
 				vars.prevIndex = ''+parseInt(vars.index-1);
 			}

@@ -9,23 +9,24 @@ require.config({
 	}
 });
 
-var isCollectionPage = location.pathname.match(/^\/subscription\//)
-var isSearchPage = location.pathname.match(/^\/searchCollection\//)
+var isCollectionItemPage = location.pathname.match(/^\/subscription\/.*\/item\/\d+$/);
+var isCollectionPage = !isCollectionItemPage && location.pathname.match(/^\/subscription\//);
+var isSearchPage = location.pathname.match(/^\/searchCollection\//);
 var init,paths = ['jquery','lib/view/hdUtil','lib/view/searchBar'];
 if(isCollectionPage){
-	paths.push('collection')
-	init = _.partial(require,'collection')
+	paths.push('collection');
+	init = _.partial(require,'collection');
 }else if(isSearchPage){
-	paths.push('search')
-	init = _.partial(require,'seach')
+	paths.push('search');
+	init = _.partial(require,'seach');
 }
 
 requirejs(paths, function($,HdUtilView,SearchBarView) {
-	var hdUtilView = new HdUtilView({id: '#header-utils'})
+	var hdUtilView = new HdUtilView({id: '#header-utils'});
 	$('form.search-collection').each(function(i,e){
-		new SearchBarView({el:$(e)})
-	})
+		new SearchBarView({el:$(e)});
+	});
 	if(init){
-		init()
+		init();
 	}
 });

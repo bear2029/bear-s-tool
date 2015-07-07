@@ -42,9 +42,21 @@ module.exports = function(grunt)
 				files: ['public/js/src/*.js'],
 				tasks: ['uglify']
 			},
+			lint: {
+				files: ['<%= jshint.files %>'],
+				tasks: ['jshint']
+			},
 			scss: {
 				files: ['public/css/*.scss'],
 				tasks: ['sass','autoprefixer']
+			}
+		},
+		jshint: {
+			files: ['Gruntfile.js', 'lib/*.js', 'public/js/*.js','public/js/src/*.js','public/js/lib/*.js','public/lib/*/*.js'],
+			options: {
+				globals: {
+					jQuery: true
+				}
 			}
 		},
 		copy:{
@@ -55,12 +67,14 @@ module.exports = function(grunt)
 					{expand: true, cwd: 'node_modules/underscore/', src: 'underscore*' , dest: 'public/vendor/'},
 					{expand: true, cwd: 'node_modules/backbone/', src: 'backbone*' , dest: 'public/vendor/'},
 					{expand: true, cwd: 'node_modules/requirejs/', src: 'require*' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/bootstrap/dist/css/', src: 'bootstrap*.css' , dest: 'public/vendor/'}
+					{expand: true, cwd: 'node_modules/bootstrap/dist/css/', src: 'bootstrap*.css' , dest: 'public/vendor/'},
+					{expand: true, cwd: 'node_modules/react/dist/', src: '*.js' , dest: 'public/vendor/'}
 				]
 			}
 		}
 	});
 
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-autoprefixer');
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
