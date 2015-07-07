@@ -24,3 +24,7 @@ Reference:
 http://www.noip.com/support/knowledgebase/installing-the-linux-dynamic-update-client-on-ubuntu/
 https://gist.github.com/ricardo-rossi/8265589463915837429d
 https://github.com/elastic/elasticsearch-analysis-smartcn/tree/v2.6.0/#version-260-for-elasticsearch-16
+
+running on port 80 (443 for SSL)
+- sudo apt-get install libcap2-bin
+- sudo setcap cap_net_bind_service=+ep /usr/local/bin/node
