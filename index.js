@@ -7,6 +7,7 @@ fs = require('fs');
 util = require('util');
 bodyParser = require('body-parser');
 _ = require('underscore')
+argv = require('./lib/argvController.js');
 logger = require('morgan');
 error_handler = require('errorhandler');
 exphbs  = require('express-handlebars');
@@ -68,5 +69,5 @@ app.engine('handlebars', exphbs({
 app.set('view engine', 'handlebars');
 app.use('/public',express.static(global.appRoot+'/public'));
 require('./config/routes.js')(app,controllers)
-http.listen(8080);
-https.listen(8081);
+http.listen(argv.get('port',8080));
+https.listen(argv.get('sslport',8081));

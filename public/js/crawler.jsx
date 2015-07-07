@@ -18,11 +18,11 @@ var socket = io();
 Ajax = {/*{{{*/
 	delete:function(url,data)
 	{
-		return this.post(url,data,'DELETE')
+		return this.post(url,data,'DELETE');
 	},
 	post:function(url,data)
 	{
-		var method = arguments[2] || 'POST'
+		var method = arguments[2] || 'POST';
 		return new Promise(function(resolve,reject){
 			$.ajax({
 				method: method,
@@ -33,9 +33,9 @@ Ajax = {/*{{{*/
 			}).done(function(msg) {
 				resolve(msg);
 			}).fail(function(jqXHR, textStatus, errorThrown){
-				reject(new Error(jqXHR.responseJSON))
+				reject(new Error(jqXHR.responseJSON));
 			});
-		})
+		});
 	},
 	get:function(url)
 	{
@@ -47,16 +47,16 @@ Ajax = {/*{{{*/
 			}).done(function(msg) {
 				resolve(msg);
 			}).fail(function(jqXHR, textStatus, errorThrown){
-				reject(new Error(errorThrown))
+				reject(new Error(errorThrown));
 			});
-		})
+		});
 	}
 };/*}}}*/
 var EditorCore = 
 {/*{{{*/
 	mixins: [React.addons.LinkedStateMixin],
 	getInitialState:function(){
-		this.fieldMap = ['siteName','collectionRule','itemRule','collectionUrlRegex','itemUrlRegex','collectionUrl','itemUrl']
+		this.fieldMap = ['siteName','collectionRule','itemRule','collectionUrlRegex','itemUrlRegex','collectionUrl','itemUrl'];
 		this.isNew = !this.props.data._source;
 		var state = $.extend({
 			iscollectionUrlValid: true,
@@ -67,24 +67,24 @@ var EditorCore =
 	onSubmit: function(e)
 	{
 		e.preventDefault();
-		var self = this
+		var self = this;
 		var formBody = _.pick(self.state,this.fieldMap);
 		var url = searchHost+"/crawler/common";
 		if(this.props.data && this.props.data._id){
-			url += '/' + this.props.data._id
+			url += '/' + this.props.data._id;
 		}
 		Ajax.post(url,formBody)
 		.then(this.onSubmitComplete)
 		.catch(function(e){
 			console.log('catch');
-		})
+		});
 	},
 	onSubmitComplete: function(e){
 		if(typeof this.props.onSubmitComplete == 'function'){
 			this.props.data._source = this.state;
 			this.props.data._id = e._id;
-			this.props.onSubmitComplete(this.props.data)
-			this.onClose()
+			this.props.onSubmitComplete(this.props.data);
+			this.onClose();
 		}
 	},
 	urlTestTypeFromEvent: function(e)
@@ -92,7 +92,7 @@ var EditorCore =
 		var name = $(e.target).attr('name');
 		var matches = name.match(/^([a-z]+)-url/);
 		if(!matches){
-			new Error('element is illigal')
+			new Error('element is illigal');
 		}
 		return matches[1];
 	},
@@ -100,49 +100,49 @@ var EditorCore =
 	{
 		this.parentElement = $(React.findDOMNode(this)).closest('.popup');
 		if(this.parentElement){
-			this.parentElement.addClass('appear')
+			this.parentElement.addClass('appear');
 		}
 	},
 	onClose: function(e)
 	{
-		var that = this
+		var that = this;
 		console.log(this,React.findDOMNode(that));
 		if(e){
 			e.preventDefault();
 		}
 		if(this.parentElement){
-			this.parentElement.removeClass('appear')
-			$(React.findDOMNode(that)).remove()
+			this.parentElement.removeClass('appear');
+			$(React.findDOMNode(that)).remove();
 		}
 	},
 	onTest: function(e)
 	{
-		e.preventDefault()
-		var matches = $(e.target).attr('class').match(/(item|collection)/)
+		e.preventDefault();
+		var matches = $(e.target).attr('class').match(/(item|collection)/);
 		if(matches){
 			var testType = matches[0];
-			var consoleArea = $('.console textarea',React.findDOMNode(this))
+			var consoleArea = $('.console textarea',React.findDOMNode(this));
 			var story = {
 				testUrl: this.state[testType+'Url'],
 				testRule: JSON.parse(this.state[testType+'Rule'])
 			};
 			Ajax.post('/crawler/scriptTester',story).then(function(e){
 				//console.log('response',e);
-				consoleArea.removeClass('error')
-				consoleArea.html(JSON.stringify(e))
+				consoleArea.removeClass('error');
+				consoleArea.html(JSON.stringify(e));
 			},function(e){
 				//console.log('error',e);
-				consoleArea.addClass('error')
-				consoleArea.html(e.message)
-			})
+				consoleArea.addClass('error');
+				consoleArea.html(e.message);
+			});
 		}
 	},
 	onUrlMatchChanged: function(e)
 	{
 		var testType = this.urlTestTypeFromEvent(e);
-		var regexString = $('input[name='+testType+'-url-regex]',React.findDOMNode(this)).val()
-		var url = $('input[name='+testType+'-url]',React.findDOMNode(this)).val()
-		var urlDiv = $('input[name='+testType+'-url]',React.findDOMNode(this)).parent()
+		var regexString = $('input[name='+testType+'-url-regex]',React.findDOMNode(this)).val();
+		var url = $('input[name='+testType+'-url]',React.findDOMNode(this)).val();
+		var urlDiv = $('input[name='+testType+'-url]',React.findDOMNode(this)).parent();
 		var isValid = false;
 		if(url && regexString){
 			var regex = new RegExp(regexString);
@@ -211,7 +211,7 @@ var CrawlerListCore =
 	onSubmitComplete: function(data)
 	{
 		this.state.data.push(data);
-		this.setState(this.state)
+		this.setState(this.state);
 	},
 	render: function()
 	{
@@ -242,7 +242,7 @@ var CrawlerListCore =
 				</tr>
 			</tbody>
 		</table>
-		)
+		);
 	}
 };/*}}}*/
 var CrawlerList = React.createClass(CrawlerListCore);
@@ -266,12 +266,12 @@ var CrawlerItemCore =
 	},
 	onDelete: function(e)
 	{
-		var that = this
+		var that = this;
 		e.preventDefault();
 		Ajax.delete(searchHost+'/crawler/common/'+this.state._id).then(function(){
 			$(React.findDOMNode(that)).remove();
-		})
-		return false
+		});
+		return false;
 	},
 	render: function()
 	{
@@ -283,7 +283,7 @@ var CrawlerItemCore =
 			<td><a className="btn btn-info btn-xs" href={'/crawler/subscribe/'+this.state._id}>Subscribe <span className="glyphicon glyphicon-heart"></span></a></td>
 			<td><button className="btn btn-danger btn-xs" onClick={this.onDelete}>delete <span className="glyphicon glyphicon-remove"></span></button></td>
 		</tr>
-		)
+		);
 	}
 }/*}}}*/
 var CrawlerItem = React.createClass(CrawlerItemCore)
@@ -292,7 +292,7 @@ var CrawlerItem = React.createClass(CrawlerItemCore)
 var SubscriptionEditorCore = _.extend(EditorCore,
 {/*{{{*/
 	getInitialState:function(){
-		this.fieldMap = ['collectionName','collectionUrl','crawlerId']
+		this.fieldMap = ['collectionName','collectionUrl','crawlerId'];
 		this.isNew = !this.props.data._source;
 		var state = $.extend({
 			crawlerId: crawlerId,
@@ -304,18 +304,18 @@ var SubscriptionEditorCore = _.extend(EditorCore,
 	onSubmit: function(e)
 	{
 		e.preventDefault();
-		var self = this
+		var self = this;
 		var formBody = _.pick(self.state,this.fieldMap);
 		console.log(formBody);
 		var url = searchHost+"/crawler/subscription/";
 		if(this.props.data && this.props.data._id){
-			url += '/' + this.props.data._id
+			url += '/' + this.props.data._id;
 		}
 		Ajax.post(url,formBody)
 		.then(this.onSubmitComplete)
 		.catch(function(e){
 			console.log('catch');
-		})
+		});
 	},
 	render: function() {
 		return (
@@ -337,7 +337,7 @@ var SubscriptionEditorCore = _.extend(EditorCore,
 		);
 	}
 });/*}}}*/
-var SubscriptionEditor = React.createClass(SubscriptionEditorCore)
+var SubscriptionEditor = React.createClass(SubscriptionEditorCore);
 var SubscriptionListCore = _.extend(CrawlerListCore,
 {/*{{{*/
 	componentDidMount: function()
@@ -374,7 +374,7 @@ var SubscriptionListCore = _.extend(CrawlerListCore,
 				</tr>
 			</tbody>
 		</table>
-		)
+		);
 	}
 });/*}}}*/
 var SubscriptionList = React.createClass(SubscriptionListCore);
@@ -405,18 +405,18 @@ var SubscriptionItemCore = _.extend(CrawlerItemCore,
 	},
 	onDelete: function(e)
 	{/*{{{*/
-		var that = this
+		var that = this;
 		e.preventDefault();
 		Ajax.delete(searchHost+'/crawler/subscription/'+that.state._id)
 		.then(function(){
 			return Ajax.delete(searchHost+'/crawler/subscriptionItem/_query',{query:{match:{
 				subscriptionId:that.state._id}
-			}})
+			}});
 		})
 		.then(function(){
 			$(React.findDOMNode(that)).remove();
 		})
-		return false
+		return false;
 	},/*}}}*/
 	onExportToDropBox: function(e) { },
 	render: function()
@@ -445,7 +445,7 @@ var SubscriptionItemCore = _.extend(CrawlerItemCore,
 			<td><button className="btn btn-success btn-xs" onClick={this.onEdit}>Edit <span className="glyphicon glyphicon-pencil"></span></button></td>
 			<td><button className="btn btn-danger btn-xs" onClick={this.onDelete}>delete <span className="glyphicon glyphicon-trash"></span></button></td>
 		</tr>
-		)
+		);
 	}/*}}}*/
 });/*}}}*/
 var SubscriptionItem = React.createClass(SubscriptionItemCore);
@@ -465,7 +465,7 @@ if($('#crawler-list').length){
 	}).catch(function(e){
 		var data = [];
 		React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
-	})
+	});
 }else if($('#subscribe-list').length && crawlerId){
 	var core;
 	Ajax.get(searchHost+'/crawler/subscription/_search?size=1000&q=crawlerid='+crawlerId)
@@ -498,10 +498,10 @@ if($('#crawler-list').length){
 		console.log(core);
 		React.render(<SubscriptionList data={core} />, document.getElementById('subscribe-list'));
 	}).catch(function(e){
-		console.log(e)
+		console.log(e);
 		//var data = [];
 		//React.render(<SubscriptionList data={data} />, document.getElementById('subscribe-list'));
-	})
+	});
 }
 
-})()
+})();
