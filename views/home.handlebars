@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/public/css/collection.css">
+<link rel="stylesheet" href="/css/collection.css">
 <div class="">
 
 <form id="main-search" action="/searchCollection" class="search-collection" autocomplete="off">
@@ -11,7 +11,7 @@
 		<ul>
 			{{#each this}}
 			<li>
-				<a href="/subscription/{{@../key}}/item/{{this.index}}"><b>{{index}}</b> | {{this.title}}</a>
+				<a href="/subscription/{{@../key}}/item/{{this.index}}.html"><b>{{index}}</b> | {{this.title}}</a>
 			</li>
 			{{/each}}
 		</ul>

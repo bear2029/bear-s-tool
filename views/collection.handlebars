@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/public/css/collection.css">
+<link rel="stylesheet" href="/css/collection.css">
 <div class="collection" id="collection-list">
 	<div class="hd">
 		<h2>{{data.collection.name}}</h2>
@@ -9,9 +9,9 @@
 		<li>
 			{{#if chapter}}<sub>{{chapter}}</sub>{{/if}}
 			{{#if collectionName}}
-			<a href="/subscription/{{collectionName}}/item/{{index}}">{{title}}</a>
+			<a href="/subscription/{{collectionName}}/item/{{index}}.html">{{title}}</a>
 			{{else}}
-			<a href="/subscription/{{../../data.collection.name}}/item/{{index}}">{{title}}</a>
+			<a href="/subscription/{{../../data.collection.name}}/item/{{index}}.html">{{title}}</a>
 			{{/if}}
 			<b>{{index}}</b>
 		</li>
@@ -25,9 +25,9 @@
 		<li>
 			\{{#if chapter}}<sub>\{{chapter}}</sub>\{{/if}}
 			\{{#if collectionName}}
-			<a href="/subscription/\{{collectionName}}/item/\{{index}}">\{{title}}</a>
+			<a href="/subscription/\{{collectionName}}/item/\{{index}}.html">\{{title}}</a>
 			\{{else}}
-			<a href="/subscription/\{{../../collection.name}}/item/\{{index}}">\{{title}}</a>
+			<a href="/subscription/\{{../../collection.name}}/item/\{{index}}.html">\{{title}}</a>
 			\{{/if}}
 			<b>\{{index}}</b>
 		</li>
@@ -37,15 +37,17 @@
 <script id="pagination-template" type="text/x-handlebars-template">
 <nav>
 	<ul class="pagination">
+		<li><a href="1.html" aria-label="Previous">First</a></li>
 		\{{#if prev}}
 			<li><a href="\{{prev}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
 		\{{/if}}
 		\{{#each links}}
-			<li class="\{{class}}"><a href="\{{href}}">\{{content}}</a></li>
+			<li class="\{{class}} number-link"><a href="\{{href}}">\{{content}}</a></li>
 		\{{/each}}
 		\{{#if next}}
 			<li><a href="\{{next}}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
 		\{{/if}}
+		<li><a href="\{{total}}.html" aria-label="Next">Last</a></li>
 	</ul>
 </nav>
 </script>

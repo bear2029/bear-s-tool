@@ -6,9 +6,9 @@ define([
 ],function($,backbone,_,Handlebars){
 	return Backbone.View.extend({
 		tagName: 'div',
-		template: Handlebars.compile($('#pagination-template').html()),
 		initialize: function()
 		{
+			this.template = Handlebars.compile($('#pagination-template').html()),
 			_.bindAll(this,'render');
 			this.listenTo(this.model,'change',this.render)
 			this.render();
@@ -19,6 +19,7 @@ define([
 				var el = $(e.target)
 				var matches = (el.attr('href')||'').match(/(\d+).html$/)
 				if(matches){
+					console.log(matches[1])
 					this.model.set({
 						index: parseInt(matches[1])
 					})

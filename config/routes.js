@@ -32,6 +32,7 @@ module.exports = function(app, controllers) {
 	app.get( '/subscription/:collectionName/:pg.html' , controllers.subscription.collection);
 	app.get( '/subscription/:collectionName/:pg' , controllers.subscription.collection);
 	app.get( '/searchCollection/:term/:pg' , controllers.subscription.search);
+	app.get( '/subscription/:collectionName/item/:itemIndex.html' , controllers.subscription.collectionItem);
 	app.get( '/subscription/:collectionName/item/:itemIndex' , controllers.subscription.collectionItem);
 	app.use( '/dataUriConverter' , controllers.dataUriConverter.home);
 

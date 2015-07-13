@@ -7,9 +7,9 @@ define([
 ],function($,Backbone,_,Handlebars,LoginFormView)
 {
 	return Backbone.View.extend({
-		template: Handlebars.compile($('#header-utils-template').html()),
 		initialize: function()
 		{
+			this.template = Handlebars.compile($('#header-utils-template').html());
 			this.loginModel = new Backbone.Model({});
 			_.bindAll(this,'onLogin','render','renderLoginForm')
 			this.render();	

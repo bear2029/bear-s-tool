@@ -12,9 +12,9 @@ define([
 		}
 	})
 	return Backbone.View.extend({
-		template: Handlebars.compile($('#collection-list-template').html()),
 		initialize: function()
 		{
+			this.template = Handlebars.compile($('#collection-list-template').html());
 			_.bindAll(this,'render','onPaginationChange','onUrlPageChange');
 
 			Backbone.history.start({pushState: true});

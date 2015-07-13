@@ -7,9 +7,9 @@ define([
 ],function($,Backbone,_,bear,Handlebars)
 {
 	return Backbone.View.extend({
-		template: Handlebars.compile($('#login-form-template').html()),
 		initialize: function()
 		{
+			this.template = Handlebars.compile($('#login-form-template').html());
 			this.attributes.errors = [];
 			this.attributes.onSignin = true;
 			this.attributes.host = 'https://'+location.hostname+':8081';

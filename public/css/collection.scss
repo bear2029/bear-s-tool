@@ -3,7 +3,52 @@
 .content{
 	line-height: 1.5;
 	p{
+		font-size: 15px;
 		margin-bottom: 1em;
+		transition: all linear 150ms;
+		&.speaking{
+			color: $color-primary-0;
+		}
+	}
+	body.vertical &{
+		&,p{
+			-webkit-writing-mode: vertical-rl;
+		}
+		p{
+			margin-left: 1.5em;
+			text-indent: 1em;
+		}
+	}
+}
+#top-utils{
+	display: flex;
+	@media(max-width: $responsive-breakpoint-xs){
+		display: block;
+		#player{
+			margin-bottom: 10px;
+		}
+	}
+	align-items: center;
+	margin-bottom: 10px;
+	.pager{
+		margin: 0;
+		@media(max-width: $responsive-breakpoint-xs){
+			text-align: left;
+			li{
+				margin-right: .5em;
+			}
+			li:last-of-type{
+				margin-right: 0;
+			}
+		}
+	}
+}
+.pager{
+	li{
+		margin-right: .5em;
+	}
+	li:last-of-type{
+		margin-right: 0;
 	}
 }
 .collection{
@@ -130,5 +175,17 @@
 				color: $color-primary-3;
 			}
 		}
+	}
+}
+#player{
+	margin-right: 15px;
+	.btn{
+		margin-right: 10px;
+		background-color: $color-secondary-2-3;
+		box-shadow: 1px 1px 3px 0 rgba(0,0,0,.3);
+		color: #fff;
+	}
+	.btn:last-of-type{
+		margin-right: 0;
 	}
 }

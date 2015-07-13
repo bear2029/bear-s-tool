@@ -93,15 +93,33 @@ module.exports = exports = {
 			vars = data._source
 		})
 		.then(_.partial(subscription.getItemsByCollectionName,req.params.collectionName,0,0).bind(subscription))
+		.then(function(data)
+		{
+			try{
+				var filters = [
+					new RegExp(vars.collectionName+"\\s*"+vars.title),
+					/\s*請記住本站域名: 黃金屋\s*\n/
+				];
+				_.each(filters,function(filter,i){
+					vars.body = vars.body.replace(filter,'');
+				})
+			}catch(e){
+			}
+			return data;
+		})
 		.then(function(data){
 			if(vars.index>0){
-				vars.prevIndex = ''+parseInt(vars.index-1);
+				vars.prevIndex = parseInt(vars.index-1)+'.html';
 			}
 			if(vars.index<data.hits.total-1){
-				vars.nextIndex = ''+parseInt(vars.index+1);
+				vars.nextIndex = ''+parseInt(vars.index+1)+'.html';
 			}
-			vars.req = req;
-			res.render('collectionItem',vars);
+			if(req.path.match(/\.html$/)){
+				vars.req = req;
+				res.render('collectionItem',vars);
+			}else{
+				res.json(vars);
+			}
 		})
 		.catch(function(e){
 			console.log(e);

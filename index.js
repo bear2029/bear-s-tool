@@ -23,8 +23,8 @@ https = require('https').Server({
 	key: fs.readFileSync('config/key.pem'),
 	cert: fs.readFileSync('config/cert.pem')
 },app);
-io = require('socket.io')(https);
-io2 = require('socket.io')(http);
+io2 = require('socket.io')(https);
+io = require('socket.io')(http);
 
 fs.readdirSync('./controllers').map(function(file){
 	if(matches = file.match(/^(.*)\.js$/)){
@@ -46,8 +46,19 @@ app.use(session({secret: 'BearToolIsAwesome'}));
 app.engine('handlebars', exphbs({
 	defaultLayout: 'main',
 	helpers: {
-		json: function(obj) {
-			return JSON.stringify(obj);
+		json: function(obj,excludeKeys) 
+		{
+			var _obj = _.clone(obj);
+			if(excludeKeys && _.isString(excludeKeys)){
+				excludeKeys = excludeKeys.split(',');
+				for(var i=0; i<excludeKeys.length; i++){
+					if(_obj[excludeKeys[i]]){
+						delete _obj[excludeKeys[i]];
+					}
+				}	
+				delete _obj
+			}
+			return JSON.stringify(_obj);
 		},
 		isLogedIn: function(req)
 		{
@@ -67,7 +78,7 @@ app.engine('handlebars', exphbs({
 	]
 }));
 app.set('view engine', 'handlebars');
-app.use('/public',express.static(global.appRoot+'/public'));
+app.use('/',express.static(global.appRoot+'/public'));
 require('./config/routes.js')(app,controllers)
 http.listen(argv.get('port',8080));
 https.listen(argv.get('sslport',8081));

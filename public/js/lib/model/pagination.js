@@ -7,14 +7,15 @@ define([
 		defaults:{
 			total: 100,
 			index: 1,
-			size: 10
+			size: 5
 		},
 		objectForRender: function()
 		{
+			var vars = {}, links = []
 			var index = this.get('index');
 			var total = this.get('total');
 			var size = this.get('size');
-			var vars = {}, links = []
+			vars.total = total;
 			if(index>1){
 				vars.prev = parseInt(index-1)+'.html'
 			}
