@@ -4,6 +4,8 @@ require.config({
 	},
 	paths: {
 		//modernizr: 'modernizr.custom.56433.js',
+		jsx: "../vendor/jsx",
+		text: "../vendor/text",
 		react: "../vendor/react-with-addons",
 		JSXTransformer: "../vendor/JSXTransformer",
 		bear: 'lib/bear',
@@ -17,6 +19,7 @@ require.config({
 var isCollectionItemPage = location.pathname.match(/^\/subscription\/.*\/item\/\d+.html$/);
 var isCollectionPage = !isCollectionItemPage && location.pathname.match(/^\/subscription\//);
 var isSearchPage = location.pathname.match(/^\/searchCollection\//);
+var isCrawlerPage = location.pathname.match(/^\/crawler/);
 var init,paths = ['jquery','lib/view/hdUtil','lib/view/searchBar'];
 if(isCollectionItemPage){
 	paths.push('jsx!collectionItem');
@@ -27,6 +30,8 @@ if(isCollectionItemPage){
 }else if(isSearchPage){
 	paths.push('search');
 	init = _.partial(require,'seach');
+}else if(isCrawlerPage){
+	paths.push('jsx!crawler');
 }
 
 requirejs(paths, function($,HdUtilView,SearchBarView) {
