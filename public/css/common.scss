@@ -150,6 +150,16 @@ nav{
 		margin-bottom: 20px;
 	}
 	&.login{
+		body.signup &,
+		body.signin &{
+			top: 50px;
+			left: 0;
+			width: 100%;
+			margin-left: 0;
+			margin-top: 0;
+			box-shadow: none;
+			z-index: 0;
+		}
 		opacity: 0;
 		&.appear{
 			opacity: 1;

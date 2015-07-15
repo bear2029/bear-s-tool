@@ -19,7 +19,8 @@ define([
 		d.getSeconds().padLeft()].join(':');
 		return dformat;
 	};
-	searchHost = '//'+location.hostname+':9200';
+	//searchHost = '//'+location.hostname+':9200';
+	searchHost = '/es';
 	(function(){
 	var socket = io();
 	Ajax = {/*{{{*/

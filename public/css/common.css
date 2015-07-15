@@ -162,6 +162,15 @@ body.navi-list-expend nav .navi-list ul {
   top: 50%;
   margin-top: -193px;
 }
+body.signup .popup.login, body.signin .popup.login {
+  top: 50px;
+  left: 0;
+  width: 100%;
+  margin-left: 0;
+  margin-top: 0;
+  box-shadow: none;
+  z-index: 0;
+}
 .popup.login.appear {
   opacity: 1;
 }

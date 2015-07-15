@@ -1,4 +1,6 @@
 var compression = require('compression');
+var member = require('../lib/member');
+var esHelper = require('../lib/esHelper');
 
 function shouldCompress(req, res) {
 	if (req.headers['x-no-compression']) {
@@ -36,11 +38,25 @@ module.exports = function(app, controllers) {
 	app.get( '/subscription/:collectionName/item/:itemIndex' , controllers.subscription.collectionItem);
 	app.use( '/dataUriConverter' , controllers.dataUriConverter.home);
 
+	// elastic search proxy
+	app.use( '/es/*' , forceSSL, member.requireLogin);
+	app.use( '/es/*' , forceSSL, esHelper.proxy);
+
+	app.use( '/crawler*' , forceSSL, member.requireLogin);
 	app.get( '/crawler' , controllers.crawler.home);
 	app.put( '/crawler/syncDropBox' , controllers.crawler.syncDropBox);
 	app.get( '/crawler/subscribe/:id' , controllers.crawler.subscribe);
 	app.post( '/crawler/scriptTester' , controllers.crawler.scriptTester);
 	app.get( '/crawler/subscriptionItems/:id/:name.zip' , controllers.crawler.archive);
+
+	// the actuall renderer ^_^
+	app.use(function(req,res){
+		// todo -- bad, should be
+		req.vars = req.vars || {};
+		req.vars.req = req;
+		req.vars.bodyClass = req.templateName;
+		res.render(req.templateName,req.vars);
+	})
 
 	app.use(controllers.post.default.bind(controllers.post));
 

@@ -7,11 +7,14 @@ module.exports = {
 		delete(req.session.memberId);
 		res.redirect(req.query.forward);
 	},
-	signin: function(req,res)
+	signin: function(req,res,next)
 	{
 		if(!req.body.email){
-			console.log('skip');
-			res.send('redirect');
+			//todo
+			req.templateName = 'signin';
+			req.vars = {};
+			req.vars.headerTitle = 'Sign in';
+			next();
 			return
 		}
 
@@ -28,8 +31,11 @@ module.exports = {
 		.then(_.partial(_.omit,_,'pwd'))
 		.then(function(data){
 			req.session.email = data.email;
-			console.log('set',req.session.email)
 			req.session.memberId = data.id;
+			if(req.query.referral){
+				console.log('redirect to',req.query.referral);
+				return res.redirect(req.query.referral);
+			}
 			res.json(data);
 		})
 		.catch(function(error){
@@ -40,11 +46,13 @@ module.exports = {
 			res.status(500).send(_.isString(error) ? error : 'something wrong');
 		})
 	},
-	signup: function(req,res)
+	signup: function(req,res,next)
 	{
 		if(!req.body.email){
-			res.send('redirect');
-			return
+			req.templateName = 'signin';
+			req.vars = {};
+			req.vars.headerTitle = 'Sign up';
+			return next();
 		}
 		var error = memberController.validate(req.body)
 		if(error){

@@ -46,6 +46,10 @@ define([
 		},
 		onSubmit: function(e)
 		{
+			if(isLoginPage()){
+				$(e.target).attr()
+				return 1;
+			}
 			e.preventDefault(e);
 			var params = _.reduce($(e.target).serializeArray(),function(list,item){
 				list[item.name]=item.value;
@@ -60,7 +64,7 @@ define([
 				delete(params['re-pwd']);
 			}
 			$.ajax({
-				url: $(e.target).attr('action'),
+				url: $(e.target).attr('https://'+location.hostname+'/member/signin'),
 				data: JSON.stringify(params),
 				type: 'POST',
 				contentType: "application/json; charset=utf-8",

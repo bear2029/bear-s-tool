@@ -1,4 +1,5 @@
 Promise = require('promise');
+bear = require('./lib/bear.js');
 esHelper = require('./lib/esHelper.js');
 path = require('path');
 express = require('express');
@@ -38,6 +39,9 @@ fs.readdirSync('./controllers').map(function(file){
 })
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(logger('dev'));
 app.use(error_handler());
 app.use(cookieParser());

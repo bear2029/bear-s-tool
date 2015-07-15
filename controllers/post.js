@@ -8,19 +8,6 @@ controller.prototype = {
 			req: req
 		});
 	},
-	promiseFetch: function(url)
-	{
-		var request = require('request');
-		return new Promise(function(resolve,reject){
-			request(url, function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					resolve(body)
-				}else{
-					reject(error);
-				}
-			})
-		})
-	},
 	dictionaryWrapper: function(req,res)
 	{/*{{{*/
 		var redis = require("redis");
@@ -35,7 +22,7 @@ controller.prototype = {
 			}
 			var words = req.params.words.split('');
 			var requests = _.reduce(words,function(list,word){
-				list.push(this.promiseFetch('https://www.moedict.tw/a/'+word+'.json'));
+				list.push(bear.promiseFetch('https://www.moedict.tw/a/'+word+'.json'));
 				return list
 			}.bind(this),[])
 			Promise.all(requests)
