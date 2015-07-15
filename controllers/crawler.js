@@ -269,7 +269,6 @@ var self =
 	},
 	crawlComplete: function(allItemUrls,id,data)
 	{/*{{{*/
-		console.log(arguments)
 		io.emit('crawler',{
 			'msg':'all done',
 			lastUpdate: formatDate(new Date()),

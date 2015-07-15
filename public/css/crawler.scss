@@ -1,3 +1,4 @@
+@import "_global.scss";
 $responsive_width_xs: 500px;
 .crawler-editor {
 	display: flex;
@@ -71,6 +72,7 @@ $responsive_width_xs: 500px;
 	max-height: 95%;
 	overflow: auto;
 	visibility: hidden;
+	margin-left: 0;
 }
 .popup.appear{
 	opacity: 1;
@@ -97,6 +99,37 @@ table td .btn{
 				display: none;
 			}
 			background: red;
+		}
+	}
+}
+
+.add-new{
+	margin-top: 20px;
+	width: 100%;
+}
+#list{
+	display: flex;
+	flex-wrap: wrap;
+	.item{
+		flex-grow: 1;
+		padding: 10px;
+		&>div{
+			margin-bottom: 10px;
+			width: 300px;
+			&:last-of-type{
+				margin-bottom: 0;
+			}
+			h3{
+				font-size: 2em;
+				a{
+					color: $color-primary-0;
+				}
+			}
+		}
+		.utils{
+			&>*{
+				margin-right: 5px;
+			}
 		}
 	}
 }

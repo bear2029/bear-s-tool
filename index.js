@@ -24,8 +24,8 @@ https = require('https').Server({
 	key: fs.readFileSync('config/key.pem'),
 	cert: fs.readFileSync('config/cert.pem')
 },app);
-io2 = require('socket.io')(https);
-io = require('socket.io')(http);
+io2 = require('socket.io')(http);
+io = require('socket.io')(https);
 
 fs.readdirSync('./controllers').map(function(file){
 	if(matches = file.match(/^(.*)\.js$/)){
