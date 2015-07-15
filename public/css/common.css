@@ -162,7 +162,7 @@ body.navi-list-expend nav .navi-list ul {
   top: 50%;
   margin-top: -193px;
 }
-body.signup .popup.login, body.signin .popup.login {
+body.signin .popup.login {
   top: 50px;
   left: 0;
   width: 100%;
@@ -171,8 +171,37 @@ body.signup .popup.login, body.signin .popup.login {
   box-shadow: none;
   z-index: 0;
 }
+@media (min-width: 800px) {
+  body.signin .popup.login {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+  }
+  body.signin .popup.login .nav {
+    display: none;
+  }
+  body.signin .popup.login h3 {
+    font-size: 2em;
+    display: block;
+  }
+  body.signin .popup.login form {
+    display: block !important;
+    width: 47%;
+    margin-left: 3%;
+    padding-left: 3%;
+    border-left: 1px solid #E9E9E9;
+  }
+  body.signin .popup.login form:first-of-type {
+    margin-left: 0%;
+    padding-left: 0%;
+    border-left: 0px;
+  }
+}
 .popup.login.appear {
   opacity: 1;
+}
+.popup.login h3 {
+  display: none;
 }
 .popup.login .signin-section,
 .popup.login .signup-section {

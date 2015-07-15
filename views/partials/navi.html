@@ -18,7 +18,8 @@
 			<li role="presentation" \{{#if onSignin}}class="active"\{{/if}}><a href="#">Log in</a></li>
 			<li role="presentation" \{{#unless onSignin}}class="active"\{{/unless}}><a href="#">Sign up</a></li>
 		</ul>
-		<form method="post" class="signin-section">
+		<form method="post" class="signin-section" action="\{{host}}/member/signin">
+			<h3>Sign In</h3>
 			<div class="form-group">
 				<input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email" required>
 			</div>
@@ -38,6 +39,7 @@
 			<button type="reset" class="btn secondary">Close</button>
 		</form>
 		<form class="signup-section" action="\{{host}}/member/signup">
+			<h3>Sign Up</h3>
 			<div class="form-group">
 				<input name="firstname" class="form-control" placeholder="first name" required>
 			</div>

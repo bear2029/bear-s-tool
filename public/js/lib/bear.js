@@ -9,6 +9,11 @@ define([
 					resolve(el,e);
 				});
 			});
+		},
+		isLoginPage: function()
+		{
+			// /member/signin
+			return location.pathname.match(/^\/member\/signin/) != null;
 		}
 	};
 	return core;

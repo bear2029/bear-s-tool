@@ -6,6 +6,13 @@ define([
 	'handlebars'
 ],function($,Backbone,_,bear,Handlebars)
 {
+	function getReferralFromQuery()
+	{
+		var matches = location.search.match(/[?&]referral=([^&]+)/);
+		if(matches){
+			return decodeURIComponent(matches[1]);
+		}
+	}
 	return Backbone.View.extend({
 		initialize: function()
 		{
@@ -46,10 +53,6 @@ define([
 		},
 		onSubmit: function(e)
 		{
-			if(isLoginPage()){
-				$(e.target).attr()
-				return 1;
-			}
 			e.preventDefault(e);
 			var params = _.reduce($(e.target).serializeArray(),function(list,item){
 				list[item.name]=item.value;
@@ -64,16 +67,20 @@ define([
 				delete(params['re-pwd']);
 			}
 			$.ajax({
-				url: $(e.target).attr('https://'+location.hostname+'/member/signin'),
+				url: $(e.target).attr('action'),
 				data: JSON.stringify(params),
 				type: 'POST',
+				accepts: "application/json; charset=utf-8",
 				contentType: "application/json; charset=utf-8",
 				dataType   : "json",
 				context: this,
 				success: function(result){
-					//todo
-					this.model.trigger('login')
-					this.remove();
+					if(bear.isLoginPage()){
+						location.href = getReferralFromQuery();
+					}else{
+						this.model.trigger('login')
+						this.remove();
+					}
 				},
 				error: function(req,code,message){
 					this.attributes.errors = [message]

@@ -1,16 +1,12 @@
 define([
+	'bear',
 	'jquery',
 	'backbone',
 	'underscore',
 	'handlebars',
 	'lib/view/loginForm'
-],function($,Backbone,_,Handlebars,LoginFormView)
+],function(bear,$,Backbone,_,Handlebars,LoginFormView)
 {
-	function isLoginPage()
-	{
-		// /member/signin
-		return location.pathname.match(/^\/member\/signin/) != null;
-	}
 	function customizeForLoginPage()
 	{
 		// with context of the View
@@ -24,7 +20,7 @@ define([
 			_.bindAll(this,'onLogin','render','renderLoginForm')
 			this.render();	
 			$('.login',this.$el).on('click',this.renderLoginForm);
-			if(isLoginPage()){
+			if(bear.isLoginPage()){
 				customizeForLoginPage.apply(this);
 			}
 		},

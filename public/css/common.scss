@@ -150,7 +150,6 @@ nav{
 		margin-bottom: 20px;
 	}
 	&.login{
-		body.signup &,
 		body.signin &{
 			top: 50px;
 			left: 0;
@@ -159,10 +158,35 @@ nav{
 			margin-top: 0;
 			box-shadow: none;
 			z-index: 0;
+			@media(min-width: $responsive-breakpoint-sm){
+				display: flex;
+				.nav{
+					display: none;
+				}
+				h3{
+					font-size: 2em;
+					display: block;
+				}
+				form{
+					display: block !important;
+					width: 47%;
+					margin-left: 3%;
+					padding-left: 3%;
+					border-left: 1px solid $color-primary-1;
+				}
+				form:first-of-type{
+					margin-left: 0%;
+					padding-left: 0%;
+					border-left: 0px;
+				}
+			}
 		}
 		opacity: 0;
 		&.appear{
 			opacity: 1;
+		}
+		h3{
+			display: none;
 		}
 		transition: all ease-out 200ms;
 		height: 386px;
