@@ -16,7 +16,7 @@ define([
 		events:{
 			'click a': function(e){
 				e.preventDefault();
-				var el = $(e.target)
+				var el = $(e.currentTarget)
 				var matches = (el.attr('href')||'').match(/(\d+).html$/)
 				if(matches){
 					console.log(matches[1])

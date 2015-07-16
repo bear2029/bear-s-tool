@@ -27,6 +27,7 @@ define([
 					return <p key={i} className={pClass}>{p}</p>;
 				}.bind(this));
 			}
+			var collectionHref = "/subscription/"+this.state.collectionName+"/1.html";
 			return (
 			<div>
 				<h1>{this.state.title}</h1>
@@ -35,7 +36,7 @@ define([
 					<Paginator store={this.props.store} prevIndex={this.state.prevIndex} nextIndex={this.state.nextIndex} />
 				</div>
 				<ol className="breadcrumb">
-					<li><a href="/subscription/{this.state.collectionName}/1.html">{this.state.collectionName}</a></li>
+					<li><a href={collectionHref}>{this.state.collectionName}</a></li>
 					<li>{this.state.title}</li>
 				</ol>
 				<div className="content">{ps}</div>
