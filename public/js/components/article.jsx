@@ -6,6 +6,14 @@ define([
 	'jsx!components/compactPaginator'
 ],function(_,$,React,Player,Paginator)
 {
+	function resumeByHash()
+	{
+		if(location.hash === ''){
+			return;
+		}
+		var top = $(location.hash).offset().top;
+		$(document).scrollTop(top);
+	}
 	return React.createClass({
 
 		getInitialState: function()
@@ -19,12 +27,25 @@ define([
 			}.bind(this));
 			return this.props.store.state;
 		},
+		componentDidMount: function()
+		{
+			resumeByHash.apply(this);
+		},
+		componentDidUpdate: function()
+		{
+			resumeByHash.apply(this);
+		},
 		render:function()
 		{
 			if(_.isString(this.state.body)){
 				var ps = _.map(this.state.body.split("\n"),function(p,i){
+					if(p.match(/^\s*$/)){
+						return;
+					}
+					var id = 'paragraph-'+i;
+					var hash = '#'+id;
 					var pClass = this.state.speechHilightIndex == i ? 'speaking' : '';
-					return <p key={i} className={pClass}>{p}</p>;
+					return <p key={i} id={id} className={pClass}>{p}<a href={hash}>#</a></p>;
 				}.bind(this));
 			}
 			var collectionHref = "/subscription/"+this.state.collectionName+"/1.html";

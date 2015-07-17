@@ -9,6 +9,12 @@
 		&.speaking{
 			color: $color-primary-0;
 		}
+		a{
+			display: none;
+		}
+		&:hover a{
+			display: inline;
+		}
 	}
 	body.vertical &{
 		&,p{
