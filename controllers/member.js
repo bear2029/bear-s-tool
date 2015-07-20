@@ -52,11 +52,11 @@ module.exports = {
 			res.status(500).send(_.isString(error) ? error : 'something wrong');
 		})
 	},
-	signup: function(req,res,next)
+	signup: function(req,res)
 	{
 		var error = memberController.validate(req.body)
 		if(error){
-			res.status(500).send(_.isString(error) ? error : 'something wrong');
+			res.status(500).send(_.isString(error) ? error : 'something wrong while validation');
 			return;
 		}
 		memberController.get(req.body.email)

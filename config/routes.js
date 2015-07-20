@@ -49,9 +49,12 @@ module.exports = function(app, controllers) {
 	app.post( '/crawler/scriptTester' , controllers.crawler.scriptTester);
 	app.get( '/crawler/subscriptionItems/:id/:name.zip' , controllers.crawler.archive);
 
+	// tracking
+	app.get('/tracking', controllers.tracking.get);
+
 	// the actuall renderer ^_^
 	app.use(function(req,res){
-		// todo -- bad, should be
+		// todo -- bad, should prevent req
 		req.vars = req.vars || {};
 		req.vars.req = req;
 		req.vars.bodyClass = req.templateName;

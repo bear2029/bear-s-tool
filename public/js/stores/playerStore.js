@@ -23,7 +23,6 @@ define([
 			articleStore = _articleStore;
 			articleStore.observe('pageChange',function()
 			{
-				console.log(11);
 				//var wasPlaying = speechSynthesis.speaking && !paused;
 				this.stop(1);
 				//if(wasPlaying){

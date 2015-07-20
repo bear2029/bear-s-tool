@@ -1,5 +1,14 @@
-var subscription = require('../lib/subscription')
+var subscription = require('../lib/subscription');
+var tracking = require('../lib/trackingStorage');
 var size = 20;
+function processLastVisitedArticle(data)
+{
+	try{
+		return data.hits.hits[0].fields.url[0];
+	}catch(e){
+		return null;
+	}
+}
 module.exports = exports = {
 	search: function(req,res)
 	{
@@ -64,7 +73,15 @@ module.exports = exports = {
 					title: titles.title,
 					chapter: titles.chapter
 				}
-			})
+			});
+			var memberId = req.session.memberId;
+			if(memberId){
+				return tracking.findLastArticle(memberId,vars.collection.name);
+			}
+		})
+		.then(processLastVisitedArticle)
+		.then(function(lastVisitedArticleiUrl){
+			vars.collection.lastVisitedArticleUrl = lastVisitedArticleiUrl;
 			vars.items.sort(function(a,b){
 				return b.index > a.index ? -1 : 1;
 			})
@@ -91,6 +108,9 @@ module.exports = exports = {
 		.then(_.first)
 		.then(function(data){
 			vars = data._source
+			if(req.session && req.session.memberId){
+				vars.memberId = req.session.memberId;
+			}
 		})
 		.then(_.partial(subscription.getItemsByCollectionName,req.params.collectionName,0,0).bind(subscription))
 		.then(function(data)
@@ -108,6 +128,8 @@ module.exports = exports = {
 			return data;
 		})
 		.then(function(data){
+			vars.prevIndex = null;
+			vars.nextIndex = null;
 			if(vars.index>0){
 				vars.prevIndex = parseInt(vars.index-1)+'.html';
 			}

@@ -14,7 +14,6 @@ error_handler = require('errorhandler');
 exphbs  = require('express-handlebars');
 forceSSL = require('express-force-ssl');
 global.appRoot = path.resolve(__dirname);
-var controllers = {};
 var matches;
 var cookieParser = require('cookie-parser');
 var session = require('cookie-session')
@@ -27,14 +26,11 @@ https = require('https').Server({
 io2 = require('socket.io')(http);
 io = require('socket.io')(https);
 
+var controllers = {};
 fs.readdirSync('./controllers').map(function(file){
 	if(matches = file.match(/^(.*)\.js$/)){
 		var exp = require('./controllers/'+file);
-		if(_.isFunction(exp)){
-			controllers[matches[1]] = new exp()
-		}else{
-			controllers[matches[1]] = exp
-		}
+		controllers[matches[1]] = exp
 	}
 })
 

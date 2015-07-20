@@ -1,17 +1,20 @@
 define([
 	'jquery',
 	'underscore',
+	'lib/tracker',
 	'lib/store'
-],function($,_,store)
+],function($,_,tracker,store)
 {
 	var data;
-	function convertUrl(href,keepExtension)
+	function formalizeUrl(href,keepExtension)
 	{
-		var pageNum;
-		if(!keepExtension){
-			pageNum = href.replace(/(.*\/)*(\d+)\.html/,'$2');
-		}else{
-			pageNum = href;
+		if(href.match(/^#/)){
+			return location.pathname + href;
+		}
+
+		var pageNum = href.replace(/(.*\/)*(\d+)(\.html)*.*$/,'$2');
+		if(keepExtension){
+			pageNum += '.html'
 		}
 		return location.pathname.replace(/\d+\.html$/,pageNum);
 	}
@@ -23,10 +26,10 @@ define([
 			this.appRouter = appRouter;
 			data = initData;
 			this.appRouter.on('route:article',function(name,pg){this.fetchNewPage(pg);}.bind(this));
+			tracker.track();
 		},
 		navigate: function(href)
 		{
-			this.appRouter.navigate(convertUrl(href,true));
 			this.fetchNewPage(href);
 		},
 		hilight: function(index)
@@ -39,22 +42,31 @@ define([
 			data.speechHilightIndex = -1;
 			this.trigger('change');
 		},
-
 		gotoNextPage: function()
 		{
-			//todo, expected promise
+			if(pageData.nextIndex){
+				return fetchNewPage(pageData.nextIndex);
+			}else{
+				return Promise.reject('next page is not avaialbe');
+			}
 		},
 		fetchNewPage: function(href)
 		{
 			// expecting 1.html
-			$.ajax({
+			return $.ajax({
 				method: 'get',
-				url: convertUrl(href)
+				url: formalizeUrl(href)
 			})
 			.then(function(_data){
 				data = _.clone(_data);
 				this.trigger('pageChange');
+				this.appRouter.navigate(formalizeUrl(href,true));
+				tracker.track();
 			}.bind(this));
+		},
+		track: function(url)
+		{
+			tracker.track(location.protocol+'//'+location.hostname+':'+location.port+formalizeUrl(url,true));
 		},
 		get state(){
 			return data;

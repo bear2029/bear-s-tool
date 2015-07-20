@@ -45,7 +45,7 @@ define([
 					var id = 'paragraph-'+i;
 					var hash = '#'+id;
 					var pClass = this.state.speechHilightIndex == i ? 'speaking' : '';
-					return <p key={i} id={id} className={pClass}>{p}<a href={hash}>#</a></p>;
+					return <p key={i} id={id} className={pClass}>{p}<a onClick={this.onClickHash} href={hash}>#</a></p>;
 				}.bind(this));
 			}
 			var collectionHref = "/subscription/"+this.state.collectionName+"/1.html";
@@ -64,6 +64,13 @@ define([
 				<Paginator store={this.props.store} prevIndex={this.state.prevIndex} nextIndex={this.state.nextIndex} />
 			</div>
 			);
+		},
+		onClickHash: function(e)
+		{
+			var el = $(e.target);
+			if(el.attr('href')){
+				this.props.store.track(el.attr('href'));
+			}
 		}
 	})
 })

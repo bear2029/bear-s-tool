@@ -1,8 +1,7 @@
 var redis = require('redis'),
 client = redis.createClient();
-function controller(){}
 
-controller.prototype = {
+var controller = {
 	default: function (req, res, next) {
 		res.render(req.path.substr(1,req.path.length-1),{
 			req: req

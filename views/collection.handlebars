@@ -2,7 +2,12 @@
 <div class="collection" id="collection-list">
 	<div class="hd">
 		<h2>{{data.collection.name}}</h2>
-		<sub><a href="{{data.collection.remoteUrl}}"><span class="glyphicon glyphicon-link"></span> remote</a></sub>
+		<sub>
+			{{#if data.collection.lastVisitedArticleUrl}}
+			<a href="{{data.collection.lastVisitedArticleUrl}}">last visit</a>
+			{{/if}}
+			<a href="{{data.collection.remoteUrl}}"><span class="glyphicon glyphicon-link"></span> remote</a>
+		</sub>
 	</div>
 	<div id="collection-list"><ul class="bd list-unstyled">
 	{{#each data.items}}
