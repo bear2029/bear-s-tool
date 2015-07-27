@@ -1,0 +1,13 @@
+body {
+  background: url("//blog.spoongraphics.co.uk/wp-content/uploads/2012/textures/19.jpg") repeat;
+  font-family: 'PT Sans', sans-serif; }
+
+.hd {
+  padding: 30px;
+  display: flex;
+  justify-content: center; }
+  .hd h1 {
+    color: rgba(255, 255, 255, 0.3);
+    font-family: 'Raleway', sans-serif;
+    font-size: 70px;
+    text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.3); }
