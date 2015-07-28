@@ -9,6 +9,7 @@ Bear's tool include site scraber and name generator right now
 - sudo apt-get install openjdk-7-jre-headless -y
 - wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.5.2.deb
 - sudo dpkg -i elasticsearch-1.5.2.deb
+- npm install -g react-tools
  
 ElasticSearch setting
 for cross domain

@@ -77,8 +77,8 @@ app.engine('handlebars', exphbs({
 		'views/partials/'
 	]
 }));
+
 app.set('view engine', 'handlebars');
-app.use('/',express.static(global.appRoot+'/public'));
 require('./config/routes.js')(app,controllers)
 http.listen(argv.get('port',8080));
 https.listen(argv.get('sslport',8081));

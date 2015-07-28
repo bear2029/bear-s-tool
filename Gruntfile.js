@@ -23,6 +23,7 @@ module.exports = function(grunt)
 					'public/css/common.css': 'public/css/common.scss',
 					'public/css/name.css': 'public/css/name.scss',
 					'public/css/crawler.css': 'public/css/crawler.scss',
+					'public/css/prefixer.css': 'public/css/prefixer.scss',
 				}
 			}
 		},
@@ -59,6 +60,32 @@ module.exports = function(grunt)
 				}
 			}
 		},
+		react: {
+			/*
+			single_file_output: {
+				files: { 'path/to/output/dir/output.js': 'path/to/jsx/templates/dir/input.jsx' }
+			},
+			combined_file_output: {
+				files: {
+					'path/to/output/dir/combined.js': [
+						'path/to/jsx/templates/dir/input1.jsx',
+						'path/to/jsx/templates/dir/input2.jsx'
+					]
+				}
+			},
+			*/
+			dynamic_mappings: {
+				files: [
+					{
+						expand: true,
+						cwd: 'public/js',
+						src: ['**/*.jsx','components/*.jsx'],
+						dest: 'public/js',
+						ext: '.js'
+					}
+				]
+			}
+		},
 		copy:{
 			main:{
 				files:[
@@ -80,6 +107,7 @@ module.exports = function(grunt)
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-copy');
+	grunt.loadNpmTasks('grunt-react');
 
-	grunt.registerTask('default', ['uglify']);
+	grunt.registerTask('default', ['uglify','jshint','sass','autoprefixer','react']);
 };

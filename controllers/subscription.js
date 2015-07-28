@@ -100,14 +100,16 @@ module.exports = exports = {
 			res.status(500).send('bad');
 		})
 	},
-	collectionItem: function(req,res)
+	collectionItem: function(req,res,next)
 	{
 		var vars = {};
-		subscription.getSubscriptionItem(req.params.collectionName,req.params.itemIndex)
+		subscription.getSubscriptionItem(req.params.collectionName,parseInt(req.params.itemIndex))
 		.then(esHelper.getHits)
 		.then(_.first)
 		.then(function(data){
 			vars = data._source
+			vars._body = _.clone(vars.body);
+			delete vars.body;
 			if(req.session && req.session.memberId){
 				vars.memberId = req.session.memberId;
 			}
@@ -118,10 +120,12 @@ module.exports = exports = {
 			try{
 				var filters = [
 					new RegExp(vars.collectionName+"\\s*"+vars.title),
+					/レ♠思♥路♣客レ/,
+					/\(去讀讀www.qududu.cm\)/,
 					/\s*請記住本站域名: 黃金屋\s*\n/
 				];
 				_.each(filters,function(filter,i){
-					vars.body = vars.body.replace(filter,'');
+					vars._body = vars._body.replace(filter,'');
 				})
 			}catch(e){
 			}
@@ -136,9 +140,10 @@ module.exports = exports = {
 			if(vars.index<data.hits.total-1){
 				vars.nextIndex = ''+parseInt(vars.index+1)+'.html';
 			}
-			if(req.path.match(/\.html$/)){
-				vars.req = req;
-				res.render('collectionItem',vars);
+			if(req.accepts('html')){
+				req.vars = vars;
+				req.templateName = 'collectionItem';
+				next();
 			}else{
 				res.json(vars);
 			}

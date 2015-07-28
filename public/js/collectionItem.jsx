@@ -6,7 +6,7 @@ define([
 	'bear',
 	'stores/articleStore',
 	'stores/playerStore',
-	'jsx!components/article'
+	pageData.env === 'prod' ? 'components/article' : 'jsx!components/article'
 ],function(React,_,backbone,$,bear,articleStore,playerStore,Article)
 {
 	var AppRouter = Backbone.Router.extend({

@@ -1,4 +1,16 @@
 /* Palette URL: http://paletton.com/#uid=70r050knPon00te3wf0Xjur++e8 */
+.appearable {
+  opacity: 0;
+  -webkit-filter: blur(5px);
+          filter: blur(5px);
+  transition: all 300ms ease-out;
+}
+.appearable.appear {
+  opacity: 1;
+  -webkit-filter: blur(0);
+          filter: blur(0);
+}
+
 textarea:hover,
 input:not([type=checkbox]):hover,
 textarea:active,
@@ -23,6 +35,7 @@ body a:hover {
 }
 
 body {
+  background: url(/assets/stone.jpg);
   color: #78706A;
   font-family: 'Arvo', sans-serif;
   font-size: 14px;
@@ -54,7 +67,7 @@ h1 {
 }
 
 #navi {
-  background: #eee;
+  background: rgba(0, 0, 0, 0.2);
   border: 0;
   box-shadow: inset 0px -9px 26px -7px rgba(0, 0, 0, 0.3);
   border-radius: 0;
@@ -85,10 +98,8 @@ nav .logo {
 nav .logo a {
   font-family: 'Lobster', cursive;
   font-size: 2em;
-  color: #008794;
-}
-nav .logo a:hover {
-  color: #F26700;
+  color: rgba(255, 255, 255, 0.2);
+  text-shadow: -1px -1px rgba(0, 0, 0, 0.5);
 }
 nav a {
   font-family: 'Arvo', sans-serif;

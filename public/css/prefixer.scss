@@ -1,0 +1,72 @@
+@import "_demoGlobal.scss";
+
+textarea:hover, 
+input:not([type=checkbox]):hover, 
+textarea:active, 
+input:not([type=checkbox]):active, 
+textarea:focus, 
+input:not([type=checkbox]):focus, 
+button:focus,
+button:active,
+button:hover
+{
+	outline:0px !important;
+	-webkit-appearance:none;
+}
+body {
+	background: url(/assets/stone.jpg);
+	h1{
+		padding: 50px;
+		font-size: 48px;
+		font-weight: bold;
+		color: rgba(255,255,255,0.3);
+		text-shadow: -1px -1px rgba(0,0,0,.3);
+		text-align: center;
+	}
+}
+#prefixer-app{
+	display: flex;
+	padding: 15px;
+	textarea,pre{
+		background: rgba(255,255,255,.6);
+		border: 0;
+		width: 100%;
+		height: calc(100% - 55px);
+		padding: 15px;
+	}
+	&>*{
+		height: 500px;
+		flex-grow: 1;
+		width: 48%;
+		margin-right: 2%;
+		background: transparent;
+		border: 5px solid rgba(0,0,0,0.7);
+		padding: 0px;
+		border-radius: 8px;
+		&:before{
+			font-weight: bold;
+			color: rgba(255,255,255,1);
+			font-size: 20px;
+			display: block;
+			padding: 15px;
+			line-height: 1;
+			background-color: $rgba-primary-0;
+		}
+	}
+	#result{
+		margin-right: 0;
+		&:before{
+			content: 'RESULT';
+			background-color: $rgba-primary-2;
+		}
+		color: red;
+		&.valid{
+			color: inherit;
+		}
+	}
+	#src{
+		&:before{
+			content: 'SOURCE';
+		}
+	}
+}

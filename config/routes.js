@@ -11,6 +11,7 @@ function shouldCompress(req, res) {
 module.exports = function(app, controllers) {
 	//app.use(compression({filter: shouldCompress}))
 	app.use(compression())
+	app.use('/',express.static(global.appRoot+'/public'));
 	app.use(function(req,res,next){
 		res.header('Access-Control-Allow-Origin', 'http://bear.ddns.net:8080');
 		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -34,7 +35,6 @@ module.exports = function(app, controllers) {
 	app.get( '/subscription/:collectionName/:pg.html' , controllers.subscription.collection);
 	app.get( '/subscription/:collectionName/:pg' , controllers.subscription.collection);
 	app.get( '/searchCollection/:term/:pg' , controllers.subscription.search);
-	app.get( '/subscription/:collectionName/item/:itemIndex.html' , controllers.subscription.collectionItem);
 	app.get( '/subscription/:collectionName/item/:itemIndex' , controllers.subscription.collectionItem);
 	app.use( '/dataUriConverter' , controllers.dataUriConverter.home);
 
@@ -53,18 +53,22 @@ module.exports = function(app, controllers) {
 	app.get('/tracking', controllers.tracking.get);
 
 	// the actuall renderer ^_^
-	app.use(function(req,res){
-		// todo -- bad, should prevent req
-		req.vars = req.vars || {};
-		req.vars.req = req;
-		req.vars.bodyClass = req.templateName;
-		res.render(req.templateName,req.vars);
+	app.use(function(req,res,next){
+		if(req.vars){
+			// todo -- bad, should prevent req
+			var vars = req.vars;
+			vars.req = req;
+			vars.env = argv.get('env','dev')
+			vars.bodyClass = req.templateName;
+			res.render(req.templateName,vars);
+		}else{
+			next();
+		}
 	})
 
 	app.use(controllers.post.default.bind(controllers.post));
 
 	io.on('connection', function(socket){
-		console.log('a user connected');
 		socket.on('chat message', function(obj){
 			console.log(obj.for+' has received: ' + obj.msg);
 			io.emit('chat message',obj.msg)

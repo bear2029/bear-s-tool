@@ -21,8 +21,13 @@ var isCollectionPage = !isCollectionItemPage && location.pathname.match(/^\/subs
 var isSearchPage = location.pathname.match(/^\/searchCollection\//);
 var isCrawlerPage = location.pathname.match(/^\/crawler/);
 var init,paths = ['jquery','lib/view/hdUtil','lib/view/searchBar'];
+var pageData = pageData || {};
 if(isCollectionItemPage){
-	paths.push('jsx!collectionItem');
+	if(pageData.env == 'prod'){
+		paths.push('collectionItem');
+	}else{
+		paths.push('jsx!collectionItem');
+	}
 	init = _.partial(require,'collectionItem');
 }else if(isCollectionPage){
 	paths.push('collection');
@@ -31,7 +36,11 @@ if(isCollectionItemPage){
 	paths.push('search');
 	init = _.partial(require,'seach');
 }else if(isCrawlerPage){
-	paths.push('jsx!crawler');
+	if(pageData.env == 'prod'){
+		paths.push('crawler');
+	}else{
+		paths.push('jsx!crawler');
+	}
 }
 
 requirejs(paths, function($,HdUtilView,SearchBarView) {

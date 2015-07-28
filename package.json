@@ -64,7 +64,8 @@
     "lodash": "~3.10.0",
     "requirejs": "~2.1.18",
     "jquery": "~2.1.4",
-    "react": "~0.13.3"
+    "react": "~0.13.3",
+    "reactify": "~1.1.1"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
@@ -73,7 +74,8 @@
     "grunt-contrib-watch": "~0.6.1",
     "grunt-contrib-sass": "~0.9.2",
     "grunt-autoprefixer": "~3.0.3",
-    "grunt-contrib-copy": "~0.8.0"
+    "grunt-contrib-copy": "~0.8.0",
+    "grunt-react": "~0.12.2"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,10 @@
 @import "_global.scss";
+h1,
+#subscribe-list{
+	width: 100%;
+	max-width: 1000px;
+	margin: 0 auto;
+}
 $responsive_width_xs: 500px;
 .crawler-editor {
 	display: flex;
@@ -110,9 +116,18 @@ table td .btn{
 #list{
 	display: flex;
 	flex-wrap: wrap;
+	padding-top: 15px;
+	justify-content: space-between;
 	.item{
-		flex-grow: 1;
-		padding: 10px;
+		padding: 20px;
+		margin-bottom: 15px;
+		background-color: $color-secondary-1-2;
+		color: $color-primary-1;
+		border-radius: 10px;
+		width: 320px;
+		a{
+			color: $color-secondary-2-2;
+		}
 		&>div{
 			margin-bottom: 10px;
 			width: 300px;
@@ -120,9 +135,11 @@ table td .btn{
 				margin-bottom: 0;
 			}
 			h3{
+				margin-top: 0;
 				font-size: 2em;
+				font-weight: bold;
 				a{
-					color: $color-primary-0;
+					color: $color-primary-1;
 				}
 			}
 		}

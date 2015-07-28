@@ -78,18 +78,16 @@ var self =
 			}
 		});
 	},/*}}}*/
-	home: function(req,res)
+	home: function(req,res,next)
 	{
-		res.render('crawlerHome',{
-			req: req
-		});
+		req.templateName = 'crawlerHome';
+		next();
 	},
-	subscribe: function(req,res)
+	subscribe: function(req,res,next)
 	{
-		res.render('crawlerSubscribe',{
-			req: req,
-			crawlerId:req.params.id
-		});
+		req.templateName = 'crawlerSubscribe';
+		req.vars = {crawlerId:req.params.id};
+		next();
 	},
 	archive: function(req,res)
 	{/*{{{*/

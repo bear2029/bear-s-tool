@@ -2,10 +2,11 @@ define([
 	'jquery',
 	'underscore',
 	'lib/tracker',
-	'lib/store'
-],function($,_,tracker,store)
+	'lib/store',
+	'lib/storageWrapper'
+],function($,_,tracker,store,storage)
 {
-	var data;
+	var data, loading = false;
 	function formalizeUrl(href,keepExtension)
 	{
 		if(href.match(/^#/)){
@@ -20,6 +21,10 @@ define([
 	}
 	var bodyParagraphs = [];
 	return _.extend({
+		DISPLAY_LAYOUT:{
+			'VERTICAL': 1,
+			'HORIZONTAL': 0
+		},
 		data: {},
 		init: function(initData,appRouter)
 		{
@@ -52,12 +57,16 @@ define([
 		},
 		fetchNewPage: function(href)
 		{
+			loading = true;
+			this.trigger('change');
 			// expecting 1.html
 			return $.ajax({
+				accepts: 'application/json; charset=utf-8',
 				method: 'get',
 				url: formalizeUrl(href)
 			})
 			.then(function(_data){
+				loading = false;
 				data = _.clone(_data);
 				this.trigger('pageChange');
 				this.appRouter.navigate(formalizeUrl(href,true));
@@ -68,12 +77,33 @@ define([
 		{
 			tracker.track(location.protocol+'//'+location.hostname+':'+location.port+formalizeUrl(url,true));
 		},
+		setLayout: function(val)
+		{
+			if(storage.isWorking()){
+				storage.set(storage.STORAGE_DISPLAY_LAYOUT,val);
+				this.trigger('change');
+			}
+		},
+		getLayout: function()
+		{
+			var layout = this.DISPLAY_LAYOUT.HORIZONTAL;
+			if(storage.isWorking()){
+				layout = storage.get(storage.STORAGE_DISPLAY_LAYOUT);
+				if(!layout || layout == 'undefined'){
+					layout = this.DISPLAY_LAYOUT.HORIZONTAL;
+					storage.set(storage.STORAGE_DISPLAY_LAYOUT,layout);
+				}
+			}
+			return layout;
+		},
 		get state(){
+			data.loading = loading;
+			data.displayLayout = this.getLayout();
 			return data;
 		},
 		get bodyParagraphs(){
-			if(this.state.body && _.isString(this.state.body)){
-				bodyParagraphs = this.state.body.split("\n");
+			if(this.state._body && _.isString(this.state._body)){
+				bodyParagraphs = this.state._body.split("\n");
 			}
 			return bodyParagraphs;
 		}

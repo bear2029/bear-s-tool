@@ -1,5 +1,14 @@
 @import "_global.scss";
 
+.appearable{
+	opacity: 0;
+	filter: blur(5px);
+	transition: all 300ms ease-out;
+	&.appear{
+		opacity: 1;
+		filter: blur(0);
+	}
+}
 textarea:hover, 
 input:not([type=checkbox]):hover, 
 textarea:active, 
@@ -22,6 +31,7 @@ body a:hover{
 	text-decoration: none;
 }
 body{
+	background: url(/assets/stone.jpg);
 	color: $color-primary-2;
 	font-family: 'Arvo', sans-serif;
 	font-size: 14px;
@@ -51,7 +61,7 @@ h1{
 	@media(max-width:$responsive_breakpoint_xs){
 		font-size: 4vw;
 	}
-	background: #eee;
+	background: rgba(0,0,0,.2);
 	border: 0;
 	box-shadow: inset 0px -9px 26px -7px rgba(0,0,0,.3);
 	border-radius: 0;
@@ -75,9 +85,9 @@ nav{
 		a{
 			font-family: 'Lobster', cursive;
 			font-size: 2em;
-			color: $color-secondary-2-3;
+			color: rgba(255,255,255,.2);
+			text-shadow: -1px -1px rgba(0,0,0,.5);
 			&:hover{
-				color: $color-primary-3;
 			}
 		}
 	}

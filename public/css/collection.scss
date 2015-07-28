@@ -3,30 +3,46 @@
 .content{
 	line-height: 1.5;
 	p{
-		font-size: 15px;
+		font-size: 18px;
+		color: #333;
 		margin-bottom: 1em;
 		transition: all linear 150ms;
 		&.speaking{
 			color: $color-primary-0;
 		}
 		a{
-			display: none;
+			transition: opacity 100ms linear;
+			opacity: 0;
 		}
 		&:hover a{
-			display: inline;
+			opacity: 1;
 		}
 	}
-	body.vertical &{
-		&,p{
-			-webkit-writing-mode: vertical-rl;
+}
+#article{
+	&.vertical{
+		h1{
+			display: none;
 		}
-		p{
-			margin-left: 1.5em;
-			text-indent: 1em;
+		#top-utils{
+			margin-top: 15px;
+		}
+		.content{
+			width: 400%;
+			height: 100%;
+			/*http://drafts.csswg.org/css-writing-modes-3/#propdef-writing-mode*/
+			-webkit-writing-mode: vertical-rl;
+			&>p{
+				display: inline;
+			}
 		}
 	}
 }
 #top-utils{
+	margin: 0 -10px;
+	&>*{
+		padding: 0 10px;
+	}
 	display: flex;
 	@media(max-width: $responsive-breakpoint-xs){
 		display: block;
@@ -184,7 +200,6 @@
 	}
 }
 #player{
-	margin-right: 15px;
 	.btn{
 		margin-right: 10px;
 		background-color: $color-secondary-2-3;
@@ -193,5 +208,10 @@
 	}
 	.btn:last-of-type{
 		margin-right: 0;
+	}
+}
+body.collectionItem{
+	.breadcrumb{
+		background-color: rgba(255,255,255,.5);
 	}
 }
