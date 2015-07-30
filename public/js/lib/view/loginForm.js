@@ -19,7 +19,11 @@ define([
 			this.template = Handlebars.compile($('#login-form-template').html());
 			this.attributes.errors = [];
 			this.attributes.onSignin = true;
-			this.attributes.host = 'https://'+location.hostname+':8081';
+			if(location.port.match(/808\d/)){
+				this.attributes.host = 'https://'+location.hostname+':8081';
+			}else{
+				this.attributes.host = 'https://'+location.hostname;
+			}
 			_.bindAll(this,'wrappedRemove','render','onSubmit','onClose','onSwitchNav')
 			this.render();
 			this.remove = _.wrap(this.remove, this.wrappedRemove);

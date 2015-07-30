@@ -80,6 +80,7 @@ var self =
 	},/*}}}*/
 	home: function(req,res,next)
 	{
+		req.vars = {};
 		req.templateName = 'crawlerHome';
 		next();
 	},

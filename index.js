@@ -18,6 +18,7 @@ var matches;
 var cookieParser = require('cookie-parser');
 var session = require('cookie-session')
 
+env = argv.get('env','dev');
 http = require('http').Server(app);
 https = require('https').Server({
 	key: fs.readFileSync('config/key.pem'),
@@ -80,5 +81,7 @@ app.engine('handlebars', exphbs({
 
 app.set('view engine', 'handlebars');
 require('./config/routes.js')(app,controllers)
-http.listen(argv.get('port',8080));
-https.listen(argv.get('sslport',8081));
+//http.listen(argv.get('port',8080));
+//https.listen(argv.get('sslport',8081));
+http.listen(env === 'prod' ? 80 : 8080);
+https.listen(env === 'prod' ? 443 : 8081);

@@ -21,18 +21,18 @@
 			<div class="css">
 				<h3>CSS</h3>
 				<textarea class="form-control">background-image:url({{dataUri}});
-				width: 300px;
-				height: 100px;
+				width: {{dimensions.width}}px;
+				height: {{dimensions.height}}px;
 				background-size: 100% auto;
 				background-repeat: no-repeat;</textarea>
 			</div>
 			<div class="sample">
 				<h3>CSS SAMPLE</h3>
-				<div class="obj" style="background-image:url({{dataUri}});"></div>
+				<div class="obj" style="background-image:url({{dataUri}}); width: {{dimensions.width}}px; height: {{dimensions.height}}px;"></div>
 			</div>
 			<div class="sample">
 				<h3>IMAGE SAMPLE</h3>
-				<img src="{{dataUri}}"/>
+				<img src="{{dataUri}}" width="{{dimensions.width}}" height="{{dimensions.height}}" />
 			</div>
 		{{/if}}
 		</div>

@@ -3,7 +3,6 @@ client = redis.createClient();
 
 var controller = {
 	default: function (req, res, next) {
-		console.log(12312313);
 		res.render(req.path.substr(1,req.path.length-1),{
 			req: req
 		});
