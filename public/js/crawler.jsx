@@ -223,32 +223,14 @@ define([
 		render: function()
 		{
 			return (
-			<table className="table table-striped responsive-table">
-				<thead>
-					<colgroup>
-						<col className="" />
-						<col className="hide-mobile" />
-						<col className="hide-mobile" />
-						<col className="" />
-						<col className="hide-mobile" />
-					</colgroup>
-					<tr>
-						<th>site name</th>
-						<th>list URL</th>
-						<th>list URL match</th>
-						<th>subscription</th>
-						<th>deletion</th>
-					</tr>
-				</thead>
-				<tbody>
+			<div>
+				<div id="list">
 					{this.state.data.map(function(item,i){
 						return <CrawlerItem key={i} data={item}/>;
 					})}
-					<tr>
-						<td colSpan="5"><button className="btn btn-primary" onClick={this.onAddNew}>Add New &nbsp;<span className="glyphicon glyphicon-plus"></span></button></td>
-					</tr>
-				</tbody>
-			</table>
+				</div>
+				<button className="btn btn-primary" onClick={this.onAddNew}>Add New &nbsp;<span className="glyphicon glyphicon-plus"></span></button>
+			</div>
 			);
 		}
 	};/*}}}*/
@@ -288,13 +270,15 @@ define([
 		render: function()
 		{
 			return (
-			<tr onClick={this.onClick}>
-				<td>{this.state._source.siteName}</td>
-				<td>{this.state._source.collectionUrl}</td>
-				<td>{this.state._source.collectionUrlRegex}</td>
-				<td><a className="btn btn-info btn-xs" href={'/crawler/subscribe/'+this.state._id}>Subscribe <span className="glyphicon glyphicon-heart"></span></a></td>
-				<td><button className="btn btn-danger btn-xs" onClick={this.onDelete}>delete <span className="glyphicon glyphicon-remove"></span></button></td>
-			</tr>
+			<div className="item" onClick={this.onClick}>
+				<div><h3>{this.state._source.siteName}</h3></div>
+				<div><a target="_blank" className="remote" href={this.state._source.collectionUrl}>{this.state._source.collectionUrl}</a></div>
+				<div>{this.state._source.collectionUrlRegex}</div>
+				<div><ul className="list-inline">
+					<li><a className="btn btn-info btn-xs" href={'/crawler/subscribe/'+this.state._id}>Subscribe <span className="glyphicon glyphicon-heart"></span></a></li>
+					<li><button className="btn btn-danger btn-xs" onClick={this.onDelete}>delete <span className="glyphicon glyphicon-remove"></span></button></li>
+				</ul></div>
+			</div>
 			);
 		}
 	}/*}}}*/
@@ -426,7 +410,7 @@ define([
 			return (
 			<div className="item">
 				<div><h3><a target="_blank" href={href}>{this.state._source.collectionName}</a></h3></div>
-				<div><a target="_blank" href={this.state._source.collectionUrl}>{this.state._source.collectionUrl}</a></div>
+				<div><a target="_blank" className="remote" href={this.state._source.collectionUrl}>{this.state._source.collectionUrl}</a></div>
 				<div>count: {this.state._source.count}</div>
 				<div>last update: {this.state._source.lastUpdate}</div>
 				<div className={classes}>

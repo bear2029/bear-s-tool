@@ -9,7 +9,7 @@ var scssTree = compileSass(['src/css'], 'a.scss', 'css/a.css');
 var cssTree = funnel('src/css',{
 	include: [new RegExp('.*\.css')],
 	destDir: 'css'
-})
+});
 var cssTrees = autoprefixer(mergeTrees([scssTree,cssTree]));
 
 var jsTree = funnel('src/app',{

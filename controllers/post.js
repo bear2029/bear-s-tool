@@ -47,12 +47,12 @@ var controller = {
 		subscription.getAllSubscriptionByUpdate()
 		.then(function(o){
 			//res.json(o);return;
-			res.render('home',{
-				req: req,
-				title:'home page2',
+			req.vars = {
 				headerTitle: 'Welcome to Ecomerce',
-				summaries: o,
-			})
+				summaries: o
+			};
+			req.templateName = 'home';
+			next();
 		})
 		.catch(function(e){
 			console.log(e)

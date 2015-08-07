@@ -5,7 +5,7 @@ h1,
 	max-width: 1000px;
 	margin: 0 auto;
 }
-$responsive_width_xs: 500px;
+$responsive-breakpoint-xs: 500px;
 .crawler-editor {
 	display: flex;
 }
@@ -101,7 +101,7 @@ table td .btn{
 .responsive-table{
 	.hide-mobile{
 		td,th{
-			@media(max-width: $responsive_width_xs){
+			@media(max-width: $responsive-breakpoint-xs){
 				display: none;
 			}
 			background: red;
@@ -117,20 +117,40 @@ table td .btn{
 	display: flex;
 	flex-wrap: wrap;
 	padding-top: 15px;
-	justify-content: space-between;
+	justify-content: flex-start;
 	.item{
 		padding: 20px;
 		margin-bottom: 15px;
-		background-color: $color-secondary-1-2;
+		background-color: rgba(0,0,0,.3);
 		color: $color-primary-1;
 		border-radius: 10px;
-		width: 320px;
+		@media(min-width: $responsive-breakpoint-sm){
+			width: 32%;
+			margin-right: 2%;
+			&:nth-of-type(3n){
+				margin-right: 0;
+			}
+		}
+		@media(max-width: $responsive-breakpoint-sm) and (min-width: $responsive-breakpoint-xs){
+			width: 49%;
+			margin-right: 2%;
+			&:nth-of-type(2n){
+				margin-right: 0;
+			}
+		}
+		@media(max-width: $responsive-breakpoint-xs){
+			flex-grow: 1;
+		}
 		a{
 			color: $color-secondary-2-2;
+			&.remote{
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: block;
+			}
 		}
 		&>div{
 			margin-bottom: 10px;
-			width: 300px;
 			&:last-of-type{
 				margin-bottom: 0;
 			}

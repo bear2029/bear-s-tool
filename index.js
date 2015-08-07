@@ -12,7 +12,6 @@ argv = require('./lib/argvController.js');
 logger = require('morgan');
 error_handler = require('errorhandler');
 exphbs  = require('express-handlebars');
-forceSSL = require('express-force-ssl');
 global.appRoot = path.resolve(__dirname);
 var matches;
 var cookieParser = require('cookie-parser');

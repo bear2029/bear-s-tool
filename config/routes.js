@@ -1,6 +1,8 @@
+var forceSSL = require('express-force-ssl');
 var compression = require('compression');
 var member = require('../lib/member');
 var esHelper = require('../lib/esHelper');
+var bear = require('../lib/bear');
 
 function shouldCompress(req, res) {
 	if (req.headers['x-no-compression']) {
@@ -59,6 +61,7 @@ module.exports = function(app, controllers) {
 			var vars = req.vars;
 			vars.req = req;
 			vars.env = argv.get('env','dev')
+			vars.hosts = bear.getHosts(vars.env);
 			vars.bodyClass = req.templateName;
 			res.render(req.templateName,vars);
 		}else{

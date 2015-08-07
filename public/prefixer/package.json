@@ -1,9 +1,7 @@
 {
-  "name": "todomvc-flux",
-  "version": "0.0.3",
-  "description": "Example Flux architecture.",
-  "repository": "https://github.com/facebook/flux",
-  "main": "js/app.js",
+  "name": "css_prefixer",
+  "version": "0.0.1",
+  "description": "CSS prefixer online tool",
   "dependencies": {
     "flux": "^2.0.1",
     "keymirror": "~0.1.0",
