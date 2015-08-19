@@ -1,0 +1,33 @@
+{
+  "name": "fileDropDemo",
+  "version": "0.0.0",
+  "description": "file drop demo with browserify",
+  "main": "app.js",
+  "scripts": {
+    "start": "watchify -o bundle.js -v -d js/app.js",
+    "build": "browserify js/app.js | uglifyjs -cm > bundle.min.js",
+    "lint": "jshint js/**.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "file",
+    "drag",
+    "n",
+    "drop"
+  ],
+  "jest": {
+    "rootDir": "./js"
+  },
+  "author": "bear",
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "jest-cli": "~0.4.18",
+    "uglify-js": "~2.4.24",
+    "watchify": "~3.3.1",
+    "browserify": "~11.0.1"
+  },
+  "dependencies": {
+    "underscore": "~1.8.3",
+    "jshint": "~2.8.0"
+  }
+}

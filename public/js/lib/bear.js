@@ -13,7 +13,7 @@ define([
 		isLoginPage: function()
 		{
 			// /member/signin
-			return location.pathname.match(/^\/member\/signin/) != null;
+			return location.pathname.match(/^\/member\/signin/) !== null;
 		}
 	};
 	return core;

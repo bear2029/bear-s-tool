@@ -1,0 +1,38 @@
+@import "_global.scss";
+#foo{
+	font-size: 8vw;
+	padding: 1em;
+	border: 10px #fff solid;
+	text-align: center;
+	color: #C25732;
+}
+.container-fluid{
+	height: 100%;
+}
+.preview>*{
+	filter: drop-shadow(6px 6px 3px rgba(0,0,0,0.3));
+}
+.preview{
+	background: rgba(0,0,0,.3);
+	padding: 1em;
+}
+#foo:hover{
+	border-style: dashed;
+}
+#demo-bd{
+	padding: 2em;
+	display: flex;
+	height: calc(100% - 50px);
+	>*{
+		width: 50%;
+		@media(max-width: $responsive_breakpoint_xs){
+			width: 100%;
+			min-height: 50%;
+		}
+	}
+	@media(max-width: $responsive_breakpoint_xs){
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+}
+

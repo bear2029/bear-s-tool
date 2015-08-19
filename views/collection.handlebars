@@ -1,4 +1,13 @@
 <link rel="stylesheet" href="/css/collection.css">
+<form id="main-search" action="/searchCollection" class="form-group search-collection" autocomplete="off">
+		<select name="collection" class="form-control">
+			<option>All</option>
+			{{#each data.collections}}
+			<option value="{{this._source.collectionName}}">{{this._source.collectionName}}</option>
+			{{/each}}
+		</select>
+		<input type="search" name="term" value="{{data.term}}" placeholder="search for something..."/>
+</form>
 <div class="collection" id="collection-list">
 	<div class="hd">
 		<h2>{{data.collection.name}}</h2>

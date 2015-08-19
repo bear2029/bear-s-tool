@@ -13,11 +13,19 @@ module.exports = exports = {
 	search: function(req,res)
 	{
 		var vars = {};
-		subscription.getSearchResult(req.params.term, req.params.pg, size)
+		subscription.getCollections()
+		.then(function(o){
+			vars.collections = [];
+			if(o.hits.total > 0){
+				vars.collections = o.hits.hits;
+			}
+			return subscription.getSearchResult(req.params.collection, req.params.term, req.params.pg, size)
+		})
 		.then(function(result){
 			vars.id = vars.pg = parseInt(req.params.pg);
 			vars.total = Math.ceil(result.hits.total/size)
 			vars.term = req.params.term,
+			vars.collectionName = req.params.collection;
 			vars.items = _.map(result.hits.hits,function(itemResult){
 				var titles = subscription.itemNameParts(itemResult._source.title)
 				return {

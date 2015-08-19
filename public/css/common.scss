@@ -1,5 +1,8 @@
 @import "_global.scss";
 
+html,body{
+	height: 100%;
+}
 .appearable{
 	opacity: 0;
 	filter: blur(5px);
@@ -128,7 +131,8 @@ nav{
 			}
 			& li{
 				transition: all 100ms ease-out;
-				background: #f2f2f2;
+				background: #ddd;
+				box-shadow: 0 0px 14px 0 rgba(0,0,0,.3), -3px 1px 5px 0 rgba(0,0,0,.3);
 				color: #777;
 				&:nth-of-type(2n) {
 					background: #fff;
@@ -148,7 +152,6 @@ nav{
 			li a{
 				font-size: .5em;
 				display: block;
-				box-shadow: 0 0px 14px 0 rgba(0,0,0,.3);
 				padding: 1em;
 				@media(max-width: $responsive_breakpoint_xs){
 					padding: 0;

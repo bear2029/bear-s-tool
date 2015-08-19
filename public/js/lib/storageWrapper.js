@@ -16,5 +16,5 @@ define([],function()
 				return localStorage.getItem(name);
 			}
 		}
-	}
-})
+	};
+});

@@ -1,132 +1,110 @@
 var redis = require('redis'),
-client = redis.createClient();
+	client = redis.createClient();
 
 var controller = {
-	default: function (req, res, next) {
-		res.render(req.path.substr(1,req.path.length-1),{
-			req: req
-		});
-	},
-	dictionaryWrapper: function(req,res)
-	{/*{{{*/
+	dictionaryWrapper: function(req, res) { /*{{{*/
 		var redis = require("redis");
 		var client = redis.createClient();
-		var cacheKey = 'get:'+req.path;
-		client.get(cacheKey,function(error,cache){
-			if(!error && cache){
+		var cacheKey = 'get:' + req.path;
+		client.get(cacheKey, function(error, cache) {
+			if (!error && cache) {
 				console.log('from client');
 				res.json(JSON.parse(cache));
 				client.quit()
 				return
 			}
 			var words = req.params.words.split('');
-			var requests = _.reduce(words,function(list,word){
-				list.push(bear.promiseFetch('https://www.moedict.tw/a/'+word+'.json'));
+			var requests = _.reduce(words, function(list, word) {
+				list.push(bear.promiseFetch('https://www.moedict.tw/a/' + word + '.json'));
 				return list
-			}.bind(this),[])
+			}.bind(this), [])
 			Promise.all(requests)
-			.then(function (body) {
-				var json = _.reduce(body,function(list,item){
-					item = item.replace(/[`~]/g,'')
-					item = JSON.parse(item);
-					list[item.t] = item
-					return list
-				},{})
-				client.set(cacheKey,JSON.stringify(json));
-				console.log('set client',cacheKey,JSON.stringify(json)); 
-				client.quit()
-				res.json(json)
-			})
-			.catch(function(e){
-				res.status(400).json({});
-			})
+				.then(function(body) {
+					var json = _.reduce(body, function(list, item) {
+						item = item.replace(/[`~]/g, '')
+						item = JSON.parse(item);
+						list[item.t] = item
+						return list
+					}, {})
+					client.set(cacheKey, JSON.stringify(json));
+					console.log('set client', cacheKey, JSON.stringify(json));
+					client.quit()
+					res.json(json)
+				})
+				.catch(function(e) {
+					res.status(400).json({});
+				})
 		}.bind(this))
-	},/*}}}*/
-	home: function (req, res, next) {
+	},
+	/*}}}*/
+	home: function(req, res, next) {
 		var subscription = require('../lib/subscription')
+		req.templateName = 'home';
 		subscription.getAllSubscriptionByUpdate()
-		.then(function(o){
-			//res.json(o);return;
-			req.vars = {
-				headerTitle: 'Welcome to Ecomerce',
-				summaries: o
-			};
-			req.templateName = 'home';
-			next();
-		})
-		.catch(function(e){
-			console.log(e)
-			res.status(400).send('something wrong')
-		})
-	},
-	allFromQueue: function(name)
-	{
-		var redis = require("redis"),
-		client = redis.createClient();
-		return new Promise(function(resolve,reject){
-			client.lrange(name,0,100,function(e,obj){
-				client.quit();
-				if(e){
-					return reject(e)
-				}
-				var out = _.reduce(obj,function(list,item){
-					list.push(JSON.parse(item));
-					return list;
-				},[])
-				resolve(out);
+			.then(function(o) {
+				//res.json(o);return;
+				req.vars = {
+					headerTitle: 'Welcome to Ecomerce',
+					summaries: o
+				};
+				return subscription.getCollections();
 			})
-		})
-	},
-	dumpQueue: function(req,res)
-	{
-		this.allFromQueue(req.params.name)
-		.then(function(out){
-			for(var i=0; i<out.length; i++){
-				out[i].id = i;
-			}
-			res.json(out);
-		})
-	},
-	removeFromQueue: function(req,res)
-	{
-		this.allFromQueue(req.params.name)
-		.then(function(all){
-			var theOneToRemove = JSON.stringify(all[req.params.index]);
-			if(!theOneToRemove){
-				res.status(404).send('index of '+req.params.index + ' not found');
-				return;
-			}
-			client.lrem(req.params.name,1,theOneToRemove,function(e,obj){
-				if(e){
-					res.status(500).json(e);
-				}else{
-					res.json(obj);
+			.then(function(o){
+				req.vars.collections = [];
+				if(o.hits.total > 0){
+					req.vars.collections = o.hits.hits;
 				}
+				next();
 			})
-		})
+			.catch(function(e) {
+				console.log(e)
+				res.status(400).send('something wrong')
+			})
 	},
-	pushQueue: function(req,res)
-	{
-		var redis = require("redis"),
-		client = redis.createClient();
-		client.rpush(req.params.name, JSON.stringify(req.body),function(e,obj){
-			if(e){
+	dumpQueue: function(req, res) {
+		var QueueController = require('../lib/redisQueue');
+		var queueController = new QueueController(req.params.name);
+		console.log(queueController);
+		queueController.allFromQueue()
+			.then(function(out) {
+				for (var i = 0; i < out.length; i++) {
+					out[i].id = i;
+				}
+				res.json(out);
+			})
+			.catch(function(e) {
+				res.status(404).send('bad');
+			})
+	},
+	removeFromQueue: function(req, res) {
+		var QueueController = require('../lib/redisQueue');
+		var queueController = new QueueController(req.params.name);
+		queueController.remove(req.params.index)
+			.then(function(obj) {
+				res.json(obj);
+			})
+			.catch(function(e) {
+				console.log(e);
+				res.status(500).json(e);
+			});
+	},
+	pushQueue: function(req, res) {
+		var QueueController = require('../lib/redisQueue');
+		var queueController = new QueueController(req.params.name);
+		queueController.push(req.body)
+			.then(res.json)
+			.catch(function(e) {
 				res.json(e);
-				return;
-			}
-			res.json(obj);
-			client.quit();
-		});
-		return;
+			})
 	},
-	name: function (req, res, next) {
-		res.render('name',{
+	name: function(req, res, next) {
+		res.render('name', {
 			req: req,
-			title:'home page2',
+			title: 'home page2',
 			headerTitle: 'Welcome to Ecomerce',
-			vowels: ['ey','y','a','o','u','ine','ia','ai'],
-			consonants: ['b','p','m','f','d','t','n','l','g','k','h','ch','sh','z','ts','s','tr','j'],
-			nameBases:require('../lib/nameBase')
+			vowels: ['ey', 'y', 'a', 'o', 'u', 'ine', 'ia', 'ai'],
+			consonants: ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'ch', 'sh', 'z', 'ts', 's', 'tr', 'j'],
+			nameBases: require('../lib/nameBase')
 		});
 	}
 };

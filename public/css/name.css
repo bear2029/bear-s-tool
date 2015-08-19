@@ -175,7 +175,7 @@ input.free {
 .name-card {
   box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, 0.3) inset;
   padding: 30px 10%;
-  background: #78706A;
+  background: rgba(0, 0, 0, 0.3);
   display: inline-block;
   border-radius: 10px;
   min-width: 290px;
@@ -297,7 +297,7 @@ input.free {
   margin-bottom: 30px;
 }
 .fav > ul > li .name-card {
-  background: #E9E9E9;
+  background: rgba(0, 0, 0, 0.1);
   color: #F26700;
   min-width: 100%;
   padding-bottom: 50px;

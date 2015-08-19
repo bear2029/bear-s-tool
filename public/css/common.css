@@ -1,4 +1,8 @@
 /* Palette URL: http://paletton.com/#uid=70r050knPon00te3wf0Xjur++e8 */
+html, body {
+  height: 100%;
+}
+
 .appearable {
   opacity: 0;
   -webkit-filter: blur(5px);
@@ -139,7 +143,8 @@ nav .navi-list > ul {
 }
 nav .navi-list > ul li {
   transition: all 100ms ease-out;
-  background: #f2f2f2;
+  background: #ddd;
+  box-shadow: 0 0px 14px 0 rgba(0, 0, 0, 0.3), -3px 1px 5px 0 rgba(0, 0, 0, 0.3);
   color: #777;
 }
 nav .navi-list > ul li:nth-of-type(2n) {
@@ -161,7 +166,6 @@ nav .navi-list > ul li:hover {
 nav .navi-list > ul li a {
   font-size: .5em;
   display: block;
-  box-shadow: 0 0px 14px 0 rgba(0, 0, 0, 0.3);
   padding: 1em;
 }
 @media (max-width: 400px) {

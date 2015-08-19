@@ -1,3 +1,4 @@
+@import "_global.scss";
 @import "_demoGlobal.scss";
 
 textarea:hover, 
@@ -16,8 +17,8 @@ button:hover
 body {
 	background: url(/assets/stone.jpg);
 	h1{
-		padding: 50px;
-		font-size: 48px;
+		padding: .5em 0;
+		font-size: 6vw;
 		font-weight: bold;
 		color: rgba(255,255,255,0.3);
 		text-shadow: -1px -1px rgba(0,0,0,.3);
@@ -26,19 +27,30 @@ body {
 }
 #prefixer-app{
 	display: flex;
+	flex-wrap: wrap;
 	padding: 15px;
 	textarea,pre{
 		background: rgba(255,255,255,.6);
 		border: 0;
 		width: 100%;
-		height: calc(100% - 55px);
+		@media(min-width: $responsive-breakpoint-sm){
+			height: calc(100% - 55px);
+		}
 		padding: 15px;
+		margin: 0;
+		min-height: 150px;
 	}
 	&>*{
-		height: 500px;
+		@media(min-width: $responsive-breakpoint-sm){
+			height: 500px;
+		}
 		flex-grow: 1;
 		width: 48%;
 		margin-right: 2%;
+		@media(max-width: $responsive-breakpoint-sm){
+			width: 100%;
+			margin: 0 0 15px 0;
+		}
 		background: transparent;
 		border: 5px solid rgba(0,0,0,0.7);
 		padding: 0px;

@@ -6,6 +6,14 @@ define([
 	pageData.env === 'prod' ? 'components/compactPaginator' : 'jsx!components/compactPaginator'
 ],function(_,$,React,Player,Paginator)
 {
+	function appear()
+	{
+		$('#content').addClass('appear');
+	}
+	function disappear()
+	{
+		$('#content').removeClass('appear');
+	}
 	function resumeByHash()
 	{
 		if(location.hash === ''){
@@ -23,22 +31,22 @@ define([
 				this.setState(this.props.store.state);
 			}.bind(this));
 			this.props.store.observe('change',function(){
+				if(this.props.store.state.loading){
+					console.log(111);
+					disappear();
+				}
 				this.setState(this.props.store.state);
 			}.bind(this));
 			return this.props.store.state;
 		},
-		disappear: function()
-		{
-			$('#content').removeClass('appear');
-		},
 		componentDidMount: function()
 		{
-			$('#content').addClass('appear');
+			appear();
 			resumeByHash.apply(this);
 		},
 		componentDidUpdate: function()
 		{
-			$('#content').addClass('appear');
+			appear();
 			resumeByHash.apply(this);
 		},
 		render:function()
@@ -51,11 +59,14 @@ define([
 					var id = 'paragraph-'+i;
 					var hash = '#'+id;
 					var pClass = this.state.speechHilightIndex == i ? 'speaking' : '';
-					return React.createElement("p", {key: i, id: id, className: pClass}, p, React.createElement("a", {onClick: this.onClickHash, href: hash}, "#"));
+					return React.createElement("p", {key: i, id: id, className: pClass}, React.createElement("span", null, p), React.createElement("a", {onClick: this.onClickHash, href: hash}, "#"), React.createElement("br", null));
 				}.bind(this));
 			}
 			var collectionHref = "/subscription/"+this.state.collectionName+"/1.html";
-			var mainClass = this.state.displayLayout == this.props.store.DISPLAY_LAYOUT.VERTICAL ? 'vertical' : 'horizontal';
+			var isVertical = this.state.displayLayout == this.props.store.DISPLAY_LAYOUT.VERTICAL;
+			var mainClass = (isVertical ? 'vertical ' : 'horizontal ') + (this.state.appear ? 'appear' : '');
+			var horizontalButtonClass = "btn btn-default" + (isVertical ? "":' active')
+			var verticalButtonClass = "btn btn-default" + (isVertical ? ' active':'')
 			return (
 			React.createElement("div", {id: "article", className: mainClass}, 
 				React.createElement("h1", null, this.state.title), 
@@ -63,10 +74,10 @@ define([
 					React.createElement("div", {id: "player"}, React.createElement(Player, {store: this.props.playerStore})), 
 					React.createElement(Paginator, {store: this.props.store, prevIndex: this.state.prevIndex, nextIndex: this.state.nextIndex}), 
 					React.createElement("div", {className: "btn-group", role: "group", "aria-label": "..."}, 
-						React.createElement("button", {onClick: this.onChangeLayout, "data-value": this.props.store.DISPLAY_LAYOUT.HORIZONTAL, type: "button", className: "btn btn-default active"}, 
+						React.createElement("button", {onClick: this.onChangeLayout, "data-value": this.props.store.DISPLAY_LAYOUT.HORIZONTAL, type: "button", className: horizontalButtonClass}, 
 							React.createElement("span", {className: "glyphicon glyphicon-text-width"}), " 橫書"
 						), 
-						React.createElement("button", {onClick: this.onChangeLayout, "data-value": this.props.store.DISPLAY_LAYOUT.VERTICAL, type: "button", className: "btn btn-default"}, 
+						React.createElement("button", {onClick: this.onChangeLayout, "data-value": this.props.store.DISPLAY_LAYOUT.VERTICAL, type: "button", className: verticalButtonClass}, 
 							React.createElement("span", {className: "glyphicon glyphicon-text-height"}), " 直書"
 						)
 					)

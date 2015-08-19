@@ -31,5 +31,5 @@ define([],function(){
 				this.events[eventName].splice(i,1);
 			}
 		}
-	}
+	};
 });

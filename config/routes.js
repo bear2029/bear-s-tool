@@ -36,7 +36,8 @@ module.exports = function(app, controllers) {
 	app.delete( '/queue/:name/:index' , controllers.post.removeFromQueue.bind(controllers.post));
 	app.get( '/subscription/:collectionName/:pg.html' , controllers.subscription.collection);
 	app.get( '/subscription/:collectionName/:pg' , controllers.subscription.collection);
-	app.get( '/searchCollection/:term/:pg' , controllers.subscription.search);
+	app.get( '/searchCollection/:collection/:term/:pg' , controllers.subscription.search);
+	app.get( '/searchCollection/' , controllers.subscription.search);
 	app.get( '/subscription/:collectionName/item/:itemIndex' , controllers.subscription.collectionItem);
 	app.use( '/dataUriConverter' , controllers.dataUriConverter.home);
 
@@ -53,23 +54,22 @@ module.exports = function(app, controllers) {
 
 	// tracking
 	app.get('/tracking', controllers.tracking.get);
+	app.use('/ipCollector/post', controllers.ipCollector.post);
+	app.get('/ipCollector', controllers.ipCollector.display);
 
 	// the actuall renderer ^_^
-	app.use(function(req,res,next){
-		if(req.vars){
-			// todo -- bad, should prevent req
-			var vars = req.vars;
-			vars.req = req;
-			vars.env = argv.get('env','dev')
-			vars.hosts = bear.getHosts(vars.env);
-			vars.bodyClass = req.templateName;
-			res.render(req.templateName,vars);
-		}else{
-			next();
+	app.use(function(req,res){
+		// todo -- bad, should prevent req
+		var vars = req.vars || {};
+		vars.req = req;
+		vars.env = argv.get('env','dev')
+		vars.hosts = bear.getHosts(vars.env);
+		if(!req.templateName){
+			req.templateName = req.path.substr(1,req.path.length-1);
 		}
+		vars.bodyClass = req.templateName;
+		res.render(req.templateName,vars);
 	})
-
-	app.use(controllers.post.default.bind(controllers.post));
 
 	io.on('connection', function(socket){
 		socket.on('chat message', function(obj){

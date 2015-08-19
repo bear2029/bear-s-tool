@@ -18,6 +18,7 @@ module.exports = function(grunt)
 					style: 'expanded'
 				},
 				files: {
+					'public/css/file.css': 'public/css/file.scss',
 					'public/css/dataUriConverter.css': 'public/css/dataUriConverter.scss',
 					'public/css/collection.css': 'public/css/collection.scss',
 					'public/css/common.css': 'public/css/common.scss',

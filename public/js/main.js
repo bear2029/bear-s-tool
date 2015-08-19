@@ -34,7 +34,7 @@ if(isCollectionItemPage){
 	init = _.partial(require,'collection');
 }else if(isSearchPage){
 	paths.push('search');
-	init = _.partial(require,'seach');
+	init = _.partial(require,'search');
 }else if(isCrawlerPage){
 	if(pageData.env == 'prod'){
 		paths.push('crawler');

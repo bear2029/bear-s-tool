@@ -1,0 +1,14 @@
+<h1>IP Collection</h1>
+{{name}}
+<table class="table-striped table">
+	<thead>
+		<tr><th>time</th><th>host</th><th>IP</th></tr>
+	</thead>
+	{{#each list}}
+	<tr>
+		<td>{{this.time}}</td>
+		<td>{{this.host}}</td>
+		<td>{{this.ip}}</td>
+	</tr>
+	{{/each}}
+</table>

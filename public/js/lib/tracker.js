@@ -14,5 +14,5 @@ define([],function(){
 			}
 			img.src = url;
 		}
-	}
-})
+	};
+});

@@ -223,31 +223,13 @@ define([
 		render: function()
 		{
 			return (
-			React.createElement("table", {className: "table table-striped responsive-table"}, 
-				React.createElement("thead", null, 
-					React.createElement("colgroup", null, 
-						React.createElement("col", {className: ""}), 
-						React.createElement("col", {className: "hide-mobile"}), 
-						React.createElement("col", {className: "hide-mobile"}), 
-						React.createElement("col", {className: ""}), 
-						React.createElement("col", {className: "hide-mobile"})
-					), 
-					React.createElement("tr", null, 
-						React.createElement("th", null, "site name"), 
-						React.createElement("th", null, "list URL"), 
-						React.createElement("th", null, "list URL match"), 
-						React.createElement("th", null, "subscription"), 
-						React.createElement("th", null, "deletion")
-					)
-				), 
-				React.createElement("tbody", null, 
+			React.createElement("div", null, 
+				React.createElement("div", {id: "list"}, 
 					this.state.data.map(function(item,i){
 						return React.createElement(CrawlerItem, {key: i, data: item});
-					}), 
-					React.createElement("tr", null, 
-						React.createElement("td", {colSpan: "5"}, React.createElement("button", {className: "btn btn-primary", onClick: this.onAddNew}, "Add New  ", React.createElement("span", {className: "glyphicon glyphicon-plus"})))
-					)
-				)
+					})
+				), 
+				React.createElement("button", {className: "btn btn-primary", onClick: this.onAddNew}, "Add New  ", React.createElement("span", {className: "glyphicon glyphicon-plus"}))
 			)
 			);
 		}
@@ -288,12 +270,14 @@ define([
 		render: function()
 		{
 			return (
-			React.createElement("tr", {onClick: this.onClick}, 
-				React.createElement("td", null, this.state._source.siteName), 
-				React.createElement("td", null, this.state._source.collectionUrl), 
-				React.createElement("td", null, this.state._source.collectionUrlRegex), 
-				React.createElement("td", null, React.createElement("a", {className: "btn btn-info btn-xs", href: '/crawler/subscribe/'+this.state._id}, "Subscribe ", React.createElement("span", {className: "glyphicon glyphicon-heart"}))), 
-				React.createElement("td", null, React.createElement("button", {className: "btn btn-danger btn-xs", onClick: this.onDelete}, "delete ", React.createElement("span", {className: "glyphicon glyphicon-remove"})))
+			React.createElement("div", {className: "item", onClick: this.onClick}, 
+				React.createElement("div", null, React.createElement("h3", null, this.state._source.siteName)), 
+				React.createElement("div", null, React.createElement("a", {target: "_blank", className: "remote", href: this.state._source.collectionUrl}, this.state._source.collectionUrl)), 
+				React.createElement("div", null, this.state._source.collectionUrlRegex), 
+				React.createElement("div", null, React.createElement("ul", {className: "list-inline"}, 
+					React.createElement("li", null, React.createElement("a", {className: "btn btn-info btn-xs", href: '/crawler/subscribe/'+this.state._id}, "Subscribe ", React.createElement("span", {className: "glyphicon glyphicon-heart"}))), 
+					React.createElement("li", null, React.createElement("button", {className: "btn btn-danger btn-xs", onClick: this.onDelete}, "delete ", React.createElement("span", {className: "glyphicon glyphicon-remove"})))
+				))
 			)
 			);
 		}
@@ -426,7 +410,7 @@ define([
 			return (
 			React.createElement("div", {className: "item"}, 
 				React.createElement("div", null, React.createElement("h3", null, React.createElement("a", {target: "_blank", href: href}, this.state._source.collectionName))), 
-				React.createElement("div", null, React.createElement("a", {target: "_blank", href: this.state._source.collectionUrl}, this.state._source.collectionUrl)), 
+				React.createElement("div", null, React.createElement("a", {target: "_blank", className: "remote", href: this.state._source.collectionUrl}, this.state._source.collectionUrl)), 
 				React.createElement("div", null, "count: ", this.state._source.count), 
 				React.createElement("div", null, "last update: ", this.state._source.lastUpdate), 
 				React.createElement("div", {className: classes}, 
