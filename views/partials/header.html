@@ -2,10 +2,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
 <link rel="stylesheet" href="/vendor/bootstrap.min.css">
 <link rel="stylesheet" href="/css/common.css">
-<script src="/vendor/jquery.min.js"></script>
-<script src="/vendor/underscore-min.js"></script>
-<script src="/vendor/backbone.js"></script>
-<script src="/js/navi.js"></script>
 <title>{{headerTitle}}</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -32,6 +28,7 @@
 
 <script>
 var isSignedIn = {{isLogedIn req}};
+var app = pageData = {{{json this 'body,req,settings,_locals,cache'}}};
 </script>
 
 </head>

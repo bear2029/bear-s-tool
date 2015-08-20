@@ -2,30 +2,30 @@
 <form id="main-search" action="/searchCollection" class="form-group search-collection" autocomplete="off">
 		<select name="collection" class="form-control">
 			<option>All</option>
-			{{#each data.collections}}
+			{{#each collections}}
 			<option value="{{this._source.collectionName}}">{{this._source.collectionName}}</option>
 			{{/each}}
 		</select>
-		<input type="search" name="term" value="{{data.term}}" placeholder="search for something..."/>
+		<input type="search" name="term" value="{{term}}" placeholder="search for something..."/>
 </form>
 <div class="collection" id="collection-list">
 	<div class="hd">
-		<h2>{{data.collection.name}}</h2>
+		<h2>{{collection.name}}</h2>
 		<sub>
-			{{#if data.collection.lastVisitedArticleUrl}}
-			<a href="{{data.collection.lastVisitedArticleUrl}}">last visit</a>
+			{{#if collection.lastVisitedArticleUrl}}
+			<a href="{{collection.lastVisitedArticleUrl}}">last visit</a>
 			{{/if}}
-			<a href="{{data.collection.remoteUrl}}"><span class="glyphicon glyphicon-link"></span> remote</a>
+			<a href="{{collection.remoteUrl}}"><span class="glyphicon glyphicon-link"></span> remote</a>
 		</sub>
 	</div>
 	<div id="collection-list"><ul class="bd list-unstyled">
-	{{#each data.items}}
+	{{#each items}}
 		<li>
 			{{#if chapter}}<sub>{{chapter}}</sub>{{/if}}
 			{{#if collectionName}}
 			<a href="/subscription/{{collectionName}}/item/{{index}}.html">{{title}}</a>
 			{{else}}
-			<a href="/subscription/{{../../data.collection.name}}/item/{{index}}.html">{{title}}</a>
+			<a href="/subscription/{{../../collection.name}}/item/{{index}}.html">{{title}}</a>
 			{{/if}}
 			<b>{{index}}</b>
 		</li>
@@ -65,6 +65,8 @@
 	</ul>
 </nav>
 </script>
-<script>
-var app = {{{json data}}};
-</script>
+{{#if isProd}}
+<script src="/js/min/collection.js"></script>
+{{else}}
+<script src="/js/build/collection.js"></script>
+{{/if}}

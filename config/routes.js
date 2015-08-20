@@ -63,6 +63,7 @@ module.exports = function(app, controllers) {
 		var vars = req.vars || {};
 		vars.req = req;
 		vars.env = argv.get('env','dev')
+		vars.isProd = vars.env === 'prod';
 		vars.hosts = bear.getHosts(vars.env);
 		if(!req.templateName){
 			req.templateName = req.path.substr(1,req.path.length-1);

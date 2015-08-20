@@ -125,7 +125,7 @@ nav .navi-list > ul {
   margin: 0;
   text-align: center;
   font-size: 1.5em;
-  z-index: 1;
+  z-index: 3;
   margin: 0;
   visibility: hidden;
 }

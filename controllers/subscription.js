@@ -10,7 +10,7 @@ function processLastVisitedArticle(data)
 	}
 }
 module.exports = exports = {
-	search: function(req,res)
+	search: function(req,res,next)
 	{
 		var vars = {};
 		subscription.getCollections()
@@ -38,10 +38,10 @@ module.exports = exports = {
 				}
 			})
 			if(req.path.match(/\.html$/)){
-				res.render('collection',{
-					req: req,
-					data: vars
-				});
+				req.templateName = 'collection';
+				vars.pageTitle = 'seach page';
+				req.vars = vars;
+				next();
 			}else{
 				res.json(vars);
 			}
@@ -51,7 +51,7 @@ module.exports = exports = {
 			res.status(500).send('bad')
 		})
 	},
-	collection: function(req,res)
+	collection: function(req,res,next)
 	{
 		var pg = req.params.pg || 1;
 		var vars = {};
@@ -95,10 +95,9 @@ module.exports = exports = {
 			})
 			vars.id = pg;
 			if(req.path.match(/\.html$/)){
-				res.render('collection',{
-					req: req,
-					data: vars
-				});
+				req.templateName = 'collection';
+				req.vars = vars;
+				next();
 			}else{
 				res.json(vars);
 			}

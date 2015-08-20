@@ -2,7 +2,8 @@ node_modules/
 .sass-cache/
 public/css/*.css.map
 public/css/*.css
-public/js/build/*
+public/js/build/
+public/js/min/
 public/broccoli/node_modules/
 public/broccoli/tmp/
 public/prefixer/tmp/

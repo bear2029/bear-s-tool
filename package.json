@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "postinstall": "grunt copy; npm install public/broccoli; npm install public/prefixer",
-    "start": "pm2 start index.js --name prod -- env=prod",
+    "postinstall": "grunt build; npm install public/prefixer",
+    "start": "pm2 start index.js --name prod -- env=prod;",
     "lint": "jshint lib/**.js; jshint controllers/**.js",
     "test": "jest"
   },
@@ -81,7 +81,9 @@
     "grunt-autoprefixer": "~3.0.3",
     "grunt-contrib-copy": "~0.8.0",
     "grunt-react": "~0.12.2",
-    "jest-cli": "~0.4.18"
+    "jest-cli": "~0.4.18",
+    "grunt-browserify": "~4.0.0",
+    "grunt-watchify": "~0.1.0"
   },
   "repository": {
     "type": "git",

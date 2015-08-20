@@ -1,20 +1,44 @@
-module.exports = function(grunt) 
-{
+module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		uglify: {
-			options: {
-				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+		browserify: {
+			files: [{
+				expand: true, // Enable dynamic expansion.
+				cwd: './browserjs',
+				src: ['*.app.js','*.app.jsx'], // Actual pattern(s) to match.
+				dest: 'public/js/build/',
+				ext: '.js', // Dest filepaths will have this extension.
+				extDot: 'first'
+			}],
+			dist: {
+				files: '<%= browserify.files %>',
+				options: {
+					banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+					transform: [require('grunt-react').browserify]
+				}
 			},
-			build: {
-				files:[{
-					'public/js/build/name.js': ['public/js/src/name.js']
+			watch: {
+				files: '<%= browserify.files %>',
+				options: {
+					watch: true,
+					keepAlive: true,
+					transform: [require('grunt-react').browserify]
+				}
+			},
+		},
+		uglify: {
+			buildFolder: {
+				files: [{
+					expand: true,
+					cwd: 'public/js/build',
+					src: '**/*.js',
+					dest: 'public/js/min'
 				}]
 			}
 		},
 		sass: {
 			dist: {
-				options: { 
+				options: {
 					style: 'expanded'
 				},
 				files: {
@@ -40,64 +64,17 @@ module.exports = function(grunt)
 			}
 		},
 		watch: {
-			scripts: {
-				files: ['public/js/src/*.js'],
-				tasks: ['uglify']
-			},
-			lint: {
-				files: ['<%= jshint.files %>'],
-				tasks: ['jshint']
-			},
 			scss: {
 				files: ['public/css/*.scss'],
-				tasks: ['sass','autoprefixer']
+				tasks: ['sass', 'autoprefixer']
 			}
 		},
 		jshint: {
-			files: ['Gruntfile.js', 'lib/*.js', 'public/js/*.js','public/js/src/*.js','public/js/lib/*.js','public/lib/*/*.js'],
+			files: ['Gruntfile.js', 'lib/*.js', 'public/js/*.js', 'public/js/src/*.js', 'public/js/lib/*.js', 'public/lib/*/*.js'],
 			options: {
 				globals: {
 					jQuery: true
 				}
-			}
-		},
-		react: {
-			/*
-			single_file_output: {
-				files: { 'path/to/output/dir/output.js': 'path/to/jsx/templates/dir/input.jsx' }
-			},
-			combined_file_output: {
-				files: {
-					'path/to/output/dir/combined.js': [
-						'path/to/jsx/templates/dir/input1.jsx',
-						'path/to/jsx/templates/dir/input2.jsx'
-					]
-				}
-			},
-			*/
-			dynamic_mappings: {
-				files: [
-					{
-						expand: true,
-						cwd: 'public/js',
-						src: ['**/*.jsx','components/*.jsx'],
-						dest: 'public/js',
-						ext: '.js'
-					}
-				]
-			}
-		},
-		copy:{
-			main:{
-				files:[
-					{expand: true, cwd: 'node_modules/jquery/dist/', src: 'jquery*' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/handlebars/dist/', src: 'handlebars*' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/underscore/', src: 'underscore*' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/backbone/', src: 'backbone*' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/requirejs/', src: 'require*' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/bootstrap/dist/css/', src: 'bootstrap*.css' , dest: 'public/vendor/'},
-					{expand: true, cwd: 'node_modules/react/dist/', src: '*.js' , dest: 'public/vendor/'}
-				]
 			}
 		}
 	});
@@ -107,8 +84,24 @@ module.exports = function(grunt)
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-react');
+	grunt.loadNpmTasks('grunt-browserify');
 
-	grunt.registerTask('default', ['uglify','jshint','sass','autoprefixer','react']);
+	grunt.registerTask('build', [
+		'jshint',
+		'uglify'
+	]);
+	grunt.registerTask('default', [
+		'jshint',
+		'browserify:dist',
+		'uglify',
+		'sass',
+		'autoprefixer'
+	]);
+	grunt.registerTask('devjs', [
+		'browserify:watch'
+	]);
+	grunt.registerTask('devcss', [
+		'watch'
+	]);
 };
