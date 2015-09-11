@@ -1,9 +1,26 @@
+var AppDispatcher = require('../dispatchers/AppDispatcher');
+var EventEmitter = require('events').EventEmitter;
+var assign = require('object-assign');
+
 var $ = require('jquery');
 var _ = require('underscore');
+var Backbone = require('backbone');
+
+var AppRouter = Backbone.Router.extend({
+	routes: {
+		'subscription/:name/item/:pg': 'article',
+	}
+});
+var appRouter = new AppRouter();
+Backbone.history.start({
+	pushState: true
+});
+
 var tracker = require('../../lib/tracker');
 var store = require('../../lib/store');
 var storage = require('../../lib/storageWrapper');
 var data, loading = false;
+var CHANGE_EVENT = "change";
 
 function formalizeUrl(href, keepExtension) {
 	if (href.match(/^#/)) {
@@ -16,13 +33,15 @@ function formalizeUrl(href, keepExtension) {
 	}
 	return location.pathname.replace(/\d+\.html$/, pageNum);
 }
+
+
 var bodyParagraphs = [];
-module.exports = _.extend({
+
+var Store = assign({}, EventEmitter.prototype, {
 	DISPLAY_LAYOUT: {
 		'VERTICAL': 1,
 		'HORIZONTAL': 0
 	},
-	data: {},
 	init: function(initData, appRouter) {
 		this.appRouter = appRouter;
 		data = initData;
@@ -31,16 +50,13 @@ module.exports = _.extend({
 		}.bind(this));
 		tracker.track();
 	},
-	navigate: function(href) {
-		this.fetchNewPage(href);
-	},
 	hilight: function(index) {
 		data.speechHilightIndex = index;
-		this.trigger('change');
+		this.emitChange();
 	},
 	dehilight: function(index) {
 		data.speechHilightIndex = -1;
-		this.trigger('change');
+		this.emitChange();
 	},
 	gotoNextPage: function() {
 		if (pageData.nextIndex) {
@@ -51,7 +67,7 @@ module.exports = _.extend({
 	},
 	fetchNewPage: function(href) {
 		loading = true;
-		this.trigger('change');
+		this.emitChange();
 		// expecting 1.html
 		return $.ajax({
 				accepts: 'application/json; charset=utf-8',
@@ -61,10 +77,16 @@ module.exports = _.extend({
 			.then(function(_data) {
 				loading = false;
 				data = _.clone(_data);
-				this.trigger('pageChange');
+				this.emitChange();
 				this.appRouter.navigate(formalizeUrl(href, true));
+				this.updatePageTitle();
 				tracker.track();
 			}.bind(this));
+	},
+	updatePageTitle: function() {
+		if (document && document.title) {
+			document.title = data.title;
+		}
 	},
 	track: function(url) {
 		tracker.track(location.protocol + '//' + location.hostname + ':' + location.port + formalizeUrl(url, true));
@@ -72,7 +94,7 @@ module.exports = _.extend({
 	setLayout: function(val) {
 		if (storage.isWorking()) {
 			storage.set(storage.STORAGE_DISPLAY_LAYOUT, val);
-			this.trigger('change');
+			this.emitChange();
 		}
 	},
 	getLayout: function() {
@@ -86,15 +108,50 @@ module.exports = _.extend({
 		}
 		return layout;
 	},
-	get state() {
-		data.loading = loading;
-		data.displayLayout = this.getLayout();
-		return data;
+	state: function() {
+		if (data) {
+			data.loading = loading;
+			data.displayLayout = this.getLayout();
+			return data;
+		}
 	},
-	get bodyParagraphs() {
-		if (this.state._body && _.isString(this.state._body)) {
-			bodyParagraphs = this.state._body.split("\n");
+	bodyParagraphs: function() {
+		if (data && data._body && _.isString(data._body)) {
+			bodyParagraphs = data._body.split("\n");
 		}
 		return bodyParagraphs;
-	}
+	},
+	emitChange: function() {
+		this.emit(CHANGE_EVENT);
+	},
+
+	/**
+	 * @param {function} callback
+	 */
+	addChangeListener: function(callback) {
+		this.on(CHANGE_EVENT, callback);
+	},
+
+	/**
+	 * @param {function} callback
+	 */
+	removeChangeListener: function(callback) {
+		this.removeListener(CHANGE_EVENT, callback);
+	},
 }, store);
+
+AppDispatcher.register(function(action) {
+	var text;
+
+	switch (action.actionType) {
+		case 'CHANGE_PAGE':
+			Store.fetchNewPage(action.href);
+			break;
+		default:
+			// no op
+	}
+});
+
+Store.init(pageData, appRouter);
+
+module.exports = Store;

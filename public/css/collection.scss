@@ -1,21 +1,22 @@
 @import "_global.scss";
 @import "_mainSearch.scss";
 .content{
+	padding-bottom:100px;
 	line-height: 1.5;
 	p{
 		font-size: 18px;
 		color: #333;
 		margin-bottom: 1em;
-		transition: all linear 150ms;
 		&.speaking{
 			color: $color-primary-0;
 		}
 		a{
-			transition: opacity 100ms linear;
-			opacity: 0;
+			visibility: hidden;
 		}
-		&:hover a{
-			opacity: 1;
+		@media(min-width: $responsive-breakpoint-xs){
+			&:hover a{
+				visibility: visible;
+			}
 		}
 	}
 }
@@ -39,28 +40,42 @@
 	}
 }
 #top-utils{
-	margin: 0 -10px;
-	&>*{
-		padding: 0 10px;
-	}
-	display: flex;
-	@media(max-width: $responsive-breakpoint-xs){
-		display: block;
-		#player{
-			margin-bottom: 10px;
-		}
-	}
 	align-items: center;
-	margin-bottom: 10px;
+	display: flex;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	left: 0;
+	#layout-controller{
+		display: none;
+	}
 	.pager{
 		margin: 0;
-		@media(max-width: $responsive-breakpoint-xs){
-			text-align: left;
-			li{
-				margin-right: .5em;
+		li{
+			position: absolute;
+			left: 0;
+			bottom: 15px;
+			@media(max-width: $responsive-breakpoint-xs){
+				bottom: 70px;
 			}
-			li:last-of-type{
-				margin-right: 0;
+			@media(min-width: $responsive-breakpoint-xs){
+			}
+			a{
+				box-shadow: 0 2px 5px rgba(0,0,0,.5);
+				border-radius: 0 10px 10px 0;
+				height: 40px;
+				padding: 0 10px;
+				line-height: 40px;
+				.text{
+					display: none;
+				}
+			}
+		}
+		li:last-of-type{
+			right: 0;
+			left: inherit;
+			a{
+				border-radius: 10px 0 0 10px;
 			}
 		}
 	}
@@ -146,14 +161,29 @@
 				position: relative;
 				z-index: 2;
 			}
-			&:hover b{
-				filter: blur(2px);
+			@media(min-width: $responsive-breakpoint-xs){
+				&:hover b{
+					filter: blur(2px);
+				}
+				&:hover{
+					background-color: $color-secondary-2-1;
+					a,sub{
+						color: #fff;
+						text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+					}
+				}
 			}
-			&:hover{
-				background-color: $color-secondary-2-1;
-				a,sub{
-					color: #fff;
-					text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+			.matches{
+				padding: 0 0 0 .5em;
+				font-size: 10px;
+				li{
+					list-style: none;
+					margin-top: .5em;
+					em{
+						color: $color-primary-3;
+						font-style: normal;
+						font-weight: bold;
+					}
 				}
 			}
 		}
@@ -200,6 +230,15 @@
 	}
 }
 #player{
+	box-shadow: 0 -2px 22px rgba(0,0,0,.5);
+	position: absolute;
+	bottom: 0;
+	left: calc(50% - 140px);
+	background-color: #fff;
+	padding: 10px 20px;
+	border-radius: 10px 10px 0 0;
+	@media(min-width: $responsive-breakpoint-xs){
+	}
 	.btn{
 		margin-right: 10px;
 		background-color: $color-secondary-2-3;

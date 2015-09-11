@@ -12,15 +12,21 @@ html,body{
 		filter: blur(0);
 	}
 }
-textarea:hover, 
-input:not([type=checkbox]):hover, 
+@media(min-width: $responsive-breakpoint-xs){
+	textarea:hover, 
+	input:not([type=checkbox]):hover, 
+	button:hover
+	{
+		outline:0px !important;
+		-webkit-appearance:none;
+	}
+}
 textarea:active, 
 input:not([type=checkbox]):active, 
 textarea:focus, 
 input:not([type=checkbox]):focus, 
 button:focus,
-button:active,
-button:hover
+button:active
 {
 	outline:0px !important;
 	-webkit-appearance:none;
@@ -29,9 +35,11 @@ body a{
 	transition: color 300ms ease-out;
 	color: $color-secondary-2-3;
 }
-body a:hover{
-	color: $color-primary-3;
-	text-decoration: none;
+@media(min-width: $responsive-breakpoint-xs){
+	body a:hover{
+		color: $color-primary-3;
+		text-decoration: none;
+	}
 }
 body{
 	background: url(/assets/stone.jpg);
@@ -92,8 +100,6 @@ nav{
 			font-size: 2em;
 			color: rgba(255,255,255,.2);
 			text-shadow: -1px -1px rgba(0,0,0,.5);
-			&:hover{
-			}
 		}
 	}
 	a{
@@ -137,15 +143,15 @@ nav{
 				&:nth-of-type(2n) {
 					background: #fff;
 				}
-				&:hover{
-					color: #fff !important;
-					background: #009787 !important;
-				}
 				@media(min-width: $responsive_breakpoint_xs){
 					border-radius: 5px;
 					margin-top: .2em;
 					&:first-of-type{
 						margin-top: 0;
+					}
+					&:hover{
+						color: #fff !important;
+						background: #009787 !important;
 					}
 				}
 			}

@@ -1,13 +1,25 @@
 var $ = require ('jquery'), React = require('react');
+var Action = require('../actions/compactPaginatorAction');
 
 module.exports = React.createClass({
+
 	render: function() {
 		var PrevBtn, NextBtn;
 		if (this.props.prevIndex) {
-			PrevBtn = <li><a href={this.props.prevIndex}>Previous</a></li>;
+			PrevBtn = (
+			<li><a href={this.props.prevIndex}>
+				<span className="sprite glyphicon glyphicon-chevron-left"></span>
+				<span className="text">Previous</span>
+			</a></li>
+			);
 		}
 		if (this.props.nextIndex) {
-			NextBtn = <li><a href={this.props.nextIndex}>Next</a></li>;
+			NextBtn = (
+			<li><a href={this.props.nextIndex}>
+				<span className="sprite glyphicon glyphicon-chevron-right"></span>
+				<span className="text">Next</span>
+			</a></li>
+			);
 		}
 		return ( 
 		<nav>
@@ -21,9 +33,12 @@ module.exports = React.createClass({
 	onPaging: function(e) {
 		e.preventDefault();
 		var el = $(e.target);
+		if(e.target.tagName.toLowerCase() !== 'a'){
+			el = el.parentsUntil('li');
+		}
 		var href = el.attr('href');
 		if (href) {
-			this.props.store.navigate(href);
+			Action.changePage(href);
 		}
 	}
 });

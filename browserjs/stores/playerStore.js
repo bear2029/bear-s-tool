@@ -1,10 +1,12 @@
+var AppDispatcher = require('../dispatchers/AppDispatcher');
+var EventEmitter = require('events').EventEmitter;
+var assign = require('object-assign');
 var $ = require('jquery');
 var _ = require('underscore');
 var store = require('../../lib/store');
 
 var index = 0,
-	paused = false,
-	articleStore;
+	paused = false;
 
 function getFirstAvailableParagraph(paragraphs) {
 	do {
@@ -17,9 +19,10 @@ function getFirstAvailableParagraph(paragraphs) {
 	return p;
 }
 
-module.exports = _.extend({
+var Store = assign({}, EventEmitter.prototype, {
 
-	init: function(_articleStore) {
+	init: function() {
+		/* todo
 		articleStore = _articleStore;
 		articleStore.observe('pageChange', function() {
 			//var wasPlaying = speechSynthesis.speaking && !paused;
@@ -28,8 +31,10 @@ module.exports = _.extend({
 			//	this.play(1);
 			//}
 		}.bind(this));
+		*/
 	},
 	play: function() {
+		/* todo
 		paused = false;
 		if (paused || speechSynthesis.speaking) {
 			this.trigger('statusChange')
@@ -44,6 +49,7 @@ module.exports = _.extend({
 		articleStore.hilight(index);
 		speechSynthesis.speak(this.u);
 		this.trigger('statusChange')
+		*/
 	},
 	pause: function() {
 		if (!speechSynthesis.speaking) {
@@ -67,16 +73,19 @@ module.exports = _.extend({
 		this.stopObservingUtterance();
 		delete this.u;
 		speechSynthesis.cancel();
-		articleStore.dehilight(index);
+		////todo
+		//articleStore.dehilight(index);
 		this.trigger('statusChange')
 	},
 	observeUtterance: function() {
+		/* todo
 		$(this.u).one('end', function(e) {
 			if (++index >= articleStore.bodyParagraphs.length) {
 				gotoNextPage().then(this.play);
 			}
 			this.play();
 		}.bind(this));
+		*/
 	},
 	stopObservingUtterance: function() {
 		$(this.u).off('end');
@@ -114,3 +123,4 @@ module.exports = _.extend({
 		return u;
 	},
 }, store);
+Store.init();

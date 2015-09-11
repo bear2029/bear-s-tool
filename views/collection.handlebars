@@ -28,6 +28,13 @@
 			<a href="/subscription/{{../../collection.name}}/item/{{index}}.html">{{title}}</a>
 			{{/if}}
 			<b>{{index}}</b>
+			{{#if matches}}
+				<ul class="matches">
+				{{#each matches}}
+					<li>{{{this}}}</li>
+				{{/each}}
+				</ul>
+			{{/if}}
 		</li>
 	{{/each}}
 	</ul></div>
@@ -44,6 +51,13 @@
 			<a href="/subscription/\{{../../collection.name}}/item/\{{index}}.html">\{{title}}</a>
 			\{{/if}}
 			<b>\{{index}}</b>
+			\{{#if matches}}
+				<ul class="matches">
+				\{{#each matches}}
+					<li>\{{{this}}}</li>
+				\{{/each}}
+				</ul>
+			\{{/if}}
 		</li>
 	\{{/each}}
 	</ul></div>

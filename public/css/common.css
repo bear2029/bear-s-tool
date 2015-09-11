@@ -15,15 +15,20 @@ html, body {
           filter: blur(0);
 }
 
-textarea:hover,
-input:not([type=checkbox]):hover,
+@media (min-width: 400px) {
+  textarea:hover,
+  input:not([type=checkbox]):hover,
+  button:hover {
+    outline: 0px !important;
+    -webkit-appearance: none;
+  }
+}
 textarea:active,
 input:not([type=checkbox]):active,
 textarea:focus,
 input:not([type=checkbox]):focus,
 button:focus,
-button:active,
-button:hover {
+button:active {
   outline: 0px !important;
   -webkit-appearance: none;
 }
@@ -33,11 +38,12 @@ body a {
   color: #008794;
 }
 
-body a:hover {
-  color: #F26700;
-  text-decoration: none;
+@media (min-width: 400px) {
+  body a:hover {
+    color: #F26700;
+    text-decoration: none;
+  }
 }
-
 body {
   background: url(/assets/stone.jpg);
   color: #78706A;
@@ -150,10 +156,6 @@ nav .navi-list > ul li {
 nav .navi-list > ul li:nth-of-type(2n) {
   background: #fff;
 }
-nav .navi-list > ul li:hover {
-  color: #fff !important;
-  background: #009787 !important;
-}
 @media (min-width: 400px) {
   nav .navi-list > ul li {
     border-radius: 5px;
@@ -161,6 +163,10 @@ nav .navi-list > ul li:hover {
   }
   nav .navi-list > ul li:first-of-type {
     margin-top: 0;
+  }
+  nav .navi-list > ul li:hover {
+    color: #fff !important;
+    background: #009787 !important;
   }
 }
 nav .navi-list > ul li a {

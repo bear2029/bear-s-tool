@@ -34,12 +34,12 @@ module.exports = exports = {
 					collectionName: itemResult._source.collectionName,
 					title: titles.title,
 					chapter: titles.chapter,
-					body: itemResult._source.body
+					matches: subscription.summaryHilight(req.params.term,itemResult._source.body)
 				}
 			})
 			if(req.path.match(/\.html$/)){
 				req.templateName = 'collection';
-				vars.pageTitle = 'seach page';
+				vars.headerTitle = 'Seach result for "'+req.params.term+'"';
 				req.vars = vars;
 				next();
 			}else{
@@ -149,6 +149,7 @@ module.exports = exports = {
 			}
 			if(req.accepts('html')){
 				req.vars = vars;
+				vars.headerTitle = vars.title;
 				req.templateName = 'collectionItem';
 				next();
 			}else{

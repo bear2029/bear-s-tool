@@ -4,7 +4,6 @@
 <html>
 <head>
 <script src="https://www.dropbox.com/static/api/dropbox-datastores-1.0-latest.js"></script>
-<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <center>
@@ -15,13 +14,19 @@
 var client = new Dropbox.Client({ key: 'hpw285i1do3f7ot' });
 
 function doHelloWorld() {
-	client.writeFile('hello.txt2', 'Hello, World!2', function (error) {
+	client.writeFile('/book/hello.txt2', 'Hello, World!2', function (error) {
 		if (error) {
 			alert('Error: ' + error);
 		} else {
 			alert('File written successfully!');
 		}
 	});
+}
+function mkdir(dirname)
+{
+	client.mkdir('/'+dirname,function() {
+		console.log('done');
+	})
 }
 
 // Try to complete OAuth flow.
@@ -32,8 +37,8 @@ client.authenticate({ interactive: true }, function (error, client) {
 		client.getAccountInfo({},function(error,res,data){
 			console.log(data)
 		})
-		client.readdir('/',{},function(){
-			console.log(arguments)
+		client.readdir('/book',{},function(error,files){
+			console.log(files)
 		})
 	}
 });
@@ -44,6 +49,7 @@ document.getElementById('writeButton').onclick = function () {
 			alert('Error: ' + error);
 		} else {
 			doHelloWorld();
+			//mkdir('book');
 		}
 	});
 }

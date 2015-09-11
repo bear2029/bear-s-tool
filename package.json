@@ -70,7 +70,9 @@
     "image-size": "~0.3.5",
     "redis-mock": "~0.4.9",
     "jshint": "~2.8.0",
-    "s-date": "~1.0.4"
+    "s-date": "~1.0.4",
+    "flux": "~2.1.1",
+    "object-assign": "~4.0.1"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
@@ -95,6 +97,8 @@
   "jest": {
     "testPathDirs": [
       "./lib",
+      "./controllers",
+      "browserjs",
       "public/fileDropDemo/js"
     ]
   },

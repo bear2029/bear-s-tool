@@ -640,7 +640,7 @@ var bear = {
 	},
 	getHosts: function(env) {
 		return allHosts[env];
-	}
+	},
 };
 module.exports = exports = bear;
 

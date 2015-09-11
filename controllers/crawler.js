@@ -25,6 +25,7 @@ var formatDate = function(d)
 
 var self = 
 {
+	EXPORT_FILE_CHUNK_SIZE: 5,
 	combineUrl: function(targetUrl,sourceUrl)
 	{/*{{{*/
 		if(targetUrl.match(/^https?:/)){
@@ -131,7 +132,7 @@ var self =
 					buff = '';
 				}
 			}
-			return batch(dataSet,fsp.writeFile,5,0);
+			return batch(dataSet,fsp.writeFile,self.EXPORT_FILE_CHUNK_SIZE,0);
 		})
 		.catch(function(e){
 			res.status(400).send(e)
