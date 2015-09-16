@@ -40,7 +40,7 @@ var Collector = {
 						return item;
 					}).reverse()
 				};
-				res.templateName = 'ipCollector';
+				req.templateName = 'ipCollector';
 				next();
 			})
 			.catch(function(e) {

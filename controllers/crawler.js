@@ -7,6 +7,8 @@ var gbk = require('gbk');
 var elasticsearch = require('elasticsearch');
 var Promise = require('promise');
 var client, debug = false;
+var SubscriptionHelper = require('../lib/subscription');
+
 Number.prototype.padLeft = function(base,chr){
 	var  len = (String(base || 10).length - String(this).length)+1;
 	return len > 0? new Array(len).join(chr || '0')+this : this;
@@ -269,9 +271,11 @@ var self =
 	},
 	crawlComplete: function(allItemUrls,id,data)
 	{/*{{{*/
+		console.log('need to extract last index from...',data,'or...',allItemUrls);
 		io.emit('crawler',{
 			'msg':'all done',
 			lastUpdate: formatDate(new Date()),
+			// todo: lastIndex: formatDate(new Date()),
 			count: allItemUrls.length,
 			id: id,
 			percentage: 100
@@ -298,7 +302,14 @@ var self =
 		return batch(indexParams,function(param){
 			io.emit('crawler',{'msg':'indexing item',param:param})
 			client.index(param)
-		},10,0)
+		},10,0,function(i,n){
+			io.emit('crawler',{
+				'msg':'resolved item pagese',
+				id: subscription._id,
+				percentage: 80 + Math.round(20*i/n)
+			})
+			console.log('index',i,n);
+		})
 	},
 	fetchEveryItem: function(data,subscription,crawlerRule)
 	{/*{{{*/
@@ -315,8 +326,13 @@ var self =
 			items.push([linkItem.link,crawlerRule])
 		}
 		//todo
-		return batch(items,self.fetch,5,0,function(current,total){
-			console.log(current+'/'+total);
+		return batch(items,self.fetch,5,false,function(current,total){
+			console.log('fetch remote',current,total);
+			io.emit('crawler',{
+				'msg':'crawling items',
+				id: subscription._id,
+				percentage: 40 + Math.round(40*current/total)
+			})
 		});
 	},/*}}}*/
 	collectRemoteUrlsFromSearchedFields: function(existingItems){
@@ -324,6 +340,26 @@ var self =
 			urls.push(item.fields.remoteUrl[0]); return urls;
 		},[]))
 		return existingItemUrls;
+	},
+	someItems: function(req,res)
+	{
+		var collectionName = req.params.collectionName;
+		var indexRangeParts = req.params.indexRange.split('-');
+		if(indexRangeParts.length < 2){
+			res.status(404).send('bad');
+		}
+		SubscriptionHelper.getSubscriptionItemByRange(collectionName,indexRangeParts[0],indexRangeParts[1])
+		.then(function(data){
+			var data = _.reduce(data.hits.hits,function(data,item){
+				data += item._source.index +" -- "+ item._source.title + "\n\n";
+				data += item._source.body + "\n\n\n";
+				return data;
+			},'');
+			res.send(data);
+		})
+		.catch(function(e){
+			res.status(500).send('bad');
+		});
 	}
 }
 module.exports = exports = self

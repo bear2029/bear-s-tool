@@ -602,6 +602,10 @@ var SearchBarView = Backbone.View.extend({
 module.exports = SearchBarView;
 
 },{"../../lib/storageWrapper":"/nodeapps/bear-s-tool/lib/storageWrapper.js","backbone":"/nodeapps/bear-s-tool/node_modules/backbone/backbone.js","jquery":"/nodeapps/bear-s-tool/node_modules/jquery/dist/jquery.js","underscore":"/nodeapps/bear-s-tool/node_modules/underscore/underscore.js"}],"/nodeapps/bear-s-tool/lib/bear.js":[function(require,module,exports){
+Number.prototype.padLeft = function(base,chr){
+	var  len = (String(base || 10).length - String(this).length)+1;
+	return len > 0? new Array(len).join(chr || '0')+this : this;
+};
 var allHosts = {
 	dev: {
 		http: 'http://bear.ddns.net:8080',
@@ -641,6 +645,16 @@ var bear = {
 	getHosts: function(env) {
 		return allHosts[env];
 	},
+	formatDate: function(d)
+	{
+		dformat = [ (d.getMonth()+1).padLeft(),
+		d.getDate().padLeft(),
+		d.getFullYear()].join('/')+ ' ' +
+		[ d.getHours().padLeft(),
+		d.getMinutes().padLeft(),
+		d.getSeconds().padLeft()].join(':');
+		return dformat;
+	}
 };
 module.exports = exports = bear;
 

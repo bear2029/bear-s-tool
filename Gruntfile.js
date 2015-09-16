@@ -76,6 +76,14 @@ module.exports = function(grunt) {
 					jQuery: true
 				}
 			}
+		},
+		copy: {
+			bootstrap: {
+				expand: true,
+				cwd: 'node_modules/bootstrap/dist/',
+				src: '**',
+				dest: 'public/vendor/bootstrap/'
+			}
 		}
 	});
 
@@ -84,12 +92,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-react');
 	grunt.loadNpmTasks('grunt-browserify');
 
 	grunt.registerTask('build', [
 		'jshint',
-		'uglify'
+		'uglify',
+		'copy'
 	]);
 	grunt.registerTask('default', [
 		'jshint',

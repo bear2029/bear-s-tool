@@ -4,8 +4,7 @@ public/css/*.css.map
 public/css/*.css
 public/js/build/
 public/js/min/
-public/broccoli/node_modules/
-public/broccoli/tmp/
+public/fileDropDemo/node_modules
 public/prefixer/tmp/
 public/prefixer/node_modules/
 public/vendor/*

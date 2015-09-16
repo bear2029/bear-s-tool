@@ -51,6 +51,7 @@ module.exports = function(app, controllers) {
 	app.get( '/crawler/subscribe/:id' , controllers.crawler.subscribe);
 	app.post( '/crawler/scriptTester' , controllers.crawler.scriptTester);
 	app.get( '/crawler/subscriptionItems/:id/:name.zip' , controllers.crawler.archive);
+	app.get( '/crawler/subscriptionItems/:collectionName/:indexRange.txt' , controllers.crawler.someItems);
 
 	// tracking
 	app.get('/tracking', controllers.tracking.get);
