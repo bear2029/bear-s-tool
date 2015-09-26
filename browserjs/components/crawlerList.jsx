@@ -1,35 +1,38 @@
 var React = require('react');
+var Reflux = require('reflux');
 var CrawlerEditor = require('./crawlerEditor.jsx')
 var CrawlerItem = require('./crawlerItem.jsx')
+var CrawlerStore = require('../stores/crawlerStore');
 var CrawlerActions = require('../actions/crawlerActions');
 //todo
 //var CrawlerStore = require('
 var CrawlerList = React.createClass(
 {
+	mixins: [Reflux.listenTo(CrawlerStore,"onStatusChange")],
+        onStatusChange: function(status) {
+		this.setState(status)
+	},
 	getInitialState: function()
 	{
-		return {data:this.props.data};
+		return CrawlerStore.state();
 	},
 	onAddNew: function()
 	{
-		var data = {'_source': {}}
-		React.render(<CrawlerEditor data={data} onSubmitComplete={this.onSubmitComplete} />, $('#crawler-editor')[0]);
-	},
-	onSubmitComplete: function(data)
-	{
-		this.state.data.push(data);
-		this.setState(this.state);
+		CrawlerActions.add();
+		//var data = {'_source': {}}
+		//React.render(<CrawlerEditor data={data} onSubmitComplete={this.onSubmitComplete} />, document.getElementById('crawler-editor'));
 	},
 	render: function()
 	{
 		return (
 		<div>
 			<div id="list">
-				{this.state.data.map(function(item,i){
+				{this.state.crawlers.map(function(item,i){
 					return <CrawlerItem key={i} data={item}/>;
 				})}
 			</div>
 			<button className="btn btn-primary" onClick={this.onAddNew}>Add New &nbsp;<span className="glyphicon glyphicon-plus"></span></button>
+			{<CrawlerEditor />}
 		</div>
 		);
 	}

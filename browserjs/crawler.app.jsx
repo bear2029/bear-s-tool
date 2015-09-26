@@ -10,22 +10,12 @@ require('./ui/navi');
 
 //searchHost = '//'+location.hostname+':9200';
 searchHost = '/es';
-var socket = io();
 
 
 
 if($('#crawler-list').length){
-	var collectionList;
-	Ajax.post(searchHost+'/crawler/common/_search',{size:1000})
-	.then(function(data){
-		var items = _.filter(data.hits.hits,function(item){
-			return item._source && item._source.siteName;
-		});
-		React.render(<CrawlerList data={items} />, document.getElementById('crawler-list'));
-	}).catch(function(e){
-		var data = [];
-		React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
-	});
+	React.render(<CrawlerList />, document.getElementById('crawler-list'));
+	//React.render(<CrawlerList data={data} />, document.getElementById('crawler-list'));
 }else if($('#subscribe-list').length && crawlerId){
 	var core;
 	Ajax.get(searchHost+'/crawler/subscription/_search?size=1000&q=crawlerid='+crawlerId)

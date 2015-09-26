@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "postinstall": "grunt build; npm install public/prefixer",
+    "postinstall": "grunt build; npm install public/prefixer; bower install",
     "start": "pm2 start index.js --name prod -- env=prod;",
     "lint": "jshint lib/**.js; jshint controllers/**.js",
     "test": "jest"
@@ -87,7 +87,8 @@
     "grunt-react": "~0.12.3",
     "jest-cli": "~0.4.18",
     "grunt-browserify": "~4.0.0",
-    "grunt-watchify": "~0.1.0"
+    "grunt-watchify": "~0.1.0",
+    "reflux": "~0.2.12"
   },
   "repository": {
     "type": "git",

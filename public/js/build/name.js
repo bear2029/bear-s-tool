@@ -654,11 +654,32 @@ var bear = {
 		d.getMinutes().padLeft(),
 		d.getSeconds().padLeft()].join(':');
 		return dformat;
+	},
+	dashToCamel: function(dash)
+	{
+		var _ = require('underscore');
+		var parts = dash.split('-');
+		var camel = _.map(parts,function(part,i){
+			if(i === 0){
+				return part;
+			}
+			return part.replace(part.charAt(0),part.charAt(0).toUpperCase())
+		}).join('');
+		return camel;
+	},
+	wait: function()
+	{
+		var Promise = require('promise');
+		return new Promise(function(resolve,reject){
+			setTimeout(function(){
+				resolve();
+			},500);
+		});
 	}
 };
 module.exports = exports = bear;
 
-},{"promise":"/nodeapps/bear-s-tool/node_modules/promise/index.js","request":"/nodeapps/bear-s-tool/node_modules/request/index.js"}],"/nodeapps/bear-s-tool/lib/storageWrapper.js":[function(require,module,exports){
+},{"promise":"/nodeapps/bear-s-tool/node_modules/promise/index.js","request":"/nodeapps/bear-s-tool/node_modules/request/index.js","underscore":"/nodeapps/bear-s-tool/node_modules/underscore/underscore.js"}],"/nodeapps/bear-s-tool/lib/storageWrapper.js":[function(require,module,exports){
 module.exports = {
 	STORAGE_DISPLAY_LAYOUT: 'STORAGE_DISPLAY_LAYOUT',
 	isWorking: function() {

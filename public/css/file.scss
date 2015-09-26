@@ -1,6 +1,6 @@
 @import "_global.scss";
 #foo{
-	font-size: 8vw;
+	font-size: 7vmin;
 	padding: 1em;
 	border: 10px #fff solid;
 	text-align: center;
@@ -9,12 +9,20 @@
 .container-fluid{
 	height: 100%;
 }
-.preview>*{
-	filter: drop-shadow(6px 6px 3px rgba(0,0,0,0.3));
-}
 .preview{
+	color: #fff;
+	font-size: 14px;
 	background: rgba(0,0,0,.3);
 	padding: 1em;
+	overflow: auto;
+	li.css{
+		span{
+			white-space: nowrap;
+		}
+		.i{
+			text-indent: 1em;
+		}
+	}
 }
 #foo:hover{
 	border-style: dashed;

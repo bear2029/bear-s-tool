@@ -32,7 +32,7 @@ h1,
   line-height: 1.5;
 }
 
-.crawler-editor .url {
+.crawler-editor .one-line {
   position: relative;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -41,13 +41,11 @@ h1,
       -ms-flex-align: baseline;
           align-items: baseline;
 }
-
-.crawler-editor .url textarea {
+.crawler-editor .one-line textarea {
   height: 200px;
 }
-
-.crawler-editor .url textarea,
-.crawler-editor .url input {
+.crawler-editor .one-line textarea,
+.crawler-editor .one-line input {
   transition: color 300ms ease-out;
   width: auto;
 }
@@ -60,26 +58,26 @@ h1,
   margin-left: 0px;
 }
 
-.crawler-editor .url input[type=url] {
+.crawler-editor .one-line input[type=one-line] {
   padding-left: 32px;
 }
 
-.crawler-editor .url textarea.wide,
-.crawler-editor .url input.wide {
+.crawler-editor .one-line textarea.wide,
+.crawler-editor .one-line input.wide {
   -webkit-flex-grow: 2;
       -ms-flex-positive: 2;
           flex-grow: 2;
 }
 
-.crawler-editor .url.invalid input {
+.crawler-editor .one-line.invalid input {
   color: red;
 }
 
-.crawler-editor .url.valid .validation-icon {
+.crawler-editor .one-line.valid .validation-icon {
   opacity: 1;
 }
 
-.crawler-editor .url .validation-icon {
+.crawler-editor .one-line .validation-icon {
   opacity: 0.2;
   transition: opacity 300ms ease-out;
   position: absolute;

@@ -1,0 +1,20 @@
+{
+  "name": "bear-s-tool",
+  "main": "index.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/bear2029/bear-s-tool",
+  "authors": [
+    "bear2029 <bear2029@gmail.com>"
+  ],
+  "description": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/components",
+    "test",
+    "tests"
+  ]
+}
