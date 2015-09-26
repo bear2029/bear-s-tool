@@ -11,6 +11,7 @@ Bear's tool include site scraber and name generator right now
 - sudo dpkg -i elasticsearch-1.5.2.deb
 - npm install -g react-tools
 - npm install -g grunt-cli
+- npm install jest-cli -g
 - npm install bower -g
  
 ElasticSearch setting

@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "postinstall": "grunt build; npm install public/prefixer; bower install",
+    "postinstall": "grunt build; bower install",
+    "postinstall_old": "grunt build; npm install public/prefixer; bower install",
     "start": "pm2 start index.js --name prod -- env=prod;",
     "lint": "jshint lib/**.js; jshint controllers/**.js",
     "test": "jest"
