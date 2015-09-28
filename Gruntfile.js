@@ -97,7 +97,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-browserify');
 
 	grunt.registerTask('build', [
-		'jshint',
+		//'jshint',
 		'uglify',
 		'copy'
 	]);

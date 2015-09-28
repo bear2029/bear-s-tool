@@ -13,7 +13,7 @@ function shouldCompress(req, res) {
 module.exports = function(app, controllers) {
 	//app.use(compression({filter: shouldCompress}))
 	app.use(compression())
-	app.use('/',express.static(global.appRoot+'/public'));
+	app.use(express.static(global.appRoot+'/public'));
 	app.use(function(req,res,next){
 		res.header('Access-Control-Allow-Origin', 'http://bear.ddns.net:8080');
 		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -70,7 +70,12 @@ module.exports = function(app, controllers) {
 			req.templateName = req.path.substr(1,req.path.length-1);
 		}
 		vars.bodyClass = req.templateName;
-		res.render(req.templateName,vars);
+		try{
+			res.render(req.templateName,vars);
+		}catch(e){
+			console.log('fail to render',e);
+			res.status(404).send('sorry, the page is not found');
+		}
 	})
 
 	io.on('connection', function(socket){
