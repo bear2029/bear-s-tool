@@ -5,12 +5,14 @@ html, body {
 
 .appearable {
   opacity: 0;
-  filter: blur(5px);
+  -webkit-filter: blur(5px);
+          filter: blur(5px);
   transition: all 300ms ease-out;
 }
 .appearable.appear {
   opacity: 1;
-  filter: blur(0);
+  -webkit-filter: blur(0);
+          filter: blur(0);
 }
 
 @media (min-width: 400px) {
@@ -48,7 +50,7 @@ body {
   font-family: 'Arvo', sans-serif;
   font-size: 14px;
 }
-@media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 2dppx) {
+@media (-webkit-min-device-pixel-ratio: 1.5), (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
   body {
     background-size: 225px auto;
   }
@@ -224,6 +226,8 @@ body.signin .popup.login {
 }
 @media (min-width: 800px) {
   body.signin .popup.login {
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
   }
   body.signin .popup.login .nav {
@@ -274,5 +278,3 @@ body.signin .popup.login {
 #header-utils.signed-in .logout {
   display: block;
 }
-
-/*# sourceMappingURL=common.css.map */
