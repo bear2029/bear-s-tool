@@ -7,14 +7,27 @@ var bear = require('../../lib/bear');
 var searchHost = '/es', editingCrawlerId;
 var data = {
 	crawlers: [],
-	isEditing: false,
-	isErrorOnConsole: null,
 	consoleHtml: '',
-	isCollectionUrlValid: null,
-	isItemUrlValid: null
+	editor: getDefaultEditorState()
 };
 
 var bodyParagraphs = [];
+function getDefaultEditorState()
+{
+	// todo add default crawler shit
+	return {
+		isEditing: false,
+		consoleHtml: '',
+		isErrorOnConsole: null,
+		isCollectionUrlValid: null,
+		isItemUrlValid: null
+	};
+}
+function getCurrentEditorState(id)
+{
+	// todo, validation status need to be regit
+	return Object.assign(getDefaultEditorState(),_.findWhere(data.crawlers,{id:id}));
+}
 
 var Store = reflux.createStore({
 	listenables: CrawlerActions,
@@ -33,15 +46,14 @@ var Store = reflux.createStore({
 		var collectionList;
 		return Ajax.post(searchHost+'/crawler/common/_search',{size:1000})
 		.then(function(res){
-			 console.log('crawler loaded',res)
 			 var items = _.map(_.filter(res.hits.hits,function(_item){
 				if(_item._source && _item._source.siteName){
 					return true;
 				}
 			}),function(_item){
 				var item = {};
-				item.id = _item._id;
 				item = Object.assign(item,_item._source);
+				item.id = _item._id;
 				return item;
 			});
 			data.crawlers = items;
@@ -53,7 +65,14 @@ var Store = reflux.createStore({
 	},
 	add: function()
 	{
-		data.isEditing = true;
+		data.editor = getDefaultEditorState();
+		data.editor.isEditing = true;
+		this.emitChange();
+	},
+	startEdit: function(id)
+	{
+		data.editor = getCurrentEditorState(id);
+		data.editor.isEditing = true;
 		this.emitChange();
 	},
 	validateUrl: function(testType,regexString,url)
@@ -62,11 +81,11 @@ var Store = reflux.createStore({
 		var regex = new RegExp(regexString);
 		isValid = url.match(regex);
 		switch(testType){
-			case 'list':
-				data.isCollectionUrlValid = isValid;
+			case 'collection':
+				data.editor.isCollectionUrlValid = isValid;
 				break;
 			case 'item':
-				data.isItemUrlValid = isValid;
+				data.editor.isItemUrlValid = isValid;
 				break;
 			default: 
 				throw new Error('Un-expected test type: "'+testType+'"');
@@ -75,19 +94,18 @@ var Store = reflux.createStore({
 	},
 	del: function(id)
 	{
-		//todo
-		this.emitChange();
-	},
-	startEdit: function(id)
-	{
-		data.isEditing = true;
-		this.emitChange();
+	 	Ajax.delete(searchHost+'/crawler/common/'+id)
+		.then(function(){
+			data.crawlers = _.filter(data.crawlers,function(crawler){
+				return crawler.id !== id;
+			});
+			this.emitChange();
+		}.bind(this));
 	},
 	testScript: function(url,rule)
 	{
 		try{
 			rule = JSON.parse(rule);
-			console.log(url,rule)
 			Ajax.post('/crawler/scriptTester',{
 				testUrl: url,
 				testRule: rule
@@ -97,18 +115,17 @@ var Store = reflux.createStore({
 		}
 	},   
 	outputResultOnConsole: function(e){
-		data.isErrorOnConsole = false
-		data.consoleHtml = JSON.stringify(e);
+		data.editor.isErrorOnConsole = false
+		data.editor.consoleHtml = JSON.stringify(e);
 		this.emitChange();
 	},
 	displayErrorOnConsole: function(e){
-		data.isErrorOnConsole = true;
-		data.consoleHtml = e.message;
+		data.editor.isErrorOnConsole = true;
+		data.editor.consoleHtml = e.message;
 		this.emitChange();
 	},
 	submitEdit: function(formData)
 	{
-		console.log(1,data.crawlers.length);
 		var requestBody = _.reduce(formData,function(newObj,value,key){
 			newObj[bear.dashToCamel(key)] = value;
 			return newObj;
@@ -119,19 +136,18 @@ var Store = reflux.createStore({
 		}
 		return Ajax.post(url,requestBody)
 		.then(function(res){
-			data.isEditing = false;
+			data.editor.isEditing = false;
 			editingCrawlerId = null;
-			console.log('new crawler added:',res);
+			data.crawlers.push(Object.assign(requestBody,{id:res._id}));
+			this.emitChange();
 		}.bind(this))
-		.then(bear.wait)
-		.then(this.loadCrawler)
 		.catch(function(e){
 			console.log('catch',e);
 		})
 	},
 	endEdit: function()
 	{
-		data.isEditing = false;
+		data.editor.isEditing = false;
 		editingCrawlerId = null;
 		this.emitChange();
 	},
