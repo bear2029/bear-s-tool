@@ -100,7 +100,7 @@ var Editor = React.createClass(
 			</div>
 			<div className={consoleClassName}>
 				<h4>Console</h4>
-				<textarea readOnly className="form-control" valueLink={this.linkState('consoleHtml')}></textarea>
+				<div dangerouslySetInnerHTML={{__html: this.state.consoleHtml}} />
 			</div>
 		</form>
 		</div>

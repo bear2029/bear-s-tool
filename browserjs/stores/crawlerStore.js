@@ -3,6 +3,7 @@ var _ = require('underscore');
 var reflux = require('reflux');
 var CrawlerActions = require('../actions/crawlerActions.js');
 var bear = require('../../lib/bear');
+var json2html = require('json-to-html');
 
 var searchHost = '/es', editingCrawlerId;
 var data = {
@@ -116,7 +117,8 @@ var Store = reflux.createStore({
 	},   
 	outputResultOnConsole: function(e){
 		data.editor.isErrorOnConsole = false
-		data.editor.consoleHtml = JSON.stringify(e);
+		data.editor.consoleHtml = json2html(e);
+		console.log(data.editor.consoleHtml);
 		this.emitChange();
 	},
 	displayErrorOnConsole: function(e){

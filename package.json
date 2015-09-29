@@ -51,6 +51,7 @@
     "isstream": "~0.1.2",
     "jquery": "~2.1.4",
     "jshint": "~2.8.0",
+    "json-to-html": "^0.1.2",
     "lodash": "~3.10.0",
     "mime-types": "~2.0.12",
     "mocha": "~2.2.5",

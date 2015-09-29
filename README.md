@@ -23,17 +23,17 @@ http.cors.enabled : true
 http.cors.allow-origin : "*"
 http.cors.allow-methods : OPTIONS, HEAD, GET, POST, PUT, DELETE
 http.cors.allow-headers : X-Requested-With,X-Auth-Token,Content-Type, Content-Length
-
+```
 Redis
-
+```
 - brew install redis
 
 ```
 Reference:
-http://www.noip.com/support/knowledgebase/installing-the-linux-dynamic-update-client-on-ubuntu/
-https://gist.github.com/ricardo-rossi/8265589463915837429d
-https://github.com/elastic/elasticsearch-analysis-smartcn/tree/v2.6.0/#version-260-for-elasticsearch-16
-https://gist.github.com/tonypujals/9631143
+- http://www.noip.com/support/knowledgebase/installing-the-linux-dynamic-update-client-on-ubuntu/
+- https://gist.github.com/ricardo-rossi/8265589463915837429d
+- https://github.com/elastic/elasticsearch-analysis-smartcn/tree/v2.6.0/#version-260-for-elasticsearch-16
+- https://gist.github.com/tonypujals/9631143
 
 running on port 80 (443 for SSL)
 - sudo apt-get install libcap2-bin
