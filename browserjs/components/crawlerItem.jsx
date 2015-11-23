@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var CrawlerEditor = require('./crawlerEditor.jsx')
 var React = require('react');
-var CrawlerActions = require('../actions/crawlerActions');
+var CrawlerAction = require('../actions/crawlerAction');
 var CrawlerItem = React.createClass(
 {
 	propTypes: {
@@ -17,11 +17,11 @@ var CrawlerItem = React.createClass(
 	onClick: function(e)
 	{
 		e.preventDefault();
-		CrawlerActions.startEdit(this.props.id);
+		CrawlerAction.startEdit(this.props.id);
 	},
 	onDelete: function(e)
 	{
-		CrawlerActions.del(this.props.id);
+		CrawlerAction.del(this.props.id);
 	 	e.preventDefault();
 	},
 	render: function()

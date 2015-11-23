@@ -1,9 +1,10 @@
 var Ajax = require('../../lib/promiseAjax');
 var _ = require('underscore');
 var reflux = require('reflux');
-var CrawlerActions = require('../actions/crawlerActions.js');
+var CrawlerAction = require('../actions/crawlerAction.js');
 var bear = require('../../lib/bear');
 var json2html = require('json-to-html');
+var assign = require('object-assign');
 
 var searchHost = '/es', editingCrawlerId;
 var data = {
@@ -21,23 +22,21 @@ function getDefaultEditorState()
 		consoleHtml: '',
 		isErrorOnConsole: null,
 		isCollectionUrlValid: null,
-		isItemUrlValid: null
+		isItemUrlValid: null,
+		collectionRule: '{"title":"$(\'h1\').text()","links":"_.reduce($(\'#tbchapterlist a\'),function(list,item){var el=$(item);var link={title:el.text(),link:el.attr(\'href\')};list.push(link);return list},[])"}',
+		itemRule: '{"body":"_.reduce($(\'article p\'),function(sum,item){sum+=$(item).text()+\"\\n\";return sum;},\'\')"}'
 	};
 }
 function getCurrentEditorState(id)
 {
 	// todo, validation status need to be regit
-	return Object.assign(getDefaultEditorState(),_.findWhere(data.crawlers,{id:id}));
+	return assign(getDefaultEditorState(),_.findWhere(data.crawlers,{id:id}));
 }
 
 var Store = reflux.createStore({
-	listenables: CrawlerActions,
+	listenables: CrawlerAction,
 	init: function() {
 		this.loadCrawler();
-	},
-    	status: function()
-	{
-		return data;
 	},
 	emitChange: function() {
 		this.trigger(data);
@@ -53,7 +52,7 @@ var Store = reflux.createStore({
 				}
 			}),function(_item){
 				var item = {};
-				item = Object.assign(item,_item._source);
+				item = assign(item,_item._source);
 				item.id = _item._id;
 				return item;
 			});
@@ -75,6 +74,10 @@ var Store = reflux.createStore({
 		data.editor = getCurrentEditorState(id);
 		data.editor.isEditing = true;
 		this.emitChange();
+	},
+	syncEditorState: function(editorStateFromView)
+	{
+		data.editor = editorStateFromView;
 	},
 	validateUrl: function(testType,regexString,url)
 	{
@@ -118,7 +121,6 @@ var Store = reflux.createStore({
 	outputResultOnConsole: function(e){
 		data.editor.isErrorOnConsole = false
 		data.editor.consoleHtml = json2html(e);
-		console.log(data.editor.consoleHtml);
 		this.emitChange();
 	},
 	displayErrorOnConsole: function(e){
@@ -128,19 +130,24 @@ var Store = reflux.createStore({
 	},
 	submitEdit: function(formData)
 	{
+		var isNew = !formData.id;
 		var requestBody = _.reduce(formData,function(newObj,value,key){
 			newObj[bear.dashToCamel(key)] = value;
 			return newObj;
 		},{});
+		data.editor = _.extend(data.editor,requestBody);
+		this.emitChange();
 		var url = searchHost+"/crawler/common";
 		if(requestBody.id){
 			url += '/' + requestBody.id;
 		}
 		return Ajax.post(url,requestBody)
 		.then(function(res){
+			if(isNew){
+				data.crawlers.push(assign(requestBody,{id:res._id}));
+			}
 			data.editor.isEditing = false;
 			editingCrawlerId = null;
-			data.crawlers.push(Object.assign(requestBody,{id:res._id}));
 			this.emitChange();
 		}.bind(this))
 		.catch(function(e){

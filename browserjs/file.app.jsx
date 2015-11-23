@@ -8,6 +8,7 @@
 	var Promise = require('promise');
 	var batch = require('../lib/batch.js');
 	var React = require('react');
+	var ReactDom = require('react-dom');
 	require('./ui/navi');
 
 	var CssComponent = React.createClass({
@@ -27,13 +28,36 @@
 		}
 	});
 	var PreviewComponent = React.createClass({
+		getInitialState: function() {
+			return {displayingType: 'datauri'};
+		},
+		onSelectURI: function()
+		{
+			this.setState({displayingType: 'datauri'})
+		},
+		onSelectURL: function()
+		{
+			this.setState({displayingType: 'url'})
+		},
 		render: function()
 		{
+			var urlButtonClass = "btn btn-default";
+			var uriButtonClass = "btn btn-default";
+			if(this.state.displayingType === 'datauri'){
+				uriButtonClass += ' active';
+			}else{
+				urlButtonClass += ' active';
+			}
 			var cssComponents = _.map(this.props.files,function(file,i){
-				return (<CssComponent key={i} className={file.className} uri={file.uri} width={file.width} height={file.height} />);
-			});
+				var url = this.state.displayingType === 'datauri' ? file.uri : file.fileName;
+				return (<CssComponent key={i} className={file.className} uri={url} width={file.width} height={file.height} />);
+			}.bind(this));
 			return (
 				<div className="preview-inner">
+					<p className="selector btn-group">
+						<label onClick={this.onSelectURI} className={uriButtonClass}>URI</label>
+						<label onClick={this.onSelectURL} className={urlButtonClass}>URL</label>
+					</p>
 					<ul className="css list-unstyled">
 					{cssComponents}
 					</ul>
@@ -65,6 +89,7 @@
 			var image = document.createElement('img');
 			image.addEventListener('load', function() {
 				resolve({
+					fileName: fileName,
 					uri: uri,
 					width: image.width,
 					height: image.height,
@@ -92,7 +117,7 @@
 		})
 		.then(function(dataList){
 			// todo, not dynamic
-			React.render(<PreviewComponent files={dataList} />,$('#preview-bd')[0]);
+			ReactDom.render(<PreviewComponent files={dataList} />,$('#preview-bd')[0]);
 		});
 	}
 

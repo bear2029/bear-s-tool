@@ -1,78 +1,63 @@
 var _ = require('underscore');
 var React = require('react');
+var ReactDom = require('react-dom');
+var LinkedStateMixin = require('react-addons-linked-state-mixin');
+var Reflux = require('reflux');
 var $ = require('jquery');
+var searchHost = '/es/';
+var Ajax = require('../../lib/promiseAjax');
+var SubscriptionStore = require('../stores/subscriptionStore');
+var SubscriptionAction = require('../actions/subscriptionAction');
+var fieldMap = ['collectionName','collectionUrl','crawlerId'];
 
 var SubscriptionEditor = React.createClass(
 {
-	getInitialState:function(){
-		this.fieldMap = ['collectionName','collectionUrl','crawlerId'];
-		this.isNew = !this.props.data._source;
-		var state = $.extend({
-			crawlerId: crawlerId,
-			lastUpdate: '',
-			count: 0
-		},this.props.data._source);
-		return state;
-	},
-	componentDidMount:function()
+	mixins: [LinkedStateMixin,Reflux.listenTo(SubscriptionStore,'onChange')],
+    	onChange: function(state)
 	{
-		this.parentElement = $(React.findDOMNode(this)).closest('.popup');
-		if(this.parentElement){
-			this.parentElement.addClass('appear');
-		}
+		this.setState(state.editor);
+	},
+	getInitialState:function(){
+		return SubscriptionStore.state().editor;
 	},
 	onSubmit: function(e)
 	{
 		e.preventDefault();
-		var self = this;
-		var formBody = _.pick(self.state,this.fieldMap);
-		var url = searchHost+"/crawler/subscription/";
-		if(this.props.data && this.props.data._id){
-			url += '/' + this.props.data._id;
-		}
-		Ajax.post(url,formBody)
-		.then(this.onSubmitComplete)
-		.catch(function(e){
-			console.log('catch');
-		});
-	},
-	onChangeField: function(e)
-	{
-		var $input = $(e.target);
-		switch($input.attr('name')){
-			case 'collection-name':
-				this.setState({collectionName:$input.val()});
-				break;
-			case 'collection-url':
-				this.setState({collectionUrl:$input.val()});
-				break;
-		}
+		var formBody = _.pick(this.state,fieldMap);
+		// todo
+		SubscriptionAction.editorSubmit(formBody,this.state.subscriptionId);
 	},
 	onClose: function(e)
 	{
-		var that = this;
-		if(e){
-			e.preventDefault();
-		}
-		if(this.parentElement){
-			this.parentElement.removeClass('appear');
-			$(React.findDOMNode(that)).remove();
-		}
+		e.preventDefault();
+		SubscriptionAction.closeEditor();
 	},
 	render: function() {
+		var img,rootClassName = 'crawler-editor popup' + (this.state.isEditing ? ' appear' : '');
+		if (this.state.thumnailUrl){
+			img = (<img src={this.state.thumnailUrl} />);
+		}
 		return (
-		<form className="crawler-editor" onSubmit={this.onSubmit}>
+		<form className={rootClassName} onSubmit={this.onSubmit}>
 			<div className="editor">
 				<h4>Editor</h4>
-				<div className="form-group">
-					<input name="collection-name" className="form-control" onChange={this.onChangeField} placeholder="collection name" value={this.state.collectionName}/>
-				</div>
-				<div className="form-group">
-					<input name="collection-url" type="url" className="form-control" onChange={this.onChangeField} placeholder="collection URL" value={this.state.collectionUrl}/>
-				</div>
-				<div className="form-group">
-					<button type="submit" className="btn btn-default" >Submit</button>&nbsp;
-					<button type="close" className="btn btn-default" onClick={this.onClose}>Close</button>
+				<div className="row">
+					<div className="col-xs-8">
+						<input name="thumbnail-uri" type="hidden" valueLink={this.linkState('thumbnail-uri')}/>
+						<div className="form-group">
+							<input name="collection-name" className="form-control" valueLink={this.linkState('collectionName')} placeholder="collection name"/>
+						</div>
+						<div className="form-group">
+							<input name="collection-url" type="url" className="form-control" valueLink={this.linkState('collectionUrl')} placeholder="collection URL"/>
+						</div>
+						<div className="form-group">
+							<button type="submit" className="btn btn-primary" >Submit</button>&nbsp;
+							<button type="close" className="btn btn-default" onClick={this.onClose}>Close</button>
+						</div>
+					</div>
+					<div className="col-xs-4">
+						<figure>{img}</figure>
+					</div>
 				</div>
 			</div>
 		</form>

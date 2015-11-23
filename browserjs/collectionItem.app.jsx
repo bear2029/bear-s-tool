@@ -1,7 +1,8 @@
 var React = require('react');
+var ReactDom = require('react-dom');
 var $ = require('jquery');
 var bear = require('../lib/bear');
 var Article = require('./components/article.jsx');
 require('./ui/navi');
 
-React.render(<Article />,$('#content')[0]);
+ReactDom.render(<Article />,$('#content')[0]);

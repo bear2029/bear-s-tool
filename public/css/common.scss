@@ -1,6 +1,6 @@
 @import "_global.scss";
 
-html,body{
+html,body,.container-fluid{
 	height: 100%;
 }
 .appearable{
@@ -111,6 +111,37 @@ nav{
 			padding: 1em;
 			position: absolute;
 			z-index: 2;
+			top: 0;
+			left: 0;
+			figure{
+				width: 22px;
+				border-top: 3px solid #000;
+				margin-bottom: 4px;
+				transition: all 300ms ease-out;
+				&:last-of-type{
+					margin-bottom: 0;
+				}
+			}
+			&:hover{
+				figure{
+					border-color: rgba(0,0,0,.5);
+				}
+			}
+			body.navi-list-expend &{
+				figure:nth-of-type(1){
+					transform-origin: 6px 4px;
+					transform: rotateZ(45deg);
+				}
+				figure:nth-of-type(2){
+					opacity: 0;
+				}
+				figure:nth-of-type(3){
+					transform-origin: 0 -4px;
+					transform: rotateZ(-45deg);
+				
+				}
+
+			}
 		}
 		&>ul{
 			transition: all 400ms ease-out;
@@ -127,7 +158,6 @@ nav{
 			visibility: hidden;
 			@media(max-width: $responsive_breakpoint_xs){
 				background-color: #fff;
-				overflow: hidden;
 				font-size: 3em;
 				padding: 0;
 				height: 0;
@@ -260,5 +290,19 @@ nav{
 	}
 	&.signed-in .logout{
 		display: block;
+	}
+}
+.home.main{
+	width: 100%;
+	height: calc(100% - 30px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	img{
+		max-width: 100%;
+		max-height: 100%;
+		width: auto;
+		height: auto;
+		transform: scale(0.8);
 	}
 }

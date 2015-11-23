@@ -1,15 +1,10 @@
-Promise = require('promise');
-bear = require('./lib/bear.js');
-esHelper = require('./lib/esHelper.js');
 path = require('path');
 express = require('express');
 app = express();
 fs = require('fs');
-util = require('util');
 bodyParser = require('body-parser');
 _ = require('underscore')
 argv = require('./lib/argvController.js');
-logger = require('morgan');
 error_handler = require('errorhandler');
 exphbs  = require('express-handlebars');
 global.appRoot = path.resolve(__dirname);
@@ -28,6 +23,7 @@ io = require('socket.io')(https);
 
 var controllers = {};
 fs.readdirSync('./controllers').map(function(file){
+	console.log(file);
 	if(matches = file.match(/^(.*)\.js$/)){
 		var exp = require('./controllers/'+file);
 		controllers[matches[1]] = exp
@@ -38,7 +34,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(error_handler());
 app.use(cookieParser());
 app.use(session({secret: 'BearToolIsAwesome'}));

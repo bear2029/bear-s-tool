@@ -1,17 +1,18 @@
 var $ = require('jquery');
 var React = require('react');
+var ReactDom = require('react');
 var Reflux = require('reflux');
 var CrawlerEditor = require('./crawlerEditor.jsx')
 var CrawlerItem = require('./crawlerItem.jsx')
 var CrawlerStore = require('../stores/crawlerStore');
-var CrawlerActions = require('../actions/crawlerActions');
+var CrawlerAction = require('../actions/crawlerAction');
 //todo
 //var CrawlerStore = require('
 var CrawlerList = React.createClass(
 {
-	mixins: [Reflux.listenTo(CrawlerStore,"onStatusChange")],
-        onStatusChange: function(status) {
-		this.setState(status)
+	mixins: [Reflux.listenTo(CrawlerStore,"onChange")],
+        onChange: function(state) {
+		this.setState(state)
 	},
 	getInitialState: function()
 	{
@@ -20,9 +21,7 @@ var CrawlerList = React.createClass(
 	onAddNew: function()
 	{
 		window.scroll(0,0);
-		CrawlerActions.add();
-		//var data = {'_source': {}}
-		//React.render(<CrawlerEditor data={data} onSubmitComplete={this.onSubmitComplete} />, document.getElementById('crawler-editor'));
+		CrawlerAction.add();
 	},
 	render: function()
 	{

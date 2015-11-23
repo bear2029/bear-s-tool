@@ -1,41 +1,28 @@
 var React = require('react');
+var ReactDom = require('react-dom');
+var SubscriptionAction = require('../actions/subscriptionAction');
 var $ = require('jquery');
 var socket = io();
 var Ajax = require('../../lib/promiseAjax');
 var dropBoxHelper = require('../../lib/dropBoxHelper');
+var searchHost = '/es/';
 
 module.exports = React.createClass({
 	getInitialState: function()
 	{
-		return this.props.data;
-	},
-	onSubmitComplete: function(data)
-	{
-		this.setState(data);
-		this.render();
-	},
-	onClick: function(e)
-	{
-		var el = $(e.target);
-		if(el.prop('tagName').toLowerCase() != 'a'){
-			el = el.parentsUntil('td');
-		}
-		if(el.prop('tagName').toLowerCase() != 'a'){
-			e.preventDefault();
-			React.render(<Editor data={this.state} onSubmitComplete={this.onSubmitComplete} />, $('#crawler-editor')[0]);
-		}
+		return {updating: false,updatePercentage: 0};
 	},
 	componentDidMount: function()
 	{
 		var that = this;
 		this.state.updating = false;
 		socket.on('crawler',function(msg){
-			if(msg.id == that.state._id){
+			if(msg.id == that.props.id){
 				if(msg.msg == 'all done'){
 					that.state.updating = false;
-					that.state._source.count = msg.count;
-					that.state._source.lastUpdate = msg.lastUpdate;
-					that.state._source.lastIndex = msg.lastIndex;
+					that.props.count = msg.count;
+					that.props.lastUpdate = msg.lastUpdate;
+					that.props.lastIndex = msg.lastIndex;
 					that.setState(that.state);
 				}else if(msg.percentage){
 					that.setState({'updating': true,'updatePercentage':msg.percentage});
@@ -43,31 +30,38 @@ module.exports = React.createClass({
 			}
 		})
 	},
-	onEdit: function(e) { React.render(<SubscriptionEditor data={this.state} onSubmitComplete={this.onSubmitComplete} />, $('#subscribe-editor')[0]); },
+	onEdit: function(e) {
+		e.preventDefault();
+		SubscriptionAction.edit(this.props.id);
+	},
 	onUpdate: function(e) {
 		if(this.state.updating){
 			return;
 		}
-		socket.emit('crawler', {'subscriptionId':this.state._id});
-		this.setState({'updating':true});
-		this.setState({'updatePercentage':0});
+		socket.emit('crawler', {'subscriptionId':this.props.id});
+		this.setState({
+			updating:true,
+			updatePercentage:0
+		});
 	},
 	onDelete: function(e)
 	{/*{{{*/
+		// todo: move to store
 		var that = this;
 		e.preventDefault();
-		Ajax.delete(searchHost+'/crawler/subscription/'+that.state._id)
+		Ajax.delete(searchHost+'/crawler/subscription/'+that.props.id)
 		.then(function(){
 			return Ajax.delete(searchHost+'/crawler/subscriptionItem/_query',{query:{match:{
-				subscriptionId:that.state._id}
+				subscriptionId:that.props.id}
 			}});
 		})
 		.then(function(){
-			$(React.findDOMNode(that)).remove();
+			$(ReactDom.findDOMNode(that)).remove();
 		})
 		return false;
 	},/*}}}*/
 	onExportToDropBox: function(e) {
+		// todo: move to store
 		if(this.state.updating){
 			return;
 		}
@@ -76,13 +70,11 @@ module.exports = React.createClass({
 		}
 		var collectionName = $(e.currentTarget).attr('data-collection-name');
 		var lastLocalIndex = $(e.currentTarget).attr('data-last-index');
-		this.setState({'updating':true});
-		this.setState({'updatePercentage':0});
+		this.setState({'updating':true,'updatePercentage':0});
 		dropBoxHelper.sync(collectionName, lastLocalIndex, localContentFetcher,function(i,n){
 			this.setState({'updatePercentage':Math.round(100*i/n)});
 		}.bind(this)).then(function(){
-			this.setState({'updatePercentage':100});
-			this.setState({'updating':false});
+			this.setState({'updatePercentage':100,'updating':false});
 		}.bind(this)).catch(function(e){
 			console.log('issue occured',e);
 		});
@@ -93,14 +85,14 @@ module.exports = React.createClass({
 		if(this.state.updating){
 			classes += ' updating'
 		}
-		var href = "/subscription/"+this.state._source.collectionName+"/1.html";
+		var href = "/subscription/"+this.props.name+"/1.html";
 		var progressStyle = {width: this.state.updatePercentage+'%'}
 		return (
 		<div className="item">
-			<div><h3><a target="_blank" href={href}>{this.state._source.collectionName}</a></h3></div>
-			<div><a target="_blank" className="remote" href={this.state._source.collectionUrl}>{this.state._source.collectionUrl}</a></div>
-			<div>count: {this.state._source.count}</div>
-			<div>last update: {this.state._source.lastUpdate}</div>
+			<div><h3><a target="_blank" href={href}>{this.props.name}</a></h3></div>
+			<div><a target="_blank" className="remote" href={this.props.remoteUrl}>{this.props.remoteUrl}</a></div>
+			<div>count: {this.props.count}</div>
+			<div>last update: {this.props.lastUpdate}</div>
 			<div className={classes}>
 				<button className="btn btn-info btn-sm" onClick={this.onUpdate}>
 					update <span className="glyphicon glyphicon-refresh"></span>
@@ -110,10 +102,10 @@ module.exports = React.createClass({
 				</div>
 			</div>
 			<div className="utils">
-				<a className="btn btn-primary btn-sm" href={"/crawler/subscriptionItems/"+this.state._id+"/"+this.state._source.collectionName+".zip"} title="download">
+				<a className="btn btn-primary btn-sm" href={"/crawler/subscriptionItems/"+this.props.id+"/"+this.props.name+".zip"} title="download">
 					<span className="glyphicon glyphicon-floppy-save"></span>
 				</a>
-				<button className="btn btn-primary btn-sm" data-collection-name={this.state._source.collectionName} data-last-index={this.state._source.lastIndex} onClick={this.onExportToDropBox} title="export to dropbox">
+				<button className="btn btn-primary btn-sm" data-collection-name={this.props.name} data-last-index={this.props.lastIndex} onClick={this.onExportToDropBox} title="export to dropbox">
 					<span className="glyphicon glyphicon-cloud-download"></span>
 				</button>
 				<button className="btn btn-success btn-sm" onClick={this.onEdit} title="Edit">

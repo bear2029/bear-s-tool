@@ -13,6 +13,7 @@ function shouldCompress(req, res) {
 module.exports = function(app, controllers) {
 	//app.use(compression({filter: shouldCompress}))
 	app.use(compression())
+	app.use('/coverage',express.static(global.appRoot+'/coverage/lcov-report'));
 	app.use(express.static(global.appRoot+'/public'));
 	app.use(function(req,res,next){
 		res.header('Access-Control-Allow-Origin', 'http://bear.ddns.net:8080');
@@ -34,6 +35,7 @@ module.exports = function(app, controllers) {
 
 	app.get( '/dictionaryWrapper/:words' , controllers.post.dictionaryWrapper.bind(controllers.post));
 	app.delete( '/queue/:name/:index' , controllers.post.removeFromQueue.bind(controllers.post));
+	app.get( '/subscription' , controllers.subscription.home.bind(controllers.subscription));
 	app.get( '/subscription/:collectionName/:pg.html' , controllers.subscription.collection);
 	app.get( '/subscription/:collectionName/:pg' , controllers.subscription.collection);
 	app.get( '/searchCollection/:collection/:term/:pg' , controllers.subscription.search);

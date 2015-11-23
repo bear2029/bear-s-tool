@@ -1,13 +1,13 @@
+var _ = require('underscore');
 var fsp = require('fs-promise');
-var striptags = require('striptags');
 var request = require('request');
 var cheerio = require('cheerio');
 var batch = require('../lib/batch');
-var gbk = require('gbk');
 var elasticsearch = require('elasticsearch');
 var Promise = require('promise');
 var client, debug = false;
 var SubscriptionHelper = require('../lib/subscription');
+var util = require('util');
 
 Number.prototype.padLeft = function(base,chr){
 	var  len = (String(base || 10).length - String(this).length)+1;
@@ -54,12 +54,16 @@ var self =
 		var Dropbox = require("dropbox");
 		var client = new Dropbox.Client({ key: "hpw285i1do3f7ot",secret:"kmp57d2qs3gp821" });
 	},
-	fetch: function(url,rule)
+	fetch: function(url,rule,cache)
 	{/*{{{*/
+		var that = this;
 		return new Promise(function(resolve,reject){
-			try{
-				request(url, function (error, response, body) {
-				//gbk.fetch(url).to('string', function(error,body){
+			function requestFunction(){
+				request({
+					uri: url,
+					gzip: true,
+					timeout: 1500
+				}, function (error, response, body) {
 					if (!error) {
 						var data = {}
 						for(var key in rule){
@@ -71,14 +75,19 @@ var self =
 							}
 						}
 						data.remoteUrl = url
+						console.log('success from:',url);
 						resolve(data);
 					}else{
-						reject(new Error('connection error: '+error));
+						if(error.code === 'ETIMEDOUT'){
+							console.log('fetching failed, retrying:',url);
+							setTimeout(requestFunction,10);
+						}else{
+							reject(error);
+						}
 					}
 				})
-			}catch(e){
-				reject(new Error('unknown error: '+e));
 			}
+			requestFunction();
 		});
 	},/*}}}*/
 	home: function(req,res,next)
@@ -159,6 +168,7 @@ var self =
 				res.send(util.inspect(data));
 			})
 			.catch(function(e){
+				console.log(e);
 				res.status(400).json('parsing error: '+e);
 			})
 		}catch(e){
@@ -271,7 +281,6 @@ var self =
 	},
 	crawlComplete: function(allItemUrls,id,data)
 	{/*{{{*/
-		console.log('need to extract last index from...',data,'or...',allItemUrls);
 		io.emit('crawler',{
 			'msg':'all done',
 			lastUpdate: formatDate(new Date()),
@@ -308,7 +317,6 @@ var self =
 				id: subscription._id,
 				percentage: 80 + Math.round(20*i/n)
 			})
-			console.log('index',i,n);
 		})
 	},
 	fetchEveryItem: function(data,subscription,crawlerRule)
@@ -319,7 +327,7 @@ var self =
 		io.emit('crawler',{
 			'msg':'crawling '+data.links.length+' items',
 			id: subscription._id,
-			percentage: 40
+			percentage: 10
 		})
 		for(var i=0; i<data.links.length; i++){
 			var linkItem = data.links[i];
@@ -327,11 +335,10 @@ var self =
 		}
 		//todo
 		return batch(items,self.fetch,5,false,function(current,total){
-			console.log('fetch remote',current,total);
 			io.emit('crawler',{
 				'msg':'crawling items',
 				id: subscription._id,
-				percentage: 40 + Math.round(40*current/total)
+				percentage: 10 + Math.round(70*current/total)
 			})
 		});
 	},/*}}}*/

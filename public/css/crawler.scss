@@ -1,5 +1,6 @@
 @import "_global.scss";
 h1,
+#crawler-list,
 #subscribe-list{
 	width: 100%;
 	max-width: 1000px;
@@ -18,7 +19,8 @@ $responsive-breakpoint-xs: 500px;
 	.error{
 		color: #d9534f;
 	}
-	div{
+	pre{
+		font-family: "Courier New", monospace;
 		width: 100%;
 		height: 560px;
 		line-height: 1.5;
@@ -52,6 +54,7 @@ $responsive-breakpoint-xs: 500px;
 .crawler-editor .one-line textarea.wide,
 .crawler-editor .one-line input.wide{
 	flex-grow: 2;
+	font-family: "Courier New", monospace;
 }
 .crawler-editor .one-line.invalid input {
 	color: red;

@@ -69,14 +69,6 @@ module.exports = function(grunt) {
 				tasks: ['sass', 'autoprefixer']
 			}
 		},
-		jshint: {
-			files: ['Gruntfile.js', 'lib/*.js', 'public/js/*.js', 'public/js/src/*.js', 'public/js/lib/*.js', 'public/lib/*/*.js'],
-			options: {
-				globals: {
-					jQuery: true
-				}
-			}
-		},
 		copy: {
 			bootstrap: {
 				expand: true,
@@ -87,22 +79,19 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-autoprefixer');
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-react');
 	grunt.loadNpmTasks('grunt-browserify');
 
 	grunt.registerTask('build', [
-		//'jshint',
-		'uglify',
-		'copy'
+		'sass',
+		'browserify',
+		'uglify'
 	]);
 	grunt.registerTask('default', [
-		'jshint',
 		'browserify:dist',
 		'uglify',
 		'sass',

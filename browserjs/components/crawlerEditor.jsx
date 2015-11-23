@@ -1,37 +1,39 @@
 var _ = require('underscore');
 var $ = require('jquery');
-var React = require('react/addons');
+var React = require('react');
+var ReactDom = require('react-dom');
+var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var Reflux = require('reflux');
 var CrawlerStore = require('../stores/crawlerStore');
-var CrawlerActions = require('../actions/crawlerActions');
+var CrawlerAction = require('../actions/crawlerAction');
 
 var Editor = React.createClass(
 {
-	mixins: [React.addons.LinkedStateMixin,Reflux.listenTo(CrawlerStore,'onStatusChange')],
+	mixins: [LinkedStateMixin,Reflux.listenTo(CrawlerStore,'onChange')],
 	getInitialState: function()
 	{
 		return CrawlerStore.state().editor;
 	},
-    	onStatusChange: function(status)
+    	onChange: function(state)
 	{
-		console.log('status',status.editor);
-		this.setState(status.editor)
+		console.log('ss',state.editor);
+		this.setState(state.editor)
 	},
 	onSubmit: function(e)
 	{
 		e.preventDefault();
-		console.log($(e.target).serialize());
 		var formArray = $(e.target).serializeArray();
 		var formObject = _.reduce(formArray,function(obj,item){obj[item.name] = item.value;return obj;},{});
-		CrawlerActions.submitEdit(formObject);
+		CrawlerAction.submitEdit(formObject);
 	},
 	onUrlMatchChanged: function(e)
 	{
 		var testType = this.urlTestTypeFromEvent(e);
-		var regexString = $('input[name='+testType+'-url-regex]',React.findDOMNode(this)).val();
-		var url = $('input[name='+testType+'-url]',React.findDOMNode(this)).val();
+		var url = this.state[testType+'Url'];
+		var regexString = this.state[testType+'UrlRegex'];
 		if(url && regexString){
-			CrawlerActions.validateUrl(testType,regexString,url);
+			CrawlerAction.syncEditorState(this.state);
+			CrawlerAction.validateUrl(testType,regexString,url);
 		}
 	},
 	urlTestTypeFromEvent: function(e)
@@ -46,17 +48,18 @@ var Editor = React.createClass(
 	onClose: function(e)
 	{
 		e.preventDefault();
-		CrawlerActions.endEdit();
+		CrawlerAction.endEdit();
 	},
-	onTest: function(e)
+	onTestScript: function(e)
 	{
 		e.preventDefault();
 		var matches = $(e.target).attr('class').match(/(item|collection)/);
 		if(matches){
 			var testType = matches[0];
-			var url = $('input[name='+testType+'-url]',React.findDOMNode(this)).val();
-			var rule = $('textarea[name='+testType+'-rule]',React.findDOMNode(this)).val();
-			CrawlerActions.testScript(url,rule);
+			var url = this.state[testType+'Url'];
+			var rule = this.state[testType+'Rule'];
+			CrawlerAction.syncEditorState(this.state);
+			CrawlerAction.testScript(url,rule);
 		}
 	},
 	render: function() {
@@ -74,10 +77,10 @@ var Editor = React.createClass(
 				<div className="form-group">
 					<input name="site-name" className="form-control" placeholder="site name" valueLink={this.linkState('siteName')}/>
 				</div>
-				<div className={collectionUrlSectionClass}>
-					<input name="collection-url" onKeyUp={this.onUrlMatchChanged} type="url" className="form-control wide" placeholder="list URL for test" valueLink={this.linkState('collectionUrl')}/>
+				<div className={collectionUrlSectionClass} onKeyUp={this.onUrlMatchChanged}>
+					<input name="collection-url" type="url" className="form-control wide" placeholder="list URL for test" valueLink={this.linkState('collectionUrl')}/>
 					<div className="validation-icon"><span className="glyphicon glyphicon-ok" aria-hidden="true"></span></div>
-					<input type="text" onKeyUp={this.onUrlMatchChanged} className="form-control" name="collection-url-regex" placeholder="list URL regex" valueLink={this.linkState('collectionUrlRegex')} />
+					<input type="text" className="form-control" name="collection-url-regex" placeholder="list URL regex" valueLink={this.linkState('collectionUrlRegex')} />
 				</div>
 				<div className={itemUrlSectionClass}>
 					<input name="item-url" onKeyUp={this.onUrlMatchChanged} type="url" className="form-control wide" placeholder="item URL for test" valueLink={this.linkState('itemUrl')}/>
@@ -86,11 +89,11 @@ var Editor = React.createClass(
 				</div>
 				<div className="form-group one-line">
 					<textarea className="form-control wide" name="collection-rule" placeholder="collection rule, e.g. {&#34;title&#34;:&#34;$('h1').html()&#34;,&#34;links&#34;:{&#34;link&#34;:&#34;&#34;,&#34;title&#34;:&#34;&#34;}}" valueLink={this.linkState('collectionRule')}></textarea>
-					<input type="submit" className="btn btn-default collection" onClick={this.onTest} value="test"/>
+					<input type="submit" className="btn btn-default collection" onClick={this.onTestScript} value="test"/>
 				</div>
 				<div className="form-group one-line">
 					<textarea className="form-control wide" name="item-rule" placeholder="item rule" valueLink={this.linkState('itemRule')}></textarea>
-					<input type="submit" className="btn btn-default item" onClick={this.onTest} value="test"/>
+					<input type="submit" className="btn btn-default item" onClick={this.onTestScript} value="test"/>
 				</div>
 				<div className="form-group">
 					<input type="hidden" name="id" valueLink={this.linkState('id')} />
@@ -100,7 +103,7 @@ var Editor = React.createClass(
 			</div>
 			<div className={consoleClassName}>
 				<h4>Console</h4>
-				<div dangerouslySetInnerHTML={{__html: this.state.consoleHtml}} />
+				<pre dangerouslySetInnerHTML={{__html: this.state.consoleHtml}} />
 			</div>
 		</form>
 		</div>

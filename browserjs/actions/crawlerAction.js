@@ -7,6 +7,7 @@ var CrawlerActions = Reflux.createActions([
 	"endEdit",
 	"submitEdit",
 	"validateUrl",
+	'syncEditorState',
 	"testScript"
 ]);
 

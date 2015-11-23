@@ -1,10 +1,10 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var dataUri = require('data-uri');
-var multer  = require('multer');
+//var multer  = require('multer');
 var sizeOf = require('image-size');
 var uploadPath = './uploads/';
-app.use(multer({ dest: uploadPath}))
+//app.use(multer({ dest: uploadPath}))
 var converter = {
 	convert: function(fileName)
 	{

@@ -1,5 +1,6 @@
 var subscription = require('../lib/subscription');
 var tracking = require('../lib/trackingStorage');
+var esHelper = require('../lib/esHelper');
 var size = 20;
 function processLastVisitedArticle(data)
 {
@@ -10,6 +11,30 @@ function processLastVisitedArticle(data)
 	}
 }
 module.exports = exports = {
+	home: function(req, res, next) {
+		var subscription = require('../lib/subscription')
+		req.templateName = 'subscriptionHome';
+		subscription.getAllSubscriptionByUpdate()
+			.then(function(o) {
+				//res.json(o);return;
+				req.vars = {
+					headerTitle: 'Welcome to Ecomerce',
+					summaries: o
+				};
+				return subscription.getCollections();
+			})
+			.then(function(o){
+				req.vars.collections = [];
+				if(o.hits.total > 0){
+					req.vars.collections = o.hits.hits;
+				}
+				next();
+			})
+			.catch(function(e) {
+				console.log(e)
+				res.status(400).send('something wrong')
+			})
+	},
 	search: function(req,res,next)
 	{
 		var vars = {};
