@@ -75,7 +75,6 @@ var self =
 							}
 						}
 						data.remoteUrl = url
-						console.log('success from:',url);
 						resolve(data);
 					}else{
 						if(error.code === 'ETIMEDOUT'){

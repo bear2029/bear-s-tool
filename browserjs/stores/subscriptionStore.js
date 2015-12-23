@@ -26,14 +26,13 @@ var Store = Reflux.createStore({
 		core.editor.collectionName = '';
 		core.editor.collectionUrl = '';
 		core.editor.subscriptionId = null;
-		core.editor.crawlerId = crawlerId;
+		core.editor.crawlerId = window.crawlerId;
 		this.trigger(core);
 	},
 	edit: function(subscriptionId)
 	{
 		var item = _.find(core.items,function(item){return item._id === subscriptionId});
 		if(!item){
-			console.log('ignore since given subscription id ('+subscriptionId+') associate to nothing');
 			return;
 		}
 		core.editor.isEditing = true;
@@ -129,7 +128,11 @@ var Store = Reflux.createStore({
 			crawlerId = fetchCrawlerIdFromUrl();
 		}
 		if(!crawlerId){
-			return;
+			if(window && window.crawlerId){
+				crawlerId = window.crawlerId;
+			}else{
+				return;
+			}
 		}
 		return this.loadItems()
 		.then(function() {

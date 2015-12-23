@@ -5,6 +5,7 @@
   "scripts": {
     "postinstall_cancel": "grunt build; bower install",
     "postinstall_old": "grunt build; npm install public/prefixer; bower install",
+    "start_dev": "nodemon index.js env=dev",
     "start": "pm2 start index.js --name prod -- env=prod;",
     "lint": "jshint lib/**.js; jshint controllers/**.js",
     "test": "jest"

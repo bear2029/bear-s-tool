@@ -1,5 +1,7 @@
 node_modules/
 .sass-cache/
+public/portfolio
+public/jest
 public/css/*.css.map
 public/css/*.css
 public/js/build/
