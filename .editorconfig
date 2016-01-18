@@ -1,0 +1,9 @@
+# top-most EditorConfig file
+root = true
+
+[*.json]
+indent_style = space
+indent_size = 2
+[*.{jsx,js,css,scss}]
+indent_style = tab
+
