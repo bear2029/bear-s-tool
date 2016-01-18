@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="/css/collection.css">
+<div class="">
+
+<form id="main-search" action="/searchCollection" class="form-group search-collection" autocomplete="off">
+		<input list="collections" class="form-control" name="collection"/>
+		<datalist id="collections">
+			<option>All</option>
+			{{#each collections}}
+			<option value="{{this._source.collectionName}}">{{this._source.collectionName}}</option>
+			{{/each}}
+		</datalist>
+		<input type="search" name="term" placeholder="search for something..."/>
+</form>
+<ul id="main-list" class="list-unstyled">
+	{{#each summaries}}
+	<li class="collection">
+		<h2>{{@key}}<a href="/subscription/{{@key}}/1.html">more</a></h2>
+		<ul>
+			{{#each this}}
+			<li>
+				<a href="/subscription/{{@../key}}/item/{{this.index}}.html"><b>{{index}}</b> | {{this.title}}</a>
+			</li>
+			{{/each}}
+		</ul>
+	</li>
+	{{/each}}
+</ul>
+
+</div>
+<script src="/js/build/home.js"></script>
+<!-- <script src="/js/build/home.min.js"></script>-->

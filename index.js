@@ -78,5 +78,9 @@ app.set('view engine', 'handlebars');
 require('./config/routes.js')(app,controllers)
 //http.listen(argv.get('port',8080));
 //https.listen(argv.get('sslport',8081));
-http.listen(env === 'prod' ? 80 : 8080);
-https.listen(env === 'prod' ? 443 : 8081);
+try{
+	http.listen(env === 'prod' ? 80 : 8080);
+	https.listen(env === 'prod' ? 443 : 8081);
+}catch(e){
+	console.log('failed to start server, does port occuppied?');
+}

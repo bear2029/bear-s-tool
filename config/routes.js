@@ -60,6 +60,10 @@ module.exports = function(app, controllers) {
 	app.use('/ipCollector/post', controllers.ipCollector.post);
 	app.get('/ipCollector', controllers.ipCollector.display);
 
+	app.put( '/api/tubes' , controllers.tube.resync);
+	app.get( '/api/tubes' , controllers.tube.index);
+	app.use( '/api/tubes/:id' , controllers.tube.get);
+
 	// the actuall renderer ^_^
 	app.use(function(req,res){
 		// todo -- bad, should prevent req
