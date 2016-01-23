@@ -13,29 +13,49 @@ import { connect } from 'react-redux'
 import { Provider } from 'react-redux'
 import HomeComponent from './components/home.jsx';
 
-let store = createStore((state = 0, action) => {
-	switch (action.type) {
-		case 'INCREMENT':
-			return state + 1
-		case 'DECREMENT':
-			return state - 1
+function transform(text)
+{
+	var lines = text.split(/\n/)
+		.map(line=>line.replace(/^\s*/,''))
+		.filter(line => {return line.search(/^create\s+/) > -1})
+		.map(line=>{
+			var path = line.match(/^create\s+(.*)$/)[1];
+			var script = `docker cp dev_synack_1:/home/syn/synack/${path} ${path};`;
+			return script;
+		});	
+	console.log(lines);
+	return lines.join("\n");
+}
+
+const store = createStore((state = {},action)=>{
+	switch(action.type){
+		case 'transform':
+			return {output: transform(action.input)};
 		default:
-			return state
+			return state;
 	}
 });
 
-connect(
-	state => {value: state.counter},
-	dispatch => {
-		onIncrement: () => dispatch(increment())
-	}
-)(HomeComponent)
+const DockerFilerCopyScriptGeneratorComponent = () => {
+	let onChange = e => {
+		store.dispatch({
+			type: 'transform',
+			input: e.target.value
+		})
+	};
+	return (
+	<div className="docker-copy-script-generator">
+		<textarea className="input" onChange={onChange} onKeyup={onChange}></textarea>
+		<textarea className="output" value={store.getState().output}></textarea>
+	</div>
+	)
+};
 
-render(
-	<Provider store={store}>
-		<HomeComponent />
-	</Provider>,
-	document.getElementById('home-container')
-)
-
-//render(<HomeComponent store={store} />, document.getElementById('home-container'));
+const _render = () => {
+	render(
+		<DockerFilerCopyScriptGeneratorComponent />,
+		document.getElementById('home-container')
+	)
+}
+_render();
+store.subscribe(_render);
