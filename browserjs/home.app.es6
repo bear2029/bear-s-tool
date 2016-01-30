@@ -1,60 +1,62 @@
-/*
-import { createStore } from 'redux'
-import './ui/navi';
-var React = require('react');
-var ReactDom = require('react-dom');
-var HomeComponent = require('./components/home.jsx');
-ReactDom.render(<HomeComponent />, document.getElementById('home-container'));
-*/
 import React from 'react';
 import {render} from 'react-dom';
 import { createStore } from 'redux'
-import { connect } from 'react-redux'
-import { Provider } from 'react-redux'
 import HomeComponent from './components/home.jsx';
+import NaviComponent from './components/navi.jsx';
+import naviReducer from './stores/naviReducer.es6';
+import {transform} from '../lib/bear2.es6';
+require('../public/css/dockerUtils.scss');
 
-function transform(text)
-{
-	var lines = text.split(/\n/)
-		.map(line=>line.replace(/^\s*/,''))
-		.filter(line => {return line.search(/^create\s+/) > -1})
-		.map(line=>{
-			var path = line.match(/^create\s+(.*)$/)[1];
-			var script = `docker cp dev_synack_1:/home/syn/synack/${path} ${path};`;
-			return script;
-		});	
-	console.log(lines);
-	return lines.join("\n");
+let initialState = {
+	navi:{
+		onSignin: true,
+		errors: [],
+		host: '',
+		signedIn:false, // todo
+		displaySignInModal: false
+	}
 }
 
-const store = createStore((state = {},action)=>{
+if (location.port.match(/808\d/)) {
+	initialState.navi.host = 'https://' + location.hostname + ':8081';
+} else {
+	initialState.navi.host = 'https://' + location.hostname;
+}
+
+window.store = createStore((state=initialState,action)=>{
 	switch(action.type){
-		case 'transform':
-			return {output: transform(action.input)};
+		case 'dockerHelper/transform':
+			return Object.assign({},state,{output: transform(action.input)});
 		default:
+			if(action.type.search(/^navi\//) > -1){
+				return Object.assign({},state,{
+					navi: naviReducer(state.navi,action)
+				});
+			}
 			return state;
 	}
 });
 
-const DockerFilerCopyScriptGeneratorComponent = () => {
+const DockerFilerCopyScriptGeneratorComponent = ({output,dispatcher}) => {
 	let onChange = e => {
-		store.dispatch({
-			type: 'transform',
-			input: e.target.value
-		})
+		dispatcher({ type: 'dockerHelper/transform', input: e.target.value })
 	};
 	return (
 	<div className="docker-copy-script-generator">
 		<textarea className="input" onChange={onChange} onKeyup={onChange}></textarea>
-		<textarea className="output" value={store.getState().output}></textarea>
+		<textarea className="output" value={output}></textarea>
 	</div>
 	)
 };
 
 const _render = () => {
 	render(
-		<DockerFilerCopyScriptGeneratorComponent />,
-		document.getElementById('home-container')
+		<NaviComponent state={store.getState().navi} dispatcher={store.dispatch} />,
+		document.getElementById('navi-container')
+	)
+	render(
+		<DockerFilerCopyScriptGeneratorComponent output={store.getState().output} dispatcher={store.dispatch} />,
+		document.getElementById('main-container')
 	)
 }
 _render();

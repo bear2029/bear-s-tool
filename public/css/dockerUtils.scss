@@ -1,0 +1,14 @@
+.docker-copy-script-generator{
+	display: flex;
+	padding: 20px;
+	>textarea{
+		box-sizing: border-box;
+		padding: 20px;
+		width: 49%;
+		margin-right: 2%;
+		min-height: 300px;
+		&:last-of-type{
+			margin-right: 0;
+		}
+	}
+}
