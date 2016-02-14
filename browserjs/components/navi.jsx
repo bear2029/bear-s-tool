@@ -1,7 +1,8 @@
 import React from 'react';
 import LoginModal from './loginModalComponent.jsx';
 
-const List = ({dispatcher}) => {
+const List = ({hosts,dispatcher}) => {
+	console.log(hosts)
 	function onClickToggler(){
 		dispatcher({type:'navi/toggleList'});
 	}
@@ -18,7 +19,7 @@ const List = ({dispatcher}) => {
 			<li><a href="/dataUriConverter">Data URI converter</a></li>
 			<li><a href="/broccoliDemo">Broccoli Demo</a></li>
 			<li><a href="/prefixerDemo">Prefixer</a></li>
-			<li><a href="{{hosts.https}}/crawler">crawler</a></li>
+			<li><a href={`${hosts.https}/crawler`}>crawler</a></li>
 			<li><a href="/file">file</a></li>
 			<li><a href="/ipCollector">IP Collection</a></li>
 			<li><a href="/subscription">Subscription</a></li>
@@ -46,7 +47,7 @@ const LoginButtons = ({dispatcher}) => {
 export default ({state,dispatcher}) => {
 	return (
 	<nav className="row" id="navi">
-		<List dispatcher={dispatcher} />
+		<List hosts={state.hosts} dispatcher={dispatcher} />
 		<div className="logo">
 			<a className="" href="/">Bear's tool</a>
 		</div>

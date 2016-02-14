@@ -100,20 +100,28 @@ var Store = Reflux.createStore({
 	_assignMetaOnCoreItems: function(data){
 		var itemGroup = data.aggregations.group_by_collection.buckets;
 		_.each(core.items,function(coreItem){
+			console.log(1,coreItem)
 			coreItem.id = coreItem._id;
 			coreItem.name = coreItem._source.collectionName;
 			coreItem.remoteUrl = coreItem._source.collectionUrl;
 			coreItem.crawlerId = coreItem._source.crawlerId;
 			delete coreItem._source;
 			_.each(itemGroup,function(item){
-				// todo, why item.key got F up
-				if(item && item.key.toLowerCase() == coreItem._id.toLowerCase()){
-					coreItem.count = item.doc_count;
-					coreItem.lastUpdate = bear.formatDate(new Date(item.lastUpdate.value));
-					coreItem.lastIndex = item.lastIndex.value;
+			console.log(1.5,item)
+				try{
+					// todo, why item.key got F up
+					if(item && item.key.toLowerCase() == coreItem._id.toLowerCase()){
+						coreItem.count = item.doc_count;
+						coreItem.lastUpdate = bear.formatDate(new Date(item.lastUpdate.value));
+						coreItem.lastIndex = item.lastIndex.value;
+					}
+				}catch(e){
+					console.log('mystery error',e);
 				}
+			console.log(1.6,item)
 			})
 		})
+		console.log(2);
 	},
 	loadItems: function(){
 		return Ajax.get(searchHost+'/crawler/subscription/_search?size=1000&q=crawlerid='+crawlerId)

@@ -6,7 +6,7 @@ var React = require('react');
 var ReactDom = require('react-dom');
 var Reflux = require('reflux');
 var $ = require('jquery');
-SubscriptionList = React.createClass(
+let SubscriptionList = React.createClass(
 {
 	mixins: [Reflux.listenTo(SubscriptionStore,"onChange")],
 	onChange: function(state)

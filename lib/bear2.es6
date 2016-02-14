@@ -9,3 +9,20 @@ export function transform (text) {
 		});	
 	return lines.join("\n");
 }
+export function isLoginPage() {
+	return location.pathname.match(/^\/member\/signin/) !== null;
+}
+export function toggleClass(el,className){
+	let remain = el.className.replace(new RegExp(`\s?${className}\s?`),'');
+	if(remain === el.className){
+		el.className += ` ${className}`;
+	}else{
+		el.className = remain;
+	}
+}
+export function getReferralFromQuery() {
+	var matches = location.search.match(/[?&]referral=([^&]+)/);
+	if (matches) {
+		return decodeURIComponent(matches[1]);
+	}
+}

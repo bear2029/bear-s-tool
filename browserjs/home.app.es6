@@ -2,15 +2,16 @@ import React from 'react';
 import {render} from 'react-dom';
 import { createStore } from 'redux'
 import HomeComponent from './components/home.jsx';
-import NaviComponent from './components/navi.jsx';
-import naviReducer from './stores/naviReducer.es6';
 import {transform} from '../lib/bear2.es6';
+import naviReducer from './stores/naviReducer.es6';
+import NaviComponent from './components/navi.jsx';
 require('../public/css/dockerUtils.scss');
 
 let initialState = {
 	navi:{
 		onSignin: true,
 		errors: [],
+		hosts: {https:'https://bear.ddns.net:8081'},
 		host: '',
 		signedIn:false, // todo
 		displaySignInModal: false

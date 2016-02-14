@@ -1,15 +1,13 @@
-var React = require('react');
-var ReactDom = require('react-dom');
-var Ajax = require('../lib/promiseAjax');
-var $ = require('jquery');
-var _ = require('underscore');
-var bear = require('../lib/bear');
-require('./ui/navi');
+import React from 'react';
+import {render} from 'react-dom';
+import { createStore } from 'redux'
 
-if($('#crawler-list').length){
+let crawlerList = document.getElementById('crawler-list');
+let subscriptionList = document.getElementById('subscribe-list');
+if(crawlerList){
 	var CrawlerList = require('./components/crawlerList.jsx')
-	ReactDom.render(<CrawlerList />, document.getElementById('crawler-list'));
-}else if($('#subscribe-list').length && crawlerId){
+	render(<CrawlerList />, document.getElementById('crawler-list'));
+}else if(subscriptionList && crawlerId){
 	var SubscriptionList = require('./components/subscriptionList.jsx')
-	ReactDom.render(<SubscriptionList />, document.getElementById('subscribe-list'));
+	render(<SubscriptionList />, document.getElementById('subscribe-list'));
 }

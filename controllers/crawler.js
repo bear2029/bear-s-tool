@@ -116,7 +116,7 @@ var self =
 			})
 		}catch(e){}
 		client = new elasticsearch.Client({
-			log: 'trace',
+			//log: 'trace',
 			host: 'localhost:9200'
 		});
 		client.search({

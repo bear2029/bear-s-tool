@@ -53,9 +53,11 @@ export default ({dispatcher,onSignin,host,errors,displaySignInModal}) => {
 				Remember me
 				</label>
 			</div>
-			{errors.map((e)=>(
-				<p className="error">{e}</p>
+			<div className="errors">
+			{errors.map((e,i)=>(
+				<p key={`login-error-${i}`} className="error">{e}</p>
 			))}
+			</div>
 			<input type="submit" name="signup" value="login" className="btn primary"/>
 			<button type="reset" className="btn secondary">Close</button>
 		</form>
@@ -76,9 +78,11 @@ export default ({dispatcher,onSignin,host,errors,displaySignInModal}) => {
 			<div className="form-group">
 				<input type="password" name="re-pwd" className="form-control" id="exampleInputPassword1" placeholder="Re-enter Password" required />
 			</div>
-			{errors.map((e)=>(
-				<p className="error">{e}</p>
+			<div className="errors">
+			{errors.map((e,i)=>(
+				<p key={`login-error-${i}`} className="error">{e}</p>
 			))}
+			</div>
 			<input type="submit" name="signup" value="signup" className="btn primary"/>
 			<button type="reset" className="btn secondary">Close</button>
 		</form>

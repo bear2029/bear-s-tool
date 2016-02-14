@@ -1,22 +1,15 @@
-import $ from 'jquery';
-import bear from '../../lib/bear.js';
-
-function getReferralFromQuery() {
-	var matches = location.search.match(/[?&]referral=([^&]+)/);
-	if (matches) {
-		return decodeURIComponent(matches[1]);
-	}
-}
+import "babel-polyfill";
+import fetch from 'isomorphic-fetch';
+import {toggleClass,isLoginPage,getReferralFromQuery} from '../../lib/bear2.es6';
 
 export default (state, action) => {
-	console.log(state);
 	switch (action.type) {
 		case 'navi/modalSwitchToSignin':
 			return Object.assign({},state,{onSignin:true})
 		case 'navi/modalSwitchToSignup':
 			return Object.assign({},state,{onSignin:false})
 		case 'navi/toggleList':
-			$('body').toggleClass('navi-list-expend');
+			toggleClass(document.getElementsByTagName('body')[0],'navi-list-expend');
 		case 'navi/hideSignInModal':
 			return Object.assign({},state,{displaySignInModal:false});
 		case 'navi/modal/showError':
@@ -31,25 +24,24 @@ export default (state, action) => {
 					return Object.assign({},state,{errors:['password does not match']})
 				}
 			}
-			$.ajax({
-				url: action.url,
-				data: JSON.stringify(action.params),
-				type: 'POST',
-				accepts: "application/json; charset=utf-8",
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: result => {
-					if (bear.isLoginPage()) {
-						location.href = getReferralFromQuery();
-					} else {
-						//todo: find a better way
-						store.dispatch({type:'navi/modal/loggedIn'});
-					}
-				},
-				error: (req, code, message) => {
-					//todo: find a better way
-					store.dispatch({type:'navi/modal/showError',errors:[message]});
+			fetch(action.url,{
+				method: 'POST',
+				body: JSON.stringify(action.params),
+				headers:{
+					Accepts: "application/json",
+					contentType: "application/json"
 				}
+			}).then(result => {
+				if (isLoginPage()) {
+					location.href = getReferralFromQuery();
+				} else {
+					//todo: find a better way
+					store.dispatch({type:'navi/modal/loggedIn'});
+				}
+			}).catch(error => {
+				//todo: find a better way
+				error = typeof error !== 'string' ? error.toString() : error;
+				store.dispatch({type:'navi/modal/showError',errors:[error]});
 			});
 		case 'navi/logout':
 		default:
