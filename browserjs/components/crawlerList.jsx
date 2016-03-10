@@ -1,4 +1,3 @@
-var $ = require('jquery');
 var React = require('react');
 var ReactDom = require('react');
 var Reflux = require('reflux');

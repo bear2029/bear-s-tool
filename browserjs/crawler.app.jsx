@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import { createStore } from 'redux'
+require('../public/css/crawler.scss');
 
 let crawlerList = document.getElementById('crawler-list');
 let subscriptionList = document.getElementById('subscribe-list');

@@ -2,10 +2,10 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: {
-        home: './browserjs/home.app.es6',
+	entry: {
+		home: './browserjs/home.app.es6',
+		crawler: './browserjs/crawler.app.jsx',
 	/*
-      crawler: './browserjs/crawler.app.jsx',
         collectionItem: './browserjs/collectionItem.app.jsx',
         collection: './browserjs/collection.app.js',
         file: './browserjs/file.app.jsx',
@@ -40,18 +40,5 @@ module.exports = {
 			'process.env': { 'NODE_ENV': JSON.stringify('production') },
 		}),
 		new webpack.optimize.DedupePlugin(),
-		new webpack.optimize.OccurenceOrderPlugin(),
-		new webpack.optimize.AggressiveMergingPlugin(),
-		new webpack.optimize.UglifyJsPlugin({
-			minimize: true,
-			sourceMap: false,
-			mangle:   false,
-			beautify: false,
-			compress: {
-				warnings: false, // Suppress uglification warnings
-				conditionals: true, // Do apply optimizations for if-s and conditional expressions
-				drop_console: true,
-			},
-		}),
     ]
 };

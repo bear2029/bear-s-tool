@@ -6,7 +6,7 @@ var bear = require('../../lib/bear');
 var json2html = require('json-to-html');
 var assign = require('object-assign');
 
-var searchHost = '/es', editingCrawlerId;
+var searchHost, editingCrawlerId;
 var data = {
 	crawlers: [],
 	consoleHtml: '',
@@ -44,16 +44,18 @@ var Store = reflux.createStore({
     	loadCrawler: function()
 	{
 		var collectionList;
-		return Ajax.post(searchHost+'/crawler/common/_search',{size:1000})
+		return Ajax.get('/novel-api/crawlers/')
 		.then(function(res){
-			 var items = _.map(_.filter(res.hits.hits,function(_item){
-				if(_item._source && _item._source.siteName){
-					return true;
-				}
-			}),function(_item){
-				var item = {};
-				item = assign(item,_item._source);
-				item.id = _item._id;
+			 var items = _.map(res,function(_item){
+				console.log(_item);
+				var item = {
+					id: _item.id,
+					siteName: _item.name,
+					collectionUrl: _item.test_list_url,
+					itemUrl: _item.test_item_url,
+					collectionRule: _item.list_url_pattern,
+					itemRule: _item.item_url_pattern
+				};
 				return item;
 			});
 			data.crawlers = items;
@@ -98,7 +100,7 @@ var Store = reflux.createStore({
 	},
 	del: function(id)
 	{
-	 	Ajax.delete(searchHost+'/crawler/common/'+id)
+	 	Ajax.delete('/novel-api/crawlers/'+id)
 		.then(function(){
 			data.crawlers = _.filter(data.crawlers,function(crawler){
 				return crawler.id !== id;
@@ -130,18 +132,28 @@ var Store = reflux.createStore({
 	},
 	submitEdit: function(formData)
 	{
-		var isNew = !formData.id;
-		var requestBody = _.reduce(formData,function(newObj,value,key){
+		var isNew = !formData.id, method = 'post';
+		var _requestBody = _.reduce(formData,function(newObj,value,key){
 			newObj[bear.dashToCamel(key)] = value;
 			return newObj;
 		},{});
-		data.editor = _.extend(data.editor,requestBody);
+		var requestBody = {
+			id: _requestBody.id,
+			name: _requestBody.siteName,
+			test_list_url: _requestBody.collectionUrl,
+			test_item_url: _requestBody.itemUrl,
+			list_url_pattern: _requestBody.collectionRule,
+			item_url_pattern: _requestBody.itemRule
+		};
+		console.log(formData,_requestBody,requestBody);
+		data.editor = _.extend(data.editor,_requestBody);
 		this.emitChange();
-		var url = searchHost+"/crawler/common";
+		var url = "/novel-api/crawlers";
 		if(requestBody.id){
 			url += '/' + requestBody.id;
+			method = 'put';
 		}
-		return Ajax.post(url,requestBody)
+		return Ajax[method](url,requestBody)
 		.then(function(res){
 			if(isNew){
 				data.crawlers.push(assign(requestBody,{id:res._id}));

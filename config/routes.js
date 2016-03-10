@@ -1,4 +1,3 @@
-var forceSSL = require('express-force-ssl');
 var compression = require('compression');
 var member = require('../lib/member');
 var esHelper = require('../lib/esHelper');
@@ -29,9 +28,9 @@ module.exports = function(app, controllers) {
 	app.get( '/queue/:name' , controllers.post.dumpQueue.bind(controllers.post));
 	app.post( '/queue/:name' , controllers.post.pushQueue.bind(controllers.post));
 
-	app.use('/member/signin',forceSSL, controllers.member.signin);
-	app.use('/member/signout',forceSSL, controllers.member.signout);
-	app.use('/member/signup',forceSSL, controllers.member.signup);
+	app.use('/member/signin', controllers.member.signin);
+	app.use('/member/signout', controllers.member.signout);
+	app.use('/member/signup', controllers.member.signup);
 
 	app.get( '/dictionaryWrapper/:words' , controllers.post.dictionaryWrapper.bind(controllers.post));
 	app.delete( '/queue/:name/:index' , controllers.post.removeFromQueue.bind(controllers.post));
@@ -44,10 +43,8 @@ module.exports = function(app, controllers) {
 	app.use( '/dataUriConverter' , controllers.dataUriConverter.home);
 
 	// elastic search proxy
-	app.use( '/es/*' , forceSSL, member.requireLogin);
-	app.use( '/es/*' , forceSSL, esHelper.proxy);
+	app.use( '/novel-api/*' , esHelper.proxy);
 
-	app.use( '/crawler*' , forceSSL, member.requireLogin);
 	app.get( '/crawler' , controllers.crawler.home);
 	app.put( '/crawler/syncDropBox' , controllers.crawler.syncDropBox);
 	app.get( '/crawler/subscribe/:id' , controllers.crawler.subscribe);
@@ -86,7 +83,6 @@ module.exports = function(app, controllers) {
 
 	io.on('connection', function(socket){
 		socket.on('chat message', function(obj){
-			console.log(obj.for+' has received: ' + obj.msg);
 			io.emit('chat message',obj.msg)
 		});
 		socket.on('crawler', function(obj){controllers.crawler.crawl(io,obj)})

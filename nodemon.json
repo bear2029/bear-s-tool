@@ -2,6 +2,8 @@
     "restartable": "rs",
     "ignore": [
         ".git",
+        "browserjs",
+        "public",
         "node_modules/**/node_modules"
     ],
     "verbose": true,
@@ -11,10 +13,6 @@
     "events": {
         "restart": "osascript -e 'display notification \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\"'"
     },
-    "watch": [
-        "views",
-        "controllers"
-    ],
     "env": {
         "NODE_ENV": "development"
     },

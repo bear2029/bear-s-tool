@@ -14,12 +14,7 @@ var session = require('cookie-session')
 
 env = argv.get('env','dev');
 http = require('http').Server(app);
-https = require('https').Server({
-	key: fs.readFileSync('config/key.pem'),
-	cert: fs.readFileSync('config/cert.pem')
-},app);
-io2 = require('socket.io')(http);
-io = require('socket.io')(https);
+io = require('socket.io')(http);
 
 var controllers = {};
 fs.readdirSync('./controllers').map(function(file){
@@ -76,11 +71,8 @@ app.engine('handlebars', exphbs({
 
 app.set('view engine', 'handlebars');
 require('./config/routes.js')(app,controllers)
-//http.listen(argv.get('port',8080));
-//https.listen(argv.get('sslport',8081));
 try{
 	http.listen(env === 'prod' ? 80 : 8080);
-	https.listen(env === 'prod' ? 443 : 8081);
 }catch(e){
 	console.log('failed to start server, does port occuppied?');
 }

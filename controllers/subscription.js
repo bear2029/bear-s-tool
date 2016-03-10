@@ -32,7 +32,7 @@ module.exports = exports = {
 			})
 			.catch(function(e) {
 				console.log(e)
-				res.status(400).send('something wrong')
+				res.status(400).send('Unable to fetch data')
 			})
 	},
 	search: function(req,res,next)

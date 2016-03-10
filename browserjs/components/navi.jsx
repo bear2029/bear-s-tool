@@ -19,7 +19,7 @@ const List = ({hosts,dispatcher}) => {
 			<li><a href="/dataUriConverter">Data URI converter</a></li>
 			<li><a href="/broccoliDemo">Broccoli Demo</a></li>
 			<li><a href="/prefixerDemo">Prefixer</a></li>
-			<li><a href={`${hosts.https}/crawler`}>crawler</a></li>
+			<li><a href="/crawler">crawler</a></li>
 			<li><a href="/file">file</a></li>
 			<li><a href="/ipCollector">IP Collection</a></li>
 			<li><a href="/subscription">Subscription</a></li>

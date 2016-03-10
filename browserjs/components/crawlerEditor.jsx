@@ -26,16 +26,6 @@ var Editor = React.createClass(
 		var formObject = _.reduce(formArray,function(obj,item){obj[item.name] = item.value;return obj;},{});
 		CrawlerAction.submitEdit(formObject);
 	},
-	onUrlMatchChanged: function(e)
-	{
-		var testType = this.urlTestTypeFromEvent(e);
-		var url = this.state[testType+'Url'];
-		var regexString = this.state[testType+'UrlRegex'];
-		if(url && regexString){
-			CrawlerAction.syncEditorState(this.state);
-			CrawlerAction.validateUrl(testType,regexString,url);
-		}
-	},
 	urlTestTypeFromEvent: function(e)
 	{
 		var name = $(e.target).attr('name');
@@ -77,15 +67,11 @@ var Editor = React.createClass(
 				<div className="form-group">
 					<input name="site-name" className="form-control" placeholder="site name" valueLink={this.linkState('siteName')}/>
 				</div>
-				<div className={collectionUrlSectionClass} onKeyUp={this.onUrlMatchChanged}>
+				<div className={collectionUrlSectionClass}>
 					<input name="collection-url" type="url" className="form-control wide" placeholder="list URL for test" valueLink={this.linkState('collectionUrl')}/>
-					<div className="validation-icon"><span className="glyphicon glyphicon-ok" aria-hidden="true"></span></div>
-					<input type="text" className="form-control" name="collection-url-regex" placeholder="list URL regex" valueLink={this.linkState('collectionUrlRegex')} />
 				</div>
 				<div className={itemUrlSectionClass}>
-					<input name="item-url" onKeyUp={this.onUrlMatchChanged} type="url" className="form-control wide" placeholder="item URL for test" valueLink={this.linkState('itemUrl')}/>
-					<div className="validation-icon"><span className="glyphicon glyphicon-ok" aria-hidden="true"></span></div>
-					<input type="text" onKeyUp={this.onUrlMatchChanged} className="form-control" name="item-url-regex" placeholder="item URL regex" valueLink={this.linkState('itemUrlRegex')}/>
+					<input name="item-url" type="url" className="form-control wide" placeholder="item URL for test" valueLink={this.linkState('itemUrl')}/>
 				</div>
 				<div className="form-group one-line">
 					<textarea className="form-control wide" name="collection-rule" placeholder="collection rule, e.g. {&#34;title&#34;:&#34;$('h1').html()&#34;,&#34;links&#34;:{&#34;link&#34;:&#34;&#34;,&#34;title&#34;:&#34;&#34;}}" valueLink={this.linkState('collectionRule')}></textarea>
